@@ -15,7 +15,7 @@ export default function Home() {
             backgroundColor: "#000000"
           }}
         >
-          <Graph />
+          <Graph layout="cose-bilkent"  />
         </div>
       </div>
     </>
