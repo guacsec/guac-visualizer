@@ -6,10 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "compile": "graphql-codegen",
+    "watch": "graphql-codegen -w"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.10",
+    "@apollo/react-hooks": "^4.0.0",
     "@next/font": "13.1.5",
+    "@textea/json-viewer": "^2.14.1",
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
     "@types/react-cytoscapejs": "^1.2.2",
@@ -17,17 +22,27 @@
     "cytoscape": "3.23.0",
     "cytoscape-cose-bilkent": "^4.1.0",
     "cytoscape-spread": "^3.0.0",
+    "deepmerge": "^4.3.0",
     "eslint": "8.32.0",
     "eslint-config-next": "^13.1.6",
+    "graphql": "^16.6.0",
+    "graphql-codegen-apollo-next-ssr": "^1.7.4",
     "next": "^13.1.6",
     "next-transpile-modules": "^10.0.0",
     "react": "^18.2.0",
     "react-cytoscapejs": "^2.0.0",
     "react-dom": "^18.2.0",
     "react-force-graph-2d": "^1.23.15",
-    "typescript": "4.9.4"
+    "swr": "^2.1.0",
+    "typescript": "^4.9.4",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/cytoscape": "3.19.9"
+    "@graphql-codegen/cli": "^3.2.2",
+    "@graphql-codegen/client-preset": "^2.1.1",
+    "@graphql-codegen/typescript": "^3.0.2",
+    "@graphql-codegen/typescript-resolvers": "^3.1.1",
+    "@types/cytoscape": "3.19.9",
+    "@types/uuid": "^9.0.1"
   }
 }
