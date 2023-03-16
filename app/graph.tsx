@@ -10,21 +10,25 @@ import Cytoscape from 'cytoscape';
 Cytoscape.use(Spread);
 Cytoscape.use(COSEBilkent);
 
+export type Node = {
+  data: {
+    id: string;
+    label: string;
+    type: string;
+  };
+}
+
+export type Edge = {
+  data: {
+    source: string;
+    target: string;
+    label: string;
+  };
+}
+
 type GraphData = {
-  nodes: {
-    data: {
-      id: string;
-      label: string;
-      type: string;
-    };
-  }[];
-  edges: {
-    data: {
-      source: string;
-      target: string;
-      label: string;
-    };
-  }[];
+  nodes: Node[];
+  edges: Edge[];
 }
 
 type GraphProps = {
@@ -79,6 +83,7 @@ const defaultGraphData: GraphData = {
 export default function Graph(props: GraphProps) {
   const [width, setWidth] = useState("100%");
   const [height, setHeight] = useState("800px");
+  console.log(props.graphData)
 
   const [graphData, setGraphData] = useState(props?.graphData ?? defaultGraphData);
 
@@ -142,6 +147,16 @@ export default function Graph(props: GraphProps) {
       selector: "edge",
       style: {
         width: 3,
+        'text-rotation': 'autorotate',
+        'text-margin-y': '-10px',
+        'text-background-color': '#fff',
+        'text-background-opacity': 0.7,
+        'text-background-padding': '1px',
+        'text-background-shape': 'roundrectangle',
+        'text-border-color': '#000',
+        'text-border-opacity': 0.1,
+        'text-border-width': '0.5px',
+        "label": "data(label)",
         "line-color": "#AAD8FF",
         "target-arrow-color": "#6774cb",
         "target-arrow-shape": "triangle",

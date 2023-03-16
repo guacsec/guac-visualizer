@@ -8,6 +8,14 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  rewrites: async () => {
+    return [
+      {
+        source: '/api/graphql',
+        destination: 'http://localhost:8080/query'
+      },
+    ]
+  }
 }
 
 module.exports = nextConfig
