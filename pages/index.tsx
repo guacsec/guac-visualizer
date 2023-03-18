@@ -9,7 +9,7 @@ import { Node, Edge } from 'app/graph'
 import SBOMViewer from '@/app/sbom';
 
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] });
 
 // TODO (mlieberman85): Some of the below still requires type definitions.
 
@@ -74,6 +74,7 @@ const fetcher = async (query) => {
   return cy;
 }
 
+
 const processDataForCytoscape = (data) => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
@@ -111,6 +112,10 @@ const processDataForCytoscape = (data) => {
 
 export default function Home() {
   // TODO (mlieberman85): Validate if SWR is better in this use case than alternatives like react query
+  const [detailsText, setDetailsText] = useState("detailsText");
+  function writeDetailsHandler (x : any) {
+    setDetailsText(JSON.stringify(x,null,2));
+  }
   const { data, error } = useSWR(TEST_QUERY, fetcher)
   if (error) return <div>failed to load</div>
   if (!data) return <div>loading...</div>
@@ -118,13 +123,15 @@ export default function Home() {
     <>
       <div>
         <h1>GUAC Visualizer</h1>
+        <textarea name="details-text" rows={15} cols={50} value={detailsText} onChange={e => setDetailsText(e.target.value)}/>
         <div
           style={{
             border: "1px solid",
             backgroundColor: "#000000"
           }}
         >
-          <Graph layout="cose-bilkent" graphData={data}/>
+          {/* skip sending in data which will be delegated to the graph object by passing in a way to retrieve the data instead */}
+          <Graph layout="cose-bilkent" writeDetails={writeDetailsHandler} />
         </div>
       </div>
       <SBOMViewer onSelect={null}/>

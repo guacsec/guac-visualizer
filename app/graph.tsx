@@ -34,7 +34,9 @@ type GraphData = {
 type GraphProps = {
   graphData?: GraphData;
   layout?: string;
+  writeDetails?: (x: any) => void;
 };
+
 
 const defaultGraphData: GraphData = {
   nodes: [
@@ -165,6 +167,18 @@ export default function Graph(props: GraphProps) {
     }
   ];
 
+  let nodeTapHandler = (evt: EventObject) => {
+    var node = evt.target;
+    // TODO: This should potentially run additional queries that then update the component state
+    console.log("EVT", evt);
+    console.log("TARGET", node.data());
+    console.log("TARGET TYPE", typeof node[0]);
+    if (props.writeDetails != undefined) {
+      props.writeDetails(node.data());
+    }
+    
+  }
+
   let ref;
 
   return (
@@ -187,10 +201,3 @@ export default function Graph(props: GraphProps) {
   )
 }
 
-const nodeTapHandler = (evt: EventObject) => {
-  var node = evt.target;
-  // TODO: This should potentially run additional queries that then update the component state
-  console.log("EVT", evt);
-  console.log("TARGET", node.data());
-  console.log("TARGET TYPE", typeof node[0]);
-}
