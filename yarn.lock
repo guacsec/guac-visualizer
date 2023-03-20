@@ -1306,9 +1306,9 @@
   "resolved" "https://registry.npmjs.org/@next/font/-/font-13.1.5.tgz"
   "version" "13.1.5"
 
-"@next/swc-darwin-arm64@13.1.6":
-  "integrity" "sha512-KKRQH4DDE4kONXCvFMNBZGDb499Hs+xcFAwvj+rfSUssIDrZOlyfJNy55rH5t2Qxed1e4K80KEJgsxKQN1/fyw=="
-  "resolved" "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-13.1.6.tgz"
+"@next/swc-darwin-x64@13.1.6":
+  "integrity" "sha512-/uOky5PaZDoaU99ohjtNcDTJ6ks/gZ5ykTQDvNZDjIoCxFe3+t06bxsTPY6tAO6uEAw5f6vVFX5H5KLwhrkZCA=="
+  "resolved" "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-13.1.6.tgz"
   "version" "13.1.6"
 
 "@nodelib/fs.scandir@2.1.5":
