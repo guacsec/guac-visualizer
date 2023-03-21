@@ -14,7 +14,7 @@ const config: CodegenConfig = {
     './gql/__generated__/': {
       preset: 'client',
       plugins: [
-        "typescript",
+        "typescript-react-apollo",
         "typescript-operations",
       ],
       presetConfig: {
