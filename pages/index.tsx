@@ -7,7 +7,7 @@ import useSWR from 'swr'
 import client from 'apollo/client'
 import { Node, Edge } from 'app/graph'
 import SBOMViewer from '@/app/sbom';
-import { IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment} from '../gql/__generated__/graphql';
+import { IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package} from '../gql/__generated__/graphql';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -79,10 +79,12 @@ const fetcher = async (query) => {
 
 
 const processDataForCytoscape = (data) => {
+  console.log("GQL DATA:" + data);
+
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
-  data.IsDependency.forEach((dependency :IsDependency, index) => {
+  data.packages.forEach((p :Package, index) => {
     const sourceNodeId = `pkg-${index}`;
     const targetNodeId = `depPkg-${index}`;
 
@@ -90,33 +92,16 @@ const processDataForCytoscape = (data) => {
     nodes.push(
       {
         data: { 
-          id: sourceNodeId, 
-          label: dependency.package.namespaces[0].names[0].name, 
-          type: dependency.__typename ?? "",
-        },
-      },
-      {
-        data: { 
-          id: targetNodeId, 
-          label: dependency.dependentPackage.namespaces[0].names[0].name,
-          type: dependency.__typename ?? "",
+          id: p.id, 
+          label: p.type + "." + p.namespaces[0].namespace + "." + p.namespaces[0].names[0].name,
+          type: "package",
         },
       }
     );
 
-    // Create edge between package and dependentPackage
-    edges.push({
-      data: {
-        id: `edge-${index}`,
-        source: sourceNodeId,
-        target: targetNodeId,
-        label: dependency.justification,
-      },
-    });
   });
-
-  console.log(nodes)
-  console.log(edges)
+  console.log(nodes);
+  console.log(edges);
 
   return { nodes, edges };
 };
@@ -143,17 +128,22 @@ export default function Home() {
 
   }
 
-    const { data, error } = useQuery(GetPkgDocument,{
+    const {data , error } = useQuery(GetPkgDocument,{
       variables: {
         spec: JSON.parse(requested),
+        spec: {},
       }
-    })
+    });
+    console.log("DATA:" + data);
     console.log(data);
+
+    console.log("err:" + error);
+
   
 
   //const { data, error } = useSWR(TEST_QUERY, fetcher)
-  //if (error) return <div>failed to load</div>
-  //if (!data) return <div>loading...</div>
+  if (error) return <div>failed to load</div>
+  if (!data) return <div>loading...</div>
   return (
     <>
       <div>
@@ -170,7 +160,7 @@ export default function Home() {
           }}
         >
           {/* skip sending in data which will be delegated to the graph object by passing in a way to retrieve the data instead */}
-          <Graph layout="cose-bilkent" writeDetails={writeDetailsHandler} />
+          <Graph layout="cose-bilkent" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(data)} />
         </div>
       </div>
       <SBOMViewer onSelect={null}/>
