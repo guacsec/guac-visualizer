@@ -38,9 +38,8 @@ type GraphData = {
 }
 
 type GraphProps = {
-  //graphData?: GraphData;
+  graphData?: GraphData;
   layout?: string;
-
   writeDetails?: (x: any) => void;
 };
 
