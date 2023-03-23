@@ -9,6 +9,8 @@ import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
 import { IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment} from '../gql/__generated__/graphql';
 import { gql, useQuery, useLazyQuery } from '@apollo/client';
+import client from 'apollo/client'
+
 
 
 Cytoscape.use(Spread);
@@ -168,8 +170,6 @@ export default function Graph(props: GraphProps) {
 
 
   
-
-
   //console.log(props.graphData)
   const layout = {
     name: props?.layout ?? "breadthfirst",
@@ -264,8 +264,27 @@ export default function Graph(props: GraphProps) {
 
     if (refCy != undefined) {
       if (!refCy.hasElementWithId(graphDesiredState[i].toString())) {
-        refCy.add({data: { id: graphDesiredState[i].toString(), label: "node-" + graphDesiredState[i].toString()}});
-        refCy.layout(layout).run();
+      
+        
+        client.query({
+          query: GetPkgDocument,
+          variables: {
+            spec: JSON.parse(`{
+              "type":"deb",
+              "namespace":"ubuntu",
+              "name": "dpkg",
+              "qualifiers": [{"key":"arch", "value":"amd64"}]
+            }`),
+          }
+        }).then(result => {
+          if (!refCy.hasElementWithId(graphDesiredState[i].toString())) {
+          refCy.add({data: { id: graphDesiredState[i].toString(), label: "node-" + graphDesiredState[i].toString()}});
+          refCy.layout(layout).run();
+          }
+          console.log(graphDesiredState[i].toString() + result);
+        }
+        );
+        
         /*
         const { data, error } = useQuery(GetPkgDocument,{
           variables: {
@@ -298,6 +317,7 @@ export default function Graph(props: GraphProps) {
     let rnd = Math.floor(Math.random() * (1000 - 100 + 1) + 100);
     console.log(graphDesiredState);
     setGraphDesiredState([...graphDesiredState, rnd]);
+
     
     if (props.writeDetails != undefined) {
       props.writeDetails(node.data());
