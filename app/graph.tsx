@@ -3,11 +3,13 @@
 import CytoscapeComponent from 'react-cytoscapejs'
 import Spread from 'cytoscape-spread';
 import COSEBilkent from 'cytoscape-cose-bilkent'
+import cola from 'cytoscape-cola';
+
 import { useState, useEffect } from 'react';
 import cytoscape, { EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
-import { IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment} from '../gql/__generated__/graphql';
+import { GetNeighborsDocument, IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment} from '../gql/__generated__/graphql';
 import { gql, useQuery, useLazyQuery } from '@apollo/client';
 import client from 'apollo/client'
 
@@ -15,6 +17,7 @@ import client from 'apollo/client'
 
 Cytoscape.use(Spread);
 Cytoscape.use(COSEBilkent);
+Cytoscape.use(cola);
 
 export type Node = {
   data: {
@@ -159,13 +162,17 @@ export default function Graph(props: GraphProps) {
 
   const [width, setWidth] = useState("100%");
   const [height, setHeight] = useState("800px");
+  const [dataCount, setDataCount] = useState(0);
+
   const [graphDesiredState, setGraphDesiredState] = useState([1,2,3,4,5,6,7,8,9,10,11,12]);
   const [neighborsDesired, setNeighborsDesired] = useState([]);
   const [gotNeighbors, setGotNeighbors] = useState(new Set<number>());
 
 
 
-  const [graphData, setGraphData] = useState(props?.graphData ?? defaultGraphData);
+  //const [graphData, setGraphData] = useState(props?.graphData ?? defaultGraphData);
+  const graphData = props.graphData;
+  
 
 
   
@@ -181,6 +188,59 @@ export default function Graph(props: GraphProps) {
     avoidOverlap: true,
     nodeDimensionsIncludeLabels: false,
   }
+  //refCy.layout(layout).run()
+  
+  useEffect(() => {
+    // some bad heuristic to run data once new data is found
+    if (graphData != undefined && dataCount != graphData.nodes.length) {
+      refCy.layout(layout).run();
+      setDataCount(graphData.nodes.length);
+    }
+  });
+  /*
+  function handleNeighbors(results) {
+    results.forEach(
+      console.log(refCy);
+      console.log("gds loop" + graphDesiredState[i]);
+      console.log(graphDesiredState);
+      
+  
+
+      if (refCy != undefined) {
+        if (!refCy.hasElementWithId(graphDesiredState[i].toString())) {
+        
+          
+          client.query({
+            query: GetPkgDocument,
+            variables: {
+              spec: JSON.parse(`{
+                "type":"deb",
+                "namespace":"ubuntu",
+                "name": "dpkg",
+                "qualifiers": [{"key":"arch", "value":"amd64"}]
+              }`),
+            }
+          }).then(result => {
+            if (!refCy.hasElementWithId(graphDesiredState[i].toString())) {
+            refCy.add({data: { id: graphDesiredState[i].toString(), label: "node-" + graphDesiredState[i].toString()}});
+            refCy.layout(layout).run();
+            }
+            console.log(graphDesiredState[i].toString() + result);
+          }
+          );
+          
+        } else {
+          console.log("updated all existing nodes");
+          break;
+        }
+      } else {
+        console.log("cy not initialized yet");
+      }
+
+    }
+    
+  }
+  */
 
   const styleSheet = [
     {
@@ -206,8 +266,8 @@ export default function Graph(props: GraphProps) {
         "border-color": "#AAD8FF",
         "border-opacity": "0.5",
         "background-color": "#77828C",
-        width: 50,
-        height: 50,
+        width: 30,
+        height: 30,
         //text props
         "text-outline-color": "#77828C",
         "text-outline-width": 8
@@ -247,7 +307,7 @@ export default function Graph(props: GraphProps) {
       }
     }
   ];
-  
+  /*
   for (let i=graphDesiredState.length-1;i>=0;  i--) {
     console.log(refCy);
     console.log("gds loop" + graphDesiredState[i]);
@@ -284,19 +344,6 @@ export default function Graph(props: GraphProps) {
         }
         );
         
-        /*
-        const { data, error } = useQuery(GetPkgDocument,{
-          variables: {
-            spec: JSON.parse(`{
-              "type":"deb",
-              "namespace":"ubuntu",
-              "name": "dpkg",
-              "qualifiers": [{"key":"arch", "value":"amd64"}]
-            }`),
-          }
-        })
-        console.log(data);
-        */
       } else {
         console.log("updated all existing nodes");
         break;
@@ -304,18 +351,17 @@ export default function Graph(props: GraphProps) {
     } else {
       console.log("cy not initialized yet");
     }
-    //graphData.nodes = [...graphData.nodes, {data: { id: graphDesiredState[i].toString(), label: "node-" + graphDesiredState[i].toString()}}];
-    //setGraphData(graphData);
 
   }
+  */
 
   let nodeTapHandler = (evt: EventObject) => {
     var node = evt.target;
     // TODO: This should potentially run additional queries that then update the component state
-    console.log("EVT", evt);
-    let rnd = Math.floor(Math.random() * (1000 - 100 + 1) + 100);
-    console.log(graphDesiredState);
-    setGraphDesiredState([...graphDesiredState, rnd]);
+    //let rnd = Math.floor(Math.random() * (1000 - 100 + 1) + 100);
+    //console.log(graphDesiredState);
+    //setGraphDesiredState([...graphDesiredState, rnd]);
+
 
     
     if (props.writeDetails != undefined) {
@@ -326,7 +372,30 @@ export default function Graph(props: GraphProps) {
   let nodeCxttapHandler = (evt: EventObject) => {
     var node = evt.target;
     // TODO: This should potentially run additional queries that then update the component state
-    console.log("EVT", evt);
+    console.log("EVT", evt.target.id());
+
+    client.query({
+      query: GetNeighborsDocument,
+      fetchPolicy: "no-cache" ,
+      variables: { nodeId: evt.target.id()},
+    },
+    ).then(result => {
+      console.log(evt.target.id(), "neighbors", result.data);
+      
+      /*
+
+      const neighbors = result.data.neighbors;
+      neighbors.forEach((n) => {
+          console.log(n);
+          //if (!refCy.hasElementWithId(n.id.toString())) {
+          //  refCy.add({data: { id: n.id.toString(), label: "node-" + n.id.toString()}});
+          //  refCy.layout(layout).run();
+          //  }
+      });
+      */
+      
+    });
+
   }
 
 
@@ -356,7 +425,6 @@ export default function Graph(props: GraphProps) {
       stylesheet={styleSheet}
       cy={cy => {
         refCy = cy;
-        console.log("EVT", cy);
         cy.on("tap", "node", evt => nodeTapHandler(evt));
         cy.on("cxttap", "node", evt => nodeCxttapHandler(evt));
       }}
