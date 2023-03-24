@@ -62,24 +62,9 @@ query Q1 {
   }
 }`;
 
-const fetcher = async (query) => {
-  
-
-  
-  const { data } = await client.query({
-    query: query,
-    variables: {},
-  });
-
-  const cy = processDataForCytoscape(data)
-  console.log(cy)
-
-  return cy;
-}
-
 
 const processDataForCytoscape = (data) => {
-  console.log("GQL DATA:" + data);
+  console.log("GQL DATA:", data);
 
   const nodes: Node[] = [];
   const edges: Edge[] = [];
@@ -100,8 +85,7 @@ const processDataForCytoscape = (data) => {
     );
 
   });
-  console.log(nodes);
-  console.log(edges);
+
 
   return { nodes, edges };
 };
@@ -118,39 +102,40 @@ export default function Home() {
   }`);
   const [buttonHit, setButtonHit] = useState(false);
   const [requested, setRequested] = useState("{}");
-  const [updated, setUpdated] = useState("");
+  const [data, setData] = useState<GetPkgQuery>({ packages: []});
 
 
-
+  function initGraph (s : string) {
+    client.query({
+      query: GetPkgDocument,
+      variables: {
+        spec: JSON.parse(requested),
+      }
+    }).then( res => {
+      console.log("res data", res.data);
+      setData(res.data);
+    });
+  }
 
   function writeDetailsHandler (x : any) {
     setDetailsText(JSON.stringify(x,null,2));
 
   }
 
-    const {data , error } = useQuery(GetPkgDocument,{
-      variables: {
-        spec: JSON.parse(requested),
-        spec: {},
-      }
-    });
-    console.log("DATA:" + data);
-    console.log(data);
-
-    console.log("err:" + error);
+    
 
   
 
   //const { data, error } = useSWR(TEST_QUERY, fetcher)
-  if (error) return <div>failed to load</div>
+  //if (error) return <div>failed to load</div>
   if (!data) return <div>loading...</div>
   return (
     <>
       <div>
         <h1>GUAC Visualizer</h1>
         <textarea name="text" rows={15} cols={50} value={inputText} onChange={e => setInputText(e.target.value)} />
-        <button onClick={e => setRequested(inputText)}>submit</button>
-        <textarea name="details-text" rows={15} cols={50} value={JSON.stringify(data)} />
+        <button onClick={e => initGraph(inputText)}>submit</button>
+        <textarea name="details-text" rows={15} cols={50} value={JSON.stringify(data)} onChange={() => {}} />
 
         <textarea name="details-text" rows={15} cols={50} value={detailsText} onChange={e => setDetailsText(e.target.value)}/>
         <div
@@ -160,7 +145,7 @@ export default function Home() {
           }}
         >
           {/* skip sending in data which will be delegated to the graph object by passing in a way to retrieve the data instead */}
-          <Graph layout="cose-bilkent" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(data)} />
+          <Graph layout="cola" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(data)} />
         </div>
       </div>
       <SBOMViewer onSelect={null}/>

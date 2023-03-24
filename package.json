@@ -45,6 +45,7 @@
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@graphql-codegen/typescript-resolvers": "^3.1.1",
     "@types/cytoscape": "3.19.9",
-    "@types/uuid": "^9.0.1"
+    "@types/uuid": "^9.0.1",
+    "cytoscape-cola": "^2.5.1"
   }
 }
