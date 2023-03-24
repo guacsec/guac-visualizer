@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import cytoscape, { EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
-import { GetNeighborsDocument, IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment} from '../gql/__generated__/graphql';
+import { GetNeighborsDocument, IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageNamespace, PackageName, PackageVersion ,CertifyPkg} from '../gql/__generated__/graphql';
 import { gql, useQuery, useLazyQuery } from '@apollo/client';
 import client from 'apollo/client'
 
@@ -32,6 +32,7 @@ export type Edge = {
     source: string;
     target: string;
     label: string;
+    id?: string;
   };
 }
 
@@ -382,17 +383,63 @@ export default function Graph(props: GraphProps) {
     ).then(result => {
       console.log(evt.target.id(), "neighbors", result.data);
       
-      /*
+      
 
       const neighbors = result.data.neighbors;
       neighbors.forEach((n) => {
-          console.log(n);
-          //if (!refCy.hasElementWithId(n.id.toString())) {
-          //  refCy.add({data: { id: n.id.toString(), label: "node-" + n.id.toString()}});
-          //  refCy.layout(layout).run();
-          //  }
+          let nodes : Node[] = [];
+          let edges : Edge[] = [];
+
+          switch (n.__typename) {
+            case "Package":
+              const typ : Package = n;
+              nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "package"}}];
+              // for each check if its the leaf, and if its the leaf that's where the edge goes
+
+              typ.namespaces.forEach((ns : PackageNamespace) =>{
+                nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "package"}}];
+                edges = [...edges, {data: {source:typ.id, target:ns.id, label:"pkgNs"}}]
+
+                ns.names.forEach((name: PackageName)=>{
+                  nodes = [...nodes, {data: {id: name.id, label: name.name, type: "package"}}];
+                  edges = [...edges, {data: { source:ns.id, target:name.id, label:"pkgName"}}]
+
+                  name.versions.forEach((version: PackageVersion) => {
+                    nodes = [...nodes, {data: {id: version.id, label: version.version, type: "package"}}];
+                    edges = [...edges, {data: { source:name.id, target:version.id, label:"pkgVersion"}}]
+                  });
+                });
+              });
+            case "CertifyPkg":
+              /* TODO::: NEED TO ADD TO GRAPHQL TREE FRAGMENT
+              const cpkg : CertifyPkg = n;
+              nodes = [...nodes, {data: {
+                label: "certifyPkg",
+                type: "certifyPkg",
+                id: cpkg.id,
+                
+              }}];
+              */
+              // expand mutual call back to pkgs
+              
+          }
+
+          nodes.forEach((nn) =>{
+            if (!refCy.hasElementWithId(nn.data.id)) {
+              refCy.add(nn);
+            }
+          });
+
+          edges.forEach((e) =>{
+            e.data.id = e.data.source + "->" + e.data.target;
+            if (!refCy.hasElementWithId(e.data.id)) {
+              refCy.add(e);
+            }
+          });
+          refCy.layout(layout).run();
+
       });
-      */
+      
       
     });
 
