@@ -47,6 +47,46 @@ type GraphProps = {
   writeDetails?: (x: any) => void;
 };
 
+
+// parse* returns a set of GraphData that consists of the nodes and edges to create a subgraph
+// it also returns the node which is the main node to link to of the subgraph
+function parsePackage(n: Package) : [GraphData, Node | undefined] {
+  let nodes : Node[] = [];
+  let edges : Edge[] = [];
+  // for each check if its the leaf, and if its the leaf that's where the edge goes
+  let target : Node | undefined = undefined;
+
+
+  const typ : Package = n;
+  nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "package"}}];
+  if (typ.namespaces.length == 0) {
+    target = nodes.at(-1);
+  }
+
+  typ.namespaces.forEach((ns : PackageNamespace) =>{
+    nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "package"}}];
+    edges = [...edges, {data: {source:typ.id, target:ns.id, label:"pkgNs"}}]
+    if (ns.names.length == 0) {
+      target = nodes.at(-1);
+    }
+
+    ns.names.forEach((name: PackageName)=>{
+      nodes = [...nodes, {data: {id: name.id, label: name.name, type: "package"}}];
+      edges = [...edges, {data: { source:ns.id, target:name.id, label:"pkgName"}}]
+      if (name.versions.length == 0) {
+        target = nodes.at(-1);
+      }
+
+      name.versions.forEach((version: PackageVersion) => {
+        nodes = [...nodes, {data: {id: version.id, label: version.version, type: "package"}}];
+        edges = [...edges, {data: { source:name.id, target:version.id, label:"pkgVersion"}}]
+        target = nodes.at(-1);
+      });
+    });
+  });
+  return [ { nodes: nodes, edges: edges }, target];
+}
+
 class GuacNode {
   nodeId: number;
   nodeType: string;
@@ -370,6 +410,7 @@ export default function Graph(props: GraphProps) {
     }    
   }
 
+
   let nodeCxttapHandler = (evt: EventObject) => {
     var node = evt.target;
     // TODO: This should potentially run additional queries that then update the component state
@@ -387,29 +428,13 @@ export default function Graph(props: GraphProps) {
 
       const neighbors = result.data.neighbors;
       neighbors.forEach((n) => {
-          let nodes : Node[] = [];
-          let edges : Edge[] = [];
+          let gd : GraphData;
+          let target : Node | undefined;
 
           switch (n.__typename) {
             case "Package":
-              const typ : Package = n;
-              nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "package"}}];
-              // for each check if its the leaf, and if its the leaf that's where the edge goes
-
-              typ.namespaces.forEach((ns : PackageNamespace) =>{
-                nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "package"}}];
-                edges = [...edges, {data: {source:typ.id, target:ns.id, label:"pkgNs"}}]
-
-                ns.names.forEach((name: PackageName)=>{
-                  nodes = [...nodes, {data: {id: name.id, label: name.name, type: "package"}}];
-                  edges = [...edges, {data: { source:ns.id, target:name.id, label:"pkgName"}}]
-
-                  name.versions.forEach((version: PackageVersion) => {
-                    nodes = [...nodes, {data: {id: version.id, label: version.version, type: "package"}}];
-                    edges = [...edges, {data: { source:name.id, target:version.id, label:"pkgVersion"}}]
-                  });
-                });
-              });
+              [gd, target]  = parsePackage(n as Package);
+              break;
             case "CertifyPkg":
               /* TODO::: NEED TO ADD TO GRAPHQL TREE FRAGMENT
               const cpkg : CertifyPkg = n;
@@ -421,16 +446,20 @@ export default function Graph(props: GraphProps) {
               }}];
               */
               // expand mutual call back to pkgs
+            default:
+              // not handled
+              console.log("unhandled node type:", n.__typename);
+              return;
               
           }
 
-          nodes.forEach((nn) =>{
+          gd.nodes.forEach((nn) =>{
             if (!refCy.hasElementWithId(nn.data.id)) {
               refCy.add(nn);
             }
           });
 
-          edges.forEach((e) =>{
+          gd.edges.forEach((e) =>{
             e.data.id = e.data.source + "->" + e.data.target;
             if (!refCy.hasElementWithId(e.data.id)) {
               refCy.add(e);
