@@ -5,7 +5,7 @@ import { gql, useQuery, useLazyQuery } from '@apollo/client'
 import styles from "../styles/Home.module.css";
 import useSWR from 'swr'
 import client from 'apollo/client'
-import { Node, Edge } from 'app/graph'
+import { Node, Edge, ParseNode } from 'app/ggraph'
 import SBOMViewer from '@/app/sbom';
 import { IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package} from '../gql/__generated__/graphql';
 
@@ -64,15 +64,22 @@ query Q1 {
 
 
 const processDataForCytoscape = (data) => {
+
+  
   console.log("GQL DATA:", data);
 
-  const nodes: Node[] = [];
-  const edges: Edge[] = [];
+  let nodes: Node[] = [];
+  let edges: Edge[] = [];
 
   data.packages.forEach((p :Package, index) => {
     const sourceNodeId = `pkg-${index}`;
     const targetNodeId = `depPkg-${index}`;
 
+    let gd = ParseNode(p);
+    if (gd!= undefined) {
+      nodes = [...nodes, ...gd.nodes];
+      edges = [...edges, ...gd.edges];
+    }
     // Create nodes for package and dependentPackage
     nodes.push(
       {
@@ -109,7 +116,7 @@ export default function Home() {
     client.query({
       query: GetPkgDocument,
       variables: {
-        spec: JSON.parse(requested),
+        spec: JSON.parse(s),
       }
     }).then( res => {
       console.log("res data", res.data);

@@ -9,7 +9,8 @@ import { useState, useEffect } from 'react';
 import cytoscape, { EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
-import { GetNeighborsDocument, IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageNamespace, PackageName, PackageVersion ,CertifyPkg} from '../gql/__generated__/graphql';
+import { Node as gqlNode, GetNeighborsDocument, IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageNamespace, PackageName, PackageVersion ,CertifyPkg} from '../gql/__generated__/graphql';
+import { Node, Edge, GraphData, ParseNode} from "./ggraph";
 import { gql, useQuery, useLazyQuery } from '@apollo/client';
 import client from 'apollo/client'
 
@@ -19,73 +20,11 @@ Cytoscape.use(Spread);
 Cytoscape.use(COSEBilkent);
 Cytoscape.use(cola);
 
-export type Node = {
-  data: {
-    id: string;
-    label: string;
-    type: string;
-  };
-}
-
-export type Edge = {
-  data: {
-    source: string;
-    target: string;
-    label: string;
-    id?: string;
-  };
-}
-
-type GraphData = {
-  nodes: Node[];
-  edges: Edge[];
-}
-
 type GraphProps = {
   graphData?: GraphData;
   layout?: string;
   writeDetails?: (x: any) => void;
 };
-
-
-// parse* returns a set of GraphData that consists of the nodes and edges to create a subgraph
-// it also returns the node which is the main node to link to of the subgraph
-function parsePackage(n: Package) : [GraphData, Node | undefined] {
-  let nodes : Node[] = [];
-  let edges : Edge[] = [];
-  // for each check if its the leaf, and if its the leaf that's where the edge goes
-  let target : Node | undefined = undefined;
-
-
-  const typ : Package = n;
-  nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "package"}}];
-  if (typ.namespaces.length == 0) {
-    target = nodes.at(-1);
-  }
-
-  typ.namespaces.forEach((ns : PackageNamespace) =>{
-    nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "package"}}];
-    edges = [...edges, {data: {source:typ.id, target:ns.id, label:"pkgNs"}}]
-    if (ns.names.length == 0) {
-      target = nodes.at(-1);
-    }
-
-    ns.names.forEach((name: PackageName)=>{
-      nodes = [...nodes, {data: {id: name.id, label: name.name, type: "package"}}];
-      edges = [...edges, {data: { source:ns.id, target:name.id, label:"pkgName"}}]
-      if (name.versions.length == 0) {
-        target = nodes.at(-1);
-      }
-
-      name.versions.forEach((version: PackageVersion) => {
-        nodes = [...nodes, {data: {id: version.id, label: version.version, type: "package"}}];
-        edges = [...edges, {data: { source:name.id, target:version.id, label:"pkgVersion"}}]
-        target = nodes.at(-1);
-      });
-    });
-  });
-  return [ { nodes: nodes, edges: edges }, target];
-}
 
 class GuacNode {
   nodeId: number;
@@ -238,50 +177,6 @@ export default function Graph(props: GraphProps) {
       setDataCount(graphData.nodes.length);
     }
   });
-  /*
-  function handleNeighbors(results) {
-    results.forEach(
-      console.log(refCy);
-      console.log("gds loop" + graphDesiredState[i]);
-      console.log(graphDesiredState);
-      
-  
-
-      if (refCy != undefined) {
-        if (!refCy.hasElementWithId(graphDesiredState[i].toString())) {
-        
-          
-          client.query({
-            query: GetPkgDocument,
-            variables: {
-              spec: JSON.parse(`{
-                "type":"deb",
-                "namespace":"ubuntu",
-                "name": "dpkg",
-                "qualifiers": [{"key":"arch", "value":"amd64"}]
-              }`),
-            }
-          }).then(result => {
-            if (!refCy.hasElementWithId(graphDesiredState[i].toString())) {
-            refCy.add({data: { id: graphDesiredState[i].toString(), label: "node-" + graphDesiredState[i].toString()}});
-            refCy.layout(layout).run();
-            }
-            console.log(graphDesiredState[i].toString() + result);
-          }
-          );
-          
-        } else {
-          console.log("updated all existing nodes");
-          break;
-        }
-      } else {
-        console.log("cy not initialized yet");
-      }
-
-    }
-    
-  }
-  */
 
   const styleSheet = [
     {
@@ -348,63 +243,9 @@ export default function Graph(props: GraphProps) {
       }
     }
   ];
-  /*
-  for (let i=graphDesiredState.length-1;i>=0;  i--) {
-    console.log(refCy);
-    console.log("gds loop" + graphDesiredState[i]);
-    console.log(graphDesiredState);
-    
-    const found =  graphData.nodes.find((a)=>a.data.id  == graphDesiredState[i].toString());
-    //console.log(graphDesiredState);
-    //console.log(graphData.nodes);
-    //if (found != undefined) {
-    //  console.log("updated all existing nodes");
-    //  break;
-    //}
-
-    if (refCy != undefined) {
-      if (!refCy.hasElementWithId(graphDesiredState[i].toString())) {
-      
-        
-        client.query({
-          query: GetPkgDocument,
-          variables: {
-            spec: JSON.parse(`{
-              "type":"deb",
-              "namespace":"ubuntu",
-              "name": "dpkg",
-              "qualifiers": [{"key":"arch", "value":"amd64"}]
-            }`),
-          }
-        }).then(result => {
-          if (!refCy.hasElementWithId(graphDesiredState[i].toString())) {
-          refCy.add({data: { id: graphDesiredState[i].toString(), label: "node-" + graphDesiredState[i].toString()}});
-          refCy.layout(layout).run();
-          }
-          console.log(graphDesiredState[i].toString() + result);
-        }
-        );
-        
-      } else {
-        console.log("updated all existing nodes");
-        break;
-      }
-    } else {
-      console.log("cy not initialized yet");
-    }
-
-  }
-  */
 
   let nodeTapHandler = (evt: EventObject) => {
-    var node = evt.target;
-    // TODO: This should potentially run additional queries that then update the component state
-    //let rnd = Math.floor(Math.random() * (1000 - 100 + 1) + 100);
-    //console.log(graphDesiredState);
-    //setGraphDesiredState([...graphDesiredState, rnd]);
-
-
-    
+    var node = evt.target;    
     if (props.writeDetails != undefined) {
       props.writeDetails(node.data());
     }    
@@ -423,36 +264,13 @@ export default function Graph(props: GraphProps) {
     },
     ).then(result => {
       console.log(evt.target.id(), "neighbors", result.data);
-      
-      
-
       const neighbors = result.data.neighbors;
       neighbors.forEach((n) => {
-          let gd : GraphData;
-          let target : Node | undefined;
+          let gd = ParseNode(n as gqlNode);
 
-          switch (n.__typename) {
-            case "Package":
-              [gd, target]  = parsePackage(n as Package);
-              break;
-            case "CertifyPkg":
-              /* TODO::: NEED TO ADD TO GRAPHQL TREE FRAGMENT
-              const cpkg : CertifyPkg = n;
-              nodes = [...nodes, {data: {
-                label: "certifyPkg",
-                type: "certifyPkg",
-                id: cpkg.id,
-                
-              }}];
-              */
-              // expand mutual call back to pkgs
-            default:
-              // not handled
-              console.log("unhandled node type:", n.__typename);
-              return;
-              
+          if (gd == undefined) {
+            return;
           }
-
           gd.nodes.forEach((nn) =>{
             if (!refCy.hasElementWithId(nn.data.id)) {
               refCy.add(nn);
@@ -460,7 +278,7 @@ export default function Graph(props: GraphProps) {
           });
 
           gd.edges.forEach((e) =>{
-            e.data.id = e.data.source + "->" + e.data.target;
+            //e.data.id = e.data.source + "->" + e.data.target;
             if (!refCy.hasElementWithId(e.data.id)) {
               refCy.add(e);
             }
@@ -501,6 +319,8 @@ export default function Graph(props: GraphProps) {
       stylesheet={styleSheet}
       cy={cy => {
         refCy = cy;
+        cy.removeListener('tap');
+        cy.removeListener('cxttap');
         cy.on("tap", "node", evt => nodeTapHandler(evt));
         cy.on("cxttap", "node", evt => nodeCxttapHandler(evt));
       }}
