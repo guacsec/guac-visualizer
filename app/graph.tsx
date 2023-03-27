@@ -216,6 +216,55 @@ export default function Graph(props: GraphProps) {
       }
     },
     {
+      selector: "node[type='IsDependency']",
+      style: {
+        shape: "rectangle",
+        "background-color": "yellow",
+      }
+    },
+    {
+      selector: "node[type='IsOccurrence']",
+      style: {
+        shape: "square",
+        "background-color": "pink",
+      }
+    },
+    {
+      selector: "node[type='Source']",
+      style: {
+        shape: "circle",
+        "background-color": "green",
+      }
+    },
+    {
+      selector: "node[type='Artifact']",
+      style: {
+        shape: "circle",
+        "background-color": "red",
+      }
+    },
+    {
+      selector: "node[type='CertifyPkg']",
+      style: {
+        shape: "triangle",
+        "background-color": "white",
+      }
+    },
+    {
+      selector: "node[type='PackageVersion']",
+      style: {
+        shape: "hexagon",
+        "background-color": "orange",
+      }
+    },
+    {
+      selector: "node[type='PackageName']",
+      style: {
+        shape: "hexagon",
+        "background-color": "purple",
+      }
+    },
+    {
       selector: "node[type='id']",
       style: {
         shape: "triangle",
