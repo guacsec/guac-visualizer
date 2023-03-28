@@ -252,7 +252,7 @@ export type CertifyVexStatement = {
   knownSince: Scalars['Time'];
   origin: Scalars['String'];
   subject: PackageOrArtifact;
-  vulnerability: CveOrGhsa;
+  vulnerability: OsvCveOrGhsa;
 };
 
 /**
@@ -266,7 +266,7 @@ export type CertifyVexStatementSpec = {
   knownSince?: InputMaybe<Scalars['Time']>;
   origin?: InputMaybe<Scalars['String']>;
   subject?: InputMaybe<PackageOrArtifactSpec>;
-  vulnerability?: InputMaybe<CveOrGhsaSpec>;
+  vulnerability?: InputMaybe<OsvCveOrGhsaSpec>;
 };
 
 /** CertifyVuln is an attestation that represents when a package has a vulnerability */
@@ -411,7 +411,7 @@ export type HasSlsa = {
   __typename?: 'HasSLSA';
   id: Scalars['ID'];
   /** The SLSA attestation. */
-  slsa?: Maybe<Slsa>;
+  slsa: Slsa;
   /** The subject of SLSA attestation: package, source, or artifact. */
   subject: Artifact;
 };
@@ -1861,7 +1861,7 @@ export type ScorecardMutation = { __typename?: 'Mutation', ingestSource: (
     & { ' $fragmentRefs'?: { 'AllCertifyScorecardTreeFragment': AllCertifyScorecardTreeFragment } }
   ) };
 
-export type AllCertifyVexStatementTreeFragment = { __typename?: 'CertifyVEXStatement', id: string, justification: string, knownSince: any, origin: string, collector: string, subject: { __typename: 'Artifact', id: string, algorithm: string, digest: string } | { __typename: 'Package', id: string, type: string, namespaces: Array<{ __typename?: 'PackageNamespace', id: string, namespace: string, names: Array<{ __typename?: 'PackageName', id: string, name: string, versions: Array<{ __typename?: 'PackageVersion', id: string, version: string, subpath: string, qualifiers: Array<{ __typename?: 'PackageQualifier', key: string, value: string }> }> }> }> }, vulnerability: { __typename: 'CVE', id: string, year: number, cveIds: Array<{ __typename?: 'CVEId', id: string, cveId: string }> } | { __typename: 'GHSA', id: string, ghsaIds: Array<{ __typename?: 'GHSAId', id: string, ghsaId: string }> } } & { ' $fragmentName'?: 'AllCertifyVexStatementTreeFragment' };
+export type AllCertifyVexStatementTreeFragment = { __typename?: 'CertifyVEXStatement', id: string, justification: string, knownSince: any, origin: string, collector: string, subject: { __typename: 'Artifact', id: string, algorithm: string, digest: string } | { __typename: 'Package', id: string, type: string, namespaces: Array<{ __typename?: 'PackageNamespace', id: string, namespace: string, names: Array<{ __typename?: 'PackageName', id: string, name: string, versions: Array<{ __typename?: 'PackageVersion', id: string, version: string, subpath: string, qualifiers: Array<{ __typename?: 'PackageQualifier', key: string, value: string }> }> }> }> }, vulnerability: { __typename: 'CVE', id: string, year: number, cveIds: Array<{ __typename?: 'CVEId', id: string, cveId: string }> } | { __typename: 'GHSA', id: string, ghsaIds: Array<{ __typename?: 'GHSAId', id: string, ghsaId: string }> } | { __typename: 'OSV' } } & { ' $fragmentName'?: 'AllCertifyVexStatementTreeFragment' };
 
 export type CertifyVexStatementQ1QueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2145,7 +2145,7 @@ export type HasSbomq5Query = { __typename?: 'Query', HasSBOM: Array<(
     & { ' $fragmentRefs'?: { 'AllHasSbomTreeFragment': AllHasSbomTreeFragment } }
   )> };
 
-export type AllHasSlsaTreeFragment = { __typename?: 'HasSLSA', id: string, subject: { __typename?: 'Artifact', id: string, algorithm: string, digest: string }, slsa?: { __typename?: 'SLSA', buildType: string, slsaVersion: string, startedOn: any, finishedOn: any, origin: string, collector: string, builtFrom: Array<{ __typename?: 'Artifact', id: string, algorithm: string, digest: string }>, builtBy: { __typename?: 'Builder', id: string, uri: string }, slsaPredicate: Array<{ __typename?: 'SLSAPredicate', key: string, value: string }> } | null } & { ' $fragmentName'?: 'AllHasSlsaTreeFragment' };
+export type AllHasSlsaTreeFragment = { __typename?: 'HasSLSA', id: string, subject: { __typename?: 'Artifact', id: string, algorithm: string, digest: string }, slsa: { __typename?: 'SLSA', buildType: string, slsaVersion: string, startedOn: any, finishedOn: any, origin: string, collector: string, builtFrom: Array<{ __typename?: 'Artifact', id: string, algorithm: string, digest: string }>, builtBy: { __typename?: 'Builder', id: string, uri: string }, slsaPredicate: Array<{ __typename?: 'SLSAPredicate', key: string, value: string }> } } & { ' $fragmentName'?: 'AllHasSlsaTreeFragment' };
 
 export type Slsaq1QueryVariables = Exact<{ [key: string]: never; }>;
 

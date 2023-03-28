@@ -81,15 +81,6 @@ const processDataForCytoscape = (data) => {
       edges = [...edges, ...gd.edges];
     }
     // Create nodes for package and dependentPackage
-    nodes.push(
-      {
-        data: { 
-          id: p.id, 
-          label: p.type + "." + p.namespaces[0].namespace + "." + p.namespaces[0].names[0].name,
-          type: "package",
-        },
-      }
-    );
 
   });
 
@@ -110,9 +101,11 @@ export default function Home() {
   const [buttonHit, setButtonHit] = useState(false);
   const [requested, setRequested] = useState("{}");
   const [data, setData] = useState<GetPkgQuery>({ packages: []});
+  let graph = <Graph layout="cola" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(data)} />
 
 
   function initGraph (s : string) {
+    setData({packages: []});
     client.query({
       query: GetPkgDocument,
       variables: {
@@ -130,7 +123,6 @@ export default function Home() {
   }
 
     
-
   
 
   //const { data, error } = useSWR(TEST_QUERY, fetcher)
@@ -152,7 +144,7 @@ export default function Home() {
           }}
         >
           {/* skip sending in data which will be delegated to the graph object by passing in a way to retrieve the data instead */}
-          <Graph layout="cola" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(data)} />
+          { graph }
         </div>
       </div>
       <SBOMViewer onSelect={null}/>
