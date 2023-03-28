@@ -46,60 +46,26 @@ type GraphRep = {
 }
 
 function gDataToRep (d : GraphData) :GraphRep {
-  d.nodes.map((v) => (v.data.id, v));
-  d.edges.map((v) => (v.data.id, v));
+  const nTuple = d.nodes.map((v) => [v.data.id, v]);
+  const eTuple = d.edges.map((v) => [v.data.id, v]);
+  console.log("gDataToRep:", nTuple);
   return {
-
+          nodes: new Map<string,Node>(nTuple),
+          edges: new Map<string,Edge>(eTuple),
+        }
     
-  }
 }
 
 function gRepToData (d : GraphRep) :GraphData {
-  return {
-      nodes: Array.from(d.nodes),
-      edges: Array.from(d.edges),
+  console.log("repToData:", d)
+  const g : GraphData = {
+      nodes: Array.from(d.nodes, v=> v[1]),
+      edges: Array.from(d.edges, v => v[1]),
   }
+  return g;
 }
 
 type NodeId = number;
-
-class GuacGraphHelper {
-  frontier: GuacNode[];
-  nodeMap: Map<number,GuacNode>;
-  expandedMap: Map<number,boolean>;
-
-  constructor(message: string) {
-    this.frontier = [];
-    this.nodeMap = new Map<NodeId, GuacNode>;
-    this.expandedMap = new Map<NodeId, boolean>;
-  }
-  // populateData will take a node and figure out the other nodes and edges to create and
-  // - update the frontier by removing itself and adding the new nodes
-  // - adding the new nodes to the nodeMap
-  // - adding the new nodes and edges to cytoscape graph
-  private populateData (node:GuacNode) {
-
-  }
-
-  public expandNode(id: NodeId) {
-    const n = this.getNodeEdges(id);
-    // check if n is null and populate if it is not.
-    this.populateData(n);
-  }
-
-  public getNodeEdges(id: NodeId) : GuacNode {
-    // check if it is in expnaded map, if its not been expanded, query for node (with its edge properties), else return null
-    return new GuacNode({});
-  }
-
-  public expandFrontier() {
-    const currentFrontier = Object.assign([], this.frontier);
-    currentFrontier.forEach((n)=>
-      this.expandNode(n)
-    );
-  }
-}
-
 
 function guacToCy(n:GuacNode):  Node {
   return {
@@ -171,12 +137,12 @@ export default function Graph(props: GraphProps) {
 
 
 
-  const [graphData, setGraphData] = useState(props?.graphData ?? {nodes:[], edges:[]});
+  const [graphData, setGraphData] = useState({nodes: new Map(), edges:new Map()});
   //const graphData = props.graphData;
   
   useEffect( () => {
-    if (props.graphData && graphData.nodes.length==0) {
-      setGraphData(props.graphData);
+    if (props.graphData && props.graphData.nodes.length > 0 && graphData.nodes.size ==0) {
+      setGraphData(gDataToRep(props.graphData));
     }
   }, [props.graphData, graphData]);
   
@@ -199,10 +165,10 @@ export default function Graph(props: GraphProps) {
   
   useEffect(() => {
     // some bad heuristic to run data once new data is found
-    if (graphData != undefined && dataCount != graphData.nodes.length) {
+    if (graphData != undefined && dataCount != graphData.nodes.keys.length) {
   
       //refCy.layout(layout).run();
-      setDataCount(graphData.nodes.length);
+      setDataCount(graphData.nodes.keys.length);
     }
   });
 
@@ -397,9 +363,14 @@ export default function Graph(props: GraphProps) {
       let addEdges : Edge[] = [];
       addedNodes.forEach((n) => addNodes = [...addNodes, ...n]);
       addedEdges.forEach((n) => addEdges = [...addEdges, ...n]);
+      let nMap : Map<string, Node> = new Map(graphData.nodes);
+      let eMap : Map<string, Edge> = new Map(graphData.edges);
+
+      addNodes.forEach((n) => nMap.set(n.data.id, n));
+      addEdges.forEach((n) => eMap.set(n.data.id, n));
       setGraphData({
-        nodes: new Set([...graphData.nodes, ...addNodes]),
-        edges: new Set([...graphData.edges, ...addEdges]),
+        nodes: nMap,
+        edges: eMap,
       });
     }
     );
@@ -429,7 +400,7 @@ export default function Graph(props: GraphProps) {
     <>
     <button onClick={addNode}> add node </button>
     <CytoscapeComponent
-      elements={CytoscapeComponent.normalizeElements(gdataPreprocess(graphData))}
+      elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
       style={{ width: width, height: height }}
       zoomingEnabled={true}
       maxZoom={3}
