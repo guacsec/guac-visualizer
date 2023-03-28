@@ -40,6 +40,27 @@ class GuacNode {
   }
 }
 
+type GraphRep = {
+  nodes : Map<string, Node>;
+  edges: Map<string, Edge>;
+}
+
+function gDataToRep (d : GraphData) :GraphRep {
+  d.nodes.map((v) => (v.data.id, v));
+  d.edges.map((v) => (v.data.id, v));
+  return {
+
+    
+  }
+}
+
+function gRepToData (d : GraphRep) :GraphData {
+  return {
+      nodes: Array.from(d.nodes),
+      edges: Array.from(d.edges),
+  }
+}
+
 type NodeId = number;
 
 class GuacGraphHelper {
@@ -150,11 +171,17 @@ export default function Graph(props: GraphProps) {
 
 
 
-  //const [graphData, setGraphData] = useState(props?.graphData ?? defaultGraphData);
-  const graphData = props.graphData;
+  const [graphData, setGraphData] = useState(props?.graphData ?? {nodes:[], edges:[]});
+  //const graphData = props.graphData;
+  
+  useEffect( () => {
+    if (props.graphData && graphData.nodes.length==0) {
+      setGraphData(props.graphData);
+    }
+  }, [props.graphData, graphData]);
   
 
-
+  console.log("gdata", graphData);
   
   //console.log(props.graphData)
   const layout = {
@@ -173,7 +200,8 @@ export default function Graph(props: GraphProps) {
   useEffect(() => {
     // some bad heuristic to run data once new data is found
     if (graphData != undefined && dataCount != graphData.nodes.length) {
-      refCy.layout(layout).run();
+  
+      //refCy.layout(layout).run();
       setDataCount(graphData.nodes.length);
     }
   });
@@ -232,14 +260,12 @@ export default function Graph(props: GraphProps) {
     {
       selector: "node[type='Source']",
       style: {
-        shape: "circle",
         "background-color": "green",
       }
     },
     {
       selector: "node[type='Artifact']",
       style: {
-        shape: "circle",
         "background-color": "red",
       }
     },
@@ -275,6 +301,7 @@ export default function Graph(props: GraphProps) {
       selector: "edge",
       style: {
         width: 3,
+        'font-size': 5,
         'text-rotation': 'autorotate',
         'text-margin-y': '-10px',
         'text-background-color': '#fff',
@@ -290,7 +317,17 @@ export default function Graph(props: GraphProps) {
         "target-arrow-shape": "triangle",
         "curve-style": "bezier"
       }
-    }
+    },
+    {
+      selector: "node[expanded!='true']",
+      style: {
+        "border-width": "6px",
+        "border-color": "#AAD8FF",
+        "border-opacity": "0.5",
+        width: 30,
+        height: 30,
+      }
+    },
   ];
 
   let nodeTapHandler = (evt: EventObject) => {
@@ -302,9 +339,17 @@ export default function Graph(props: GraphProps) {
 
 
   let nodeCxttapHandler = (evt: EventObject) => {
-    var node = evt.target;
     // TODO: This should potentially run additional queries that then update the component state
-    console.log("EVT", evt.target.id());
+    //console.log("EVT", evt.target);
+    
+    const node = evt.cy.getElementById(evt.target.id()).nodes()[0][0];
+    //node = "true";
+    console.log(node);
+    //evt.cy.data(node.data);
+
+
+    let addedNodes : Node[][] =[];
+    let addedEdges : Edge[][] =[];
 
     client.query({
       query: GetNeighborsDocument,
@@ -314,30 +359,50 @@ export default function Graph(props: GraphProps) {
     ).then(result => {
       console.log(evt.target.id(), "neighbors", result.data);
       const neighbors = result.data.neighbors;
-      neighbors.forEach((n) => {
+      neighbors.forEach((n,i) => {
           let gd = ParseNode(n as gqlNode);
+          
 
           if (gd == undefined) {
             return;
           }
+
+          addedNodes[i] =[];
+          addedEdges[i] = [];
           gd.nodes.forEach((nn) =>{
-            if (!refCy.hasElementWithId(nn.data.id)) {
-              refCy.add(nn);
-            }
+            //if (!refCy.hasElementWithId(nn.data.id)) {
+              //refCy.add(nn);
+              addedNodes[i] = [...addedNodes[i], nn];
+              console.log(nn);
+            //}
           });
 
           gd.edges.forEach((e) =>{
             //e.data.id = e.data.source + "->" + e.data.target;
-            if (!refCy.hasElementWithId(e.data.id)) {
-              refCy.add(e);
-            }
+            // if (!refCy.hasElementWithId(e.data.id)) {
+            //   refCy.add(e);
+            // }
+            addedEdges[i] = [...addedEdges[i], e];
           });
-          refCy.layout(layout).run();
+
+          console.log("addednodes", addedNodes);
+          
+          //refCy.layout(layout).run();
 
       });
       
       
-    });
+    }).finally( () =>{
+      let addNodes : Node[] = [];
+      let addEdges : Edge[] = [];
+      addedNodes.forEach((n) => addNodes = [...addNodes, ...n]);
+      addedEdges.forEach((n) => addEdges = [...addEdges, ...n]);
+      setGraphData({
+        nodes: new Set([...graphData.nodes, ...addNodes]),
+        edges: new Set([...graphData.edges, ...addEdges]),
+      });
+    }
+    );
 
   }
 
@@ -352,12 +417,19 @@ export default function Graph(props: GraphProps) {
     //setGraphData(graphData);
     
   }
+  function gdataPreprocess (d : GraphData) :GraphData {
+    return {
+        nodes: Array.from(d.nodes),
+        edges: Array.from(d.edges),
+    }
+  }
 
+  console.log(graphData);
   return (
     <>
     <button onClick={addNode}> add node </button>
     <CytoscapeComponent
-      elements={CytoscapeComponent.normalizeElements(graphData)}
+      elements={CytoscapeComponent.normalizeElements(gdataPreprocess(graphData))}
       style={{ width: width, height: height }}
       zoomingEnabled={true}
       maxZoom={3}
@@ -372,6 +444,7 @@ export default function Graph(props: GraphProps) {
         cy.removeListener('cxttap');
         cy.on("tap", "node", evt => nodeTapHandler(evt));
         cy.on("cxttap", "node", evt => nodeCxttapHandler(evt));
+        cy.batch(() => {cy.layout(layout).run()});
       }}
     />
     </>

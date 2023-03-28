@@ -6,6 +6,7 @@ export type Node = {
     id: string;
     label: string;
     type: string;
+    expanded?: string;
     data?: Object;
   };
 }
@@ -480,7 +481,7 @@ export function parseHasSourceAt(n: HasSourceAt) : [GraphData, Node | undefined]
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyScorecard", type: "CertifyScorecard" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "HasSourceAt", type: "HasSourceAt" }}];
   target = nodes.at(-1);
 
   let [gd, t] = parsePackage(n.package);
@@ -536,7 +537,7 @@ export function parseHasSlsa(n: HasSlsa) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "HasSbom", type: "HasSbom" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "HasSlsa", type: "HasSlsa" }}];
   target = nodes.at(-1);
 
   let gd : GraphData;
@@ -584,7 +585,7 @@ export function parseIsDependency(n: IsDependency) : [GraphData, Node | undefine
   let target : Node | undefined = undefined;
 
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "Dep", type: "IsDependency" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "Dep", type: "IsDependency" , expanded: "true"}}];
   target = nodes.at(-1);
 
   let [gd, t] = parsePackage(n.package);
