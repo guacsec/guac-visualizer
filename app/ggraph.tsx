@@ -261,7 +261,7 @@ export function parseIsVulnerability(n: IsVulnerability) : [GraphData, Node | un
   let target : Node | undefined = undefined;
 
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "vuln", type: "IsVulnerability" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "vuln", type: "IsVulnerability" , expanded: "true"}}];
   target = nodes.at(-1);
   
 
@@ -299,7 +299,7 @@ export function parseCertifyVuln(n: CertifyVuln) : [GraphData, Node | undefined]
   let target : Node | undefined = undefined;
 
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyVuln", type: "CertifyVuln" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyVuln", type: "CertifyVuln" , expanded: "true"}}];
   target = nodes.at(-1);
   
 
@@ -343,7 +343,7 @@ export function parseCertifyVexStatement(n: CertifyVexStatement) : [GraphData, N
   let target : Node | undefined = undefined;
 
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyVexStatement", type: "CertifyVexStatement" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyVexStatement", type: "CertifyVexStatement" , expanded: "true"}}];
   target = nodes.at(-1);
   
   let gd : GraphData;
@@ -401,7 +401,7 @@ export function parseHashEqual(n: HashEqual) : [GraphData, Node | undefined] {
   let target : Node | undefined = undefined;
 
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "HashEqual", type: "HashEqual" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "HashEqual", type: "HashEqual" , expanded: "true"}}];
   target = nodes.at(-1);
 
   n.artifacts.forEach((m) => {
@@ -424,7 +424,7 @@ export function parseCertifyBad(n: CertifyBad) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyVuln", type: "CertifyVuln" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyVuln", type: "CertifyVuln" , expanded: "true"}}];
   target = nodes.at(-1);
 
   let gd : GraphData;
@@ -462,7 +462,7 @@ export function parseCertifyScorecard(n: CertifyScorecard) : [GraphData, Node | 
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyScorecard", type: "CertifyScorecard" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyScorecard", type: "CertifyScorecard" , expanded: "true"}}];
   target = nodes.at(-1);
 
   let [gd, t] = parseSource(n.source)
@@ -481,7 +481,7 @@ export function parseHasSourceAt(n: HasSourceAt) : [GraphData, Node | undefined]
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "HasSourceAt", type: "HasSourceAt" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "HasSourceAt", type: "HasSourceAt" , expanded: "true"}}];
   target = nodes.at(-1);
 
   let [gd, t] = parsePackage(n.package);
@@ -506,7 +506,7 @@ export function parseHasSbom(n: HasSbom) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "HasSbom", type: "HasSbom" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "HasSbom", type: "HasSbom" , expanded: "true"}}];
   target = nodes.at(-1);
 
   let gd : GraphData;
@@ -537,7 +537,7 @@ export function parseHasSlsa(n: HasSlsa) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "HasSlsa", type: "HasSlsa" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "HasSlsa", type: "HasSlsa" , expanded: "true"}}];
   target = nodes.at(-1);
 
   let gd : GraphData;
@@ -614,7 +614,7 @@ export function parseCertifyPkg(n: CertifyPkg) : [GraphData, Node | undefined] {
   let target : Node | undefined = undefined;
 
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyPkg", type: "CertifyPkg" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyPkg", type: "CertifyPkg" , expanded: "true"}}];
   target = nodes.at(-1);
 
   n.packages.forEach((m) => {
@@ -638,7 +638,7 @@ export function parseIsOccurrence(n: IsOccurrence) : [GraphData, Node | undefine
   let target : Node | undefined = undefined;
 
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "Occur", type: "IsOccurrence" }}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "Occur", type: "IsOccurrence" , expanded: "true"}}];
   target = nodes.at(-1);
 
   let gd : GraphData;
