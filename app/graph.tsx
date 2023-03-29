@@ -48,7 +48,7 @@ type GraphRep = {
 function gDataToRep (d : GraphData) :GraphRep {
   const nTuple = d.nodes.map((v) => [v.data.id, v]);
   const eTuple = d.edges.map((v) => [v.data.id, v]);
-  console.log("gDataToRep:", nTuple);
+  
   return {
           nodes: new Map<string,Node>(nTuple),
           edges: new Map<string,Edge>(eTuple),
@@ -57,7 +57,6 @@ function gDataToRep (d : GraphData) :GraphRep {
 }
 
 function gRepToData (d : GraphRep) :GraphData {
-  console.log("repToData:", d)
   const g : GraphData = {
       nodes: Array.from(d.nodes, v=> v[1]),
       edges: Array.from(d.edges, v => v[1]),
@@ -130,6 +129,7 @@ export default function Graph(props: GraphProps) {
   const [width, setWidth] = useState("100%");
   const [height, setHeight] = useState("800px");
   const [dataCount, setDataCount] = useState(0);
+  const [expandDepth, setExpandDepth] = useState("3");
 
   const [graphDesiredState, setGraphDesiredState] = useState([1,2,3,4,5,6,7,8,9,10,11,12]);
   const [neighborsDesired, setNeighborsDesired] = useState([]);
@@ -147,7 +147,7 @@ export default function Graph(props: GraphProps) {
   }, [props.graphData, graphData]);
   
 
-  console.log("gdata", graphData);
+  //console.log("gdata", graphData);
   
   //console.log(props.graphData)
   const layout = {
@@ -303,27 +303,18 @@ export default function Graph(props: GraphProps) {
     }    
   }
 
-
-  let nodeCxttapHandler = (evt: EventObject) => {
-    // TODO: This should potentially run additional queries that then update the component state
-    //console.log("EVT", evt.target);
-    
-    const node = evt.cy.getElementById(evt.target.id()).nodes()[0][0];
-    //node = "true";
-    console.log(node);
-    //evt.cy.data(node.data);
-
+  async function expandNode (id : string) {
 
     let addedNodes : Node[][] =[];
     let addedEdges : Edge[][] =[];
 
-    client.query({
+    await client.query({
       query: GetNeighborsDocument,
       fetchPolicy: "no-cache" ,
-      variables: { nodeId: evt.target.id()},
+      variables: { nodeId: id},
     },
     ).then(result => {
-      console.log(evt.target.id(), "neighbors", result.data);
+      console.log(id, "neighbors", result.data);
       const neighbors = result.data.neighbors;
       neighbors.forEach((n,i) => {
           let gd = ParseNode(n as gqlNode);
@@ -336,25 +327,12 @@ export default function Graph(props: GraphProps) {
           addedNodes[i] =[];
           addedEdges[i] = [];
           gd.nodes.forEach((nn) =>{
-            //if (!refCy.hasElementWithId(nn.data.id)) {
-              //refCy.add(nn);
               addedNodes[i] = [...addedNodes[i], nn];
-              console.log(nn);
-            //}
           });
 
           gd.edges.forEach((e) =>{
-            //e.data.id = e.data.source + "->" + e.data.target;
-            // if (!refCy.hasElementWithId(e.data.id)) {
-            //   refCy.add(e);
-            // }
             addedEdges[i] = [...addedEdges[i], e];
           });
-
-          console.log("addednodes", addedNodes);
-          
-          //refCy.layout(layout).run();
-
       });
       
       
@@ -368,26 +346,56 @@ export default function Graph(props: GraphProps) {
 
       addNodes.forEach((n) => nMap.set(n.data.id, n));
       addEdges.forEach((n) => eMap.set(n.data.id, n));
+      // set original node as expanded
+      const origNode = nMap.get(id);
+      if (origNode != undefined) {
+        origNode.data.expanded = "true";
+        nMap.set(id, origNode);
+      }
+      // move outside so that it can be done in a single call event for frontier
       setGraphData({
         nodes: nMap,
         edges: eMap,
       });
     }
     );
+  }
 
+  let nodeCxttapHandler = (evt: EventObject) => {
+    // TODO: This should potentially run additional queries that then update the component state
+    //console.log("EVT", evt.target);
+    
+    const node = evt.cy.getElementById(evt.target.id()).nodes()[0][0];
+    //node = "true";
+    console.log(node);
+    //evt.cy.data(node.data);
+
+    expandNode(evt.target.id());
+    return;
   }
 
 
-  let addNode = () => {
-    console.log("add innode");
-    console.log(graphData);
-    console.log(refCy);
-    console.log(refCy.json());
+  let expandFrontier = () => {
+    console.log("expand frontier");
+    if (refCy === undefined){
+      return;
+    }
+    const frontier = refCy.nodes().filter('[expanded!="true"]');
+    console.log("frontier", frontier);
+    
+    frontier.forEach((n) => {
+       expandNode(n.id());
+    });
+    
+    //console.log(graphData);
+    //console.log(refCy);
+    //console.log(refCy.json());
     //refCy.add({ data: { id: "abc",label: "FJIOEJIOWFJEIOWJFOEIWFJEIOWJFEWOFIJEIOF 10", type: "fewafawefawef" } });
     //graphData.nodes.push({ data: { id: "abc",label: "FJIOEJIOWFJEIOWJFOEIWFJEIOWJFEWOFIJEIOF 10", type: "fewafawefawef" } });
     //setGraphData(graphData);
     
   }
+
   function gdataPreprocess (d : GraphData) :GraphData {
     return {
         nodes: Array.from(d.nodes),
@@ -398,7 +406,8 @@ export default function Graph(props: GraphProps) {
   console.log(graphData);
   return (
     <>
-    <button onClick={addNode}> add node </button>
+    <input type="text" pattern="[0-9]*" onChange={e => setExpandDepth(e.target.value)} value={expandDepth}/>
+    <button onClick={expandFrontier}> Expand </button>
     <CytoscapeComponent
       elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
       style={{ width: width, height: height }}
