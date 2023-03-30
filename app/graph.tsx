@@ -305,10 +305,12 @@ export default function Graph(props: GraphProps) {
   }
 
 
-  async function expandNode (ids : string[]) {
+  async function expandNode (ids : string[], graphRep : GraphRep | undefined) : Promise<GraphRep> {
 
     let addedNodes : Node[][] =[];
     let addedEdges : Edge[][] =[];
+    let ret: GraphRep;
+
 
     let promises = ids.map((id) =>  
       client.query({
@@ -347,11 +349,11 @@ export default function Graph(props: GraphProps) {
         let addEdges : Edge[] = [];
         addedNodes.forEach((n) => addNodes = [...addNodes, ...n]);
         addedEdges.forEach((n) => addEdges = [...addEdges, ...n]);
-        let nMap : Map<string, Node> = new Map(graphData.nodes);
-        let eMap : Map<string, Edge> = new Map(graphData.edges);
+        let nMap : Map<string, Node> = new Map(graphRep.nodes);
+        let eMap : Map<string, Edge> = new Map(graphRep.edges);
   
-        addNodes.forEach((n) => nMap.set(n.data.id, n));
-        addEdges.forEach((n) => eMap.set(n.data.id, n));
+        addNodes.forEach((n) =>  {if (!nMap.has(n.data.id)) {nMap.set(n.data.id, n)}});
+        addEdges.forEach((n) =>  {if (!eMap.has(n.data.id)) {eMap.set(n.data.id, n)}});
         // set original node as expanded
         ids.forEach((k)=> {
         const origNode = nMap.get(k);
@@ -362,11 +364,12 @@ export default function Graph(props: GraphProps) {
         });
 
         // move outside so that it can be done in a single call event for frontier
-        setGraphData({
+        ret =({
           nodes: nMap,
           edges: eMap,
         });
     });
+    return ret;
   }
 
 
@@ -379,7 +382,8 @@ export default function Graph(props: GraphProps) {
     console.log(node);
     //evt.cy.data(node.data);
 
-    expandNode([evt.target.id()]);
+    const gr = expandNode([evt.target.id()], graphData);
+    gr.then((v) => setGraphData(v));
     return;
   }
 
@@ -389,10 +393,36 @@ export default function Graph(props: GraphProps) {
     if (refCy === undefined){
       return;
     }
-    const frontier = refCy.nodes().filter('[expanded!="true"]');
-    const ids = frontier.map((n)=>n.id());
-    console.log("frontier", ids);
-    expandNode(ids);
+    
+    async function wrapPromise (p : Promise<GraphRep>, depth : number)  : Promise<GraphRep> {
+      if (depth === 0) {
+        return p;
+      }
+
+      return wrapPromise(p, depth-1)
+       .then((graph) => {
+         const frontier = [...graph.nodes].map(([_,v])=> v).filter((v)=> v.data.expanded != "true")
+         const ids = frontier.map((n)=>n.data.id);
+         console.log("frontier", ids);
+         return expandNode(ids, graph);
+       });
+    }
+    
+    //expandNode(ids);
+    let cacheGraph = graphData;
+    let grPromise = wrapPromise(Promise.resolve(graphData), parseInt(expandDepth));
+    grPromise.then((g) => setGraphData(g));
+    /*
+    for (let i=0; i<parseInt(expandDepth); i++) {
+      //const frontier = refCy.nodes().filter('[expanded!="true"]');
+      const frontier = [...cacheGraph.nodes].map(([_,v])=> v).filter((v)=> v.data.expanded != "true")
+      const ids = frontier.map((n)=>n.data.id);
+      console.log("frontier", ids);
+      const gr = expandNode(ids, cacheGraph);
+      gr.then((v) => cacheGraph = v);
+    }
+    */
+    
     /*
     frontier.forEach((n) => {
        expandNode(n.id());
