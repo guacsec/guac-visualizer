@@ -9,9 +9,9 @@ import { useState, useEffect } from 'react';
 import cytoscape, { EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
-import { Node as gqlNode, GetNeighborsDocument, IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageNamespace, PackageName, PackageVersion ,CertifyPkg} from '../gql/__generated__/graphql';
+import { Node as gqlNode, GetNeighborsDocument, IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageNamespace, PackageName, PackageVersion ,CertifyPkg, GetNeighborsQuery} from '../gql/__generated__/graphql';
 import { Node, Edge, GraphData, ParseNode} from "./ggraph";
-import { gql, useQuery, useLazyQuery } from '@apollo/client';
+import { gql, useQuery, useLazyQuery, ApolloQueryResult} from '@apollo/client';
 import client from 'apollo/client'
 
 
@@ -298,68 +298,77 @@ export default function Graph(props: GraphProps) {
 
   let nodeTapHandler = (evt: EventObject) => {
     var node = evt.target;    
+    //expandNode2([evt.target.id()]);
     if (props.writeDetails != undefined) {
       props.writeDetails(node.data());
     }    
   }
 
-  async function expandNode (id : string) {
+
+  async function expandNode (ids : string[]) {
 
     let addedNodes : Node[][] =[];
     let addedEdges : Edge[][] =[];
 
-    await client.query({
-      query: GetNeighborsDocument,
-      fetchPolicy: "no-cache" ,
-      variables: { nodeId: id},
-    },
-    ).then(result => {
-      console.log(id, "neighbors", result.data);
-      const neighbors = result.data.neighbors;
-      neighbors.forEach((n,i) => {
-          let gd = ParseNode(n as gqlNode);
-          
-
-          if (gd == undefined) {
-            return;
-          }
-
-          addedNodes[i] =[];
-          addedEdges[i] = [];
-          gd.nodes.forEach((nn) =>{
-              addedNodes[i] = [...addedNodes[i], nn];
-          });
-
-          gd.edges.forEach((e) =>{
-            addedEdges[i] = [...addedEdges[i], e];
-          });
-      });
-      
-      
-    }).finally( () =>{
-      let addNodes : Node[] = [];
-      let addEdges : Edge[] = [];
-      addedNodes.forEach((n) => addNodes = [...addNodes, ...n]);
-      addedEdges.forEach((n) => addEdges = [...addEdges, ...n]);
-      let nMap : Map<string, Node> = new Map(graphData.nodes);
-      let eMap : Map<string, Edge> = new Map(graphData.edges);
-
-      addNodes.forEach((n) => nMap.set(n.data.id, n));
-      addEdges.forEach((n) => eMap.set(n.data.id, n));
-      // set original node as expanded
-      const origNode = nMap.get(id);
-      if (origNode != undefined) {
-        origNode.data.expanded = "true";
-        nMap.set(id, origNode);
-      }
-      // move outside so that it can be done in a single call event for frontier
-      setGraphData({
-        nodes: nMap,
-        edges: eMap,
-      });
-    }
+    let promises = ids.map((id) =>  
+      client.query({
+        query: GetNeighborsDocument,
+        fetchPolicy: "no-cache" ,
+        variables: { nodeId: id},
+      })
     );
+
+    await Promise.all(promises).then((values) => {
+        console.log(values);
+        values.forEach((result,idx) => {
+          const id = ids[idx];
+          console.log(id, "neighbors", result.data);
+          const neighbors = result.data.neighbors;
+          addedNodes[idx] =[];
+          addedEdges[idx] = [];
+          neighbors.forEach((n,i) => {
+              let gd = ParseNode(n as gqlNode);
+
+              if (gd == undefined) {
+                return;
+              }
+              
+              gd.nodes.forEach((nn) =>{
+                  addedNodes[idx] = [...addedNodes[idx], nn];
+              });
+
+              gd.edges.forEach((e) =>{
+                addedEdges[idx] = [...addedEdges[idx], e];
+              });
+            });
+        });
+
+        let addNodes : Node[] = [];
+        let addEdges : Edge[] = [];
+        addedNodes.forEach((n) => addNodes = [...addNodes, ...n]);
+        addedEdges.forEach((n) => addEdges = [...addEdges, ...n]);
+        let nMap : Map<string, Node> = new Map(graphData.nodes);
+        let eMap : Map<string, Edge> = new Map(graphData.edges);
+  
+        addNodes.forEach((n) => nMap.set(n.data.id, n));
+        addEdges.forEach((n) => eMap.set(n.data.id, n));
+        // set original node as expanded
+        ids.forEach((k)=> {
+        const origNode = nMap.get(k);
+        if (origNode != undefined) {
+          origNode.data.expanded = "true";
+          nMap.set(k, origNode);
+        }
+        });
+
+        // move outside so that it can be done in a single call event for frontier
+        setGraphData({
+          nodes: nMap,
+          edges: eMap,
+        });
+    });
   }
+
 
   let nodeCxttapHandler = (evt: EventObject) => {
     // TODO: This should potentially run additional queries that then update the component state
@@ -370,7 +379,7 @@ export default function Graph(props: GraphProps) {
     console.log(node);
     //evt.cy.data(node.data);
 
-    expandNode(evt.target.id());
+    expandNode([evt.target.id()]);
     return;
   }
 
@@ -381,12 +390,14 @@ export default function Graph(props: GraphProps) {
       return;
     }
     const frontier = refCy.nodes().filter('[expanded!="true"]');
-    console.log("frontier", frontier);
-    
+    const ids = frontier.map((n)=>n.id());
+    console.log("frontier", ids);
+    expandNode(ids);
+    /*
     frontier.forEach((n) => {
        expandNode(n.id());
     });
-    
+    */
     //console.log(graphData);
     //console.log(refCy);
     //console.log(refCy.json());
