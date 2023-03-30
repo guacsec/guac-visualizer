@@ -26,20 +26,6 @@ type GraphProps = {
   writeDetails?: (x: any) => void;
 };
 
-class GuacNode {
-  nodeId: number;
-  nodeType: string;
-  data: undefined;
-
-  constructor(nodeData: any) {
-
-    // parse graphql data and determine what the node id and nodeType is and put the entire dict in data for JSON output
-    this.nodeId = nodeData.nodeId;
-    this.nodeType = "something";
-    this.data = nodeData;
-  }
-}
-
 type GraphRep = {
   nodes : Map<string, Node>;
   edges: Map<string, Edge>;
@@ -63,20 +49,6 @@ function gRepToData (d : GraphRep) :GraphData {
   }
   return g;
 }
-
-type NodeId = number;
-
-function guacToCy(n:GuacNode):  Node {
-  return {
-    data : {
-      id: n.nodeId.toString(),
-      label: n.nodeType,
-      type: n.nodeType,
-    }
-  }
-}
-
-
 
 const defaultGraphData: GraphData = {
   nodes: [
