@@ -276,7 +276,8 @@ export default function Graph(props: GraphProps) {
     }    
   }
 
-  function getFilters(startNode : Node) : (n:gqlNode) => boolean {
+  function getFilters(startNode : Node, graphRep : GraphRep) : (n:gqlNode) => boolean {
+    
     let startType = startNode.data.type;
     let startId = startNode.data.id;
     const alwaysFalse = (_:gqlNode) => {return false};
@@ -288,6 +289,13 @@ export default function Graph(props: GraphProps) {
       return alwaysFalse;
     }
 
+    let versions : Set<string>;
+    if (startType == "PackageName") {
+      const depNodes = [...graphRep.edges].map(([_,value]) => value).filter((d)=> d.data.target == startId && d.data.label == "depends_on");
+      versions = new Set(depNodes.map((d) => graphRep.nodes.get(d.data.source).data.versionRange));
+    }
+    console.log("versions",versions);
+
     const nFilter = (n: gqlNode) => {
       const nType = n.__typename;
 
@@ -295,12 +303,25 @@ export default function Graph(props: GraphProps) {
       // need to add special case for name expandsion with IsDepedency
 
       // TODO: need to revisit logic
-      
+      let gd, target;
       switch (nType) {
         case "IsDependency":
           // only return true if start node is the subject 
-          const [gd, target] = parsePackage(n.package);
+          [gd, target] = parsePackage(n.package);
           return target.data.id == startId;
+        case "Package":
+          console.log("the node", n);
+        
+          [gd, target] = parsePackage(n);
+          if (target.data.type == "PackageVersion") {
+            console.log("target",target);
+            if (versions.has(target.data.version)) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+
       }
       
       return true;
@@ -332,7 +353,7 @@ export default function Graph(props: GraphProps) {
           addedEdges[idx] = [];
 
           // have filter here on type of nodes
-          const nFilter = getFilters(graphRep.nodes.get(id));
+          const nFilter = getFilters(graphRep.nodes.get(id), graphRep);
           neighbors.forEach((n,i) => {
 
               if (!nFilter(n as gqlNode)) { return };
