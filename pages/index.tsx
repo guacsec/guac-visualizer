@@ -132,22 +132,23 @@ export default function Home() {
     <>
       <div>
         <h1>GUAC Visualizer</h1>
-        <textarea name="text" rows={15} cols={50} value={inputText} onChange={e => setInputText(e.target.value)} />
+        <textarea name="text" rows={10} cols={50} value={inputText} onChange={e => setInputText(e.target.value)} />
         <button onClick={e => initGraph(inputText)}>submit</button>
-        <textarea name="details-text" rows={15} cols={50} value={JSON.stringify(data)} onChange={() => {}} />
+        <textarea name="details-text" rows={10} cols={50} value={JSON.stringify(data)} onChange={() => {}} />
 
-        <textarea name="details-text" rows={15} cols={50} value={detailsText} onChange={e => setDetailsText(e.target.value)}/>
+        <textarea name="details-text" rows={10} cols={50} value={detailsText} onChange={e => setDetailsText(e.target.value)}/>
         <div
           style={{
-            border: "1px solid",
-            backgroundColor: "#000000"
+//            border: "1px solid",
+            backgroundColor: "#F0F0F0",
+            
           }}
         >
           {/* skip sending in data which will be delegated to the graph object by passing in a way to retrieve the data instead */}
           { graph }
         </div>
       </div>
-      <SBOMViewer onSelect={null}/>
+      
     </>
   )
 }

@@ -25,8 +25,7 @@ export type GraphData = {
   edges: Edge[];
 }
 
-export function ParseNode (n : gqlNode) : GraphData | undefined {
-  
+export function ParseNode (n : gqlNode) : GraphData | undefined { 
   let gd : GraphData;
   let target : Node | undefined;
 
@@ -102,7 +101,6 @@ export function ParseNode (n : gqlNode) : GraphData | undefined {
 
   gd.edges.forEach(e => {e.data.id = e.data.source + "->" + e.data.target});
 
-
   return gd;
 }
 
@@ -116,13 +114,13 @@ export function parsePackage(n: Package) : [GraphData, Node | undefined] {
   
   
     const typ : Package = n;
-    nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "Package"}}];
+    nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "PackageType"}}];
     if (typ.namespaces.length == 0) {
       target = nodes.at(-1);
     }
   
     typ.namespaces.forEach((ns : PackageNamespace) =>{
-      nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "Package"}}];
+      nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "PackageNamespace"}}];
       edges = [...edges, {data: {source:typ.id, target:ns.id, label:"pkgNs"}}]
       if (ns.names.length == 0) {
         target = nodes.at(-1);
@@ -155,13 +153,13 @@ export function parseSource(n: Source) : [GraphData, Node | undefined] {
 
 
   const typ : Source = n;
-  nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "Source"}}];
+  nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "SourceType"}}];
   if (typ.namespaces.length == 0) {
     target = nodes.at(-1);
   }
 
   typ.namespaces.forEach((ns : SourceNamespace) =>{
-    nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "Source"}}];
+    nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "SourceNamespace"}}];
     edges = [...edges, {data: {source:typ.id, target:ns.id, label:"srcNs"}}]
     if (ns.names.length == 0) {
       target = nodes.at(-1);

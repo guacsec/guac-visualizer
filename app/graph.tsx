@@ -9,8 +9,8 @@ import { useState, useEffect } from 'react';
 import cytoscape, { EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
-import { Node as gqlNode, GetNeighborsDocument, IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageNamespace, PackageName, PackageVersion ,CertifyPkg, GetNeighborsQuery} from '../gql/__generated__/graphql';
-import { Node, Edge, GraphData, ParseNode} from "./ggraph";
+import { Node as gqlNode, GetNeighborsDocument } from '../gql/__generated__/graphql';
+import { Node, Edge, GraphData, ParseNode, parsePackage} from "./ggraph";
 import { gql, useQuery, useLazyQuery, ApolloQueryResult} from '@apollo/client';
 import client from 'apollo/client'
 
@@ -98,7 +98,7 @@ let refCy :cytoscape.Core;
 export default function Graph(props: GraphProps) {
   
 
-  const [width, setWidth] = useState("100%");
+  const [width, setWidth] = useState("80%");
   const [height, setHeight] = useState("800px");
   const [dataCount, setDataCount] = useState(0);
   const [expandDepth, setExpandDepth] = useState("3");
@@ -276,7 +276,37 @@ export default function Graph(props: GraphProps) {
     }    
   }
 
+  function getFilters(startNode : Node) : (n:gqlNode) => boolean {
+    let startType = startNode.data.type;
+    let startId = startNode.data.id;
+    const alwaysFalse = (_:gqlNode) => {return false};
+    // do not expand top level nodes
+    if (startType == "PackageType" || startType == "PackageNamespace") {
+      return alwaysFalse;
+    }
+    if (startType == "SourceType" || startType == "SourceNamespace") {
+      return alwaysFalse;
+    }
 
+    const nFilter = (n: gqlNode) => {
+      const nType = n.__typename;
+
+      
+      // need to add special case for name expandsion with IsDepedency
+
+      // TODO: need to revisit logic
+      
+      switch (nType) {
+        case "IsDependency":
+          // only return true if start node is the subject 
+          const [gd, target] = parsePackage(n.package);
+          return target.data.id == startId;
+      }
+      
+      return true;
+    };
+    return nFilter;
+  }
   async function expandNode (ids : string[], graphRep : GraphRep | undefined) : Promise<GraphRep> {
 
     let addedNodes : Node[][] =[];
@@ -300,19 +330,31 @@ export default function Graph(props: GraphProps) {
           const neighbors = result.data.neighbors;
           addedNodes[idx] =[];
           addedEdges[idx] = [];
+
+          // have filter here on type of nodes
+          const nFilter = getFilters(graphRep.nodes.get(id));
           neighbors.forEach((n,i) => {
+
+              if (!nFilter(n as gqlNode)) { return };
               let gd = ParseNode(n as gqlNode);
 
               if (gd == undefined) {
                 return;
               }
               
+              const excludeNodes = new Set<string>();
               gd.nodes.forEach((nn) =>{
+               
                   addedNodes[idx] = [...addedNodes[idx], nn];
+               
               });
 
               gd.edges.forEach((e) =>{
-                addedEdges[idx] = [...addedEdges[idx], e];
+                // console.log(excludeNodes);
+                // console.log(e.data);
+                // if (!excludeNodes.has(e.data.source) && !excludeNodes.has(e.data.target)) {
+                  addedEdges[idx] = [...addedEdges[idx], e];
+                // }
               });
             });
         });
@@ -416,14 +458,19 @@ export default function Graph(props: GraphProps) {
     }
   }
 
+  const checkList = ["Artifact", "Builder", "Cve", "CertifyBad", "CertifyGood", "CertifyScorecard", "CertifyVexStatement", "CertifyVuln", "Ghsa", "HasSbom", "HasSlsa", "HasSourceAt", "HashEqual", "IsDependency", "IsOccurrence", "IsVulnerability", "Osv", "Package", "PkgEqual", "Source"];
+  
+
+
   console.log(graphData);
   return (
     <>
     <input type="text" pattern="[0-9]*" onChange={e => setExpandDepth(e.target.value)} value={expandDepth}/>
     <button onClick={expandFrontier}> Expand </button>
+    
     <CytoscapeComponent
       elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
-      style={{ width: width, height: height }}
+      style={{ width: width, height: height , float: "left"}}
       zoomingEnabled={true}
       maxZoom={3}
       minZoom={0.1}
@@ -440,6 +487,17 @@ export default function Graph(props: GraphProps) {
         cy.batch(() => {cy.layout(layout).run()});
       }}
     />
+    <div className="checkList">
+    <div className="title">Your CheckList:</div>
+    <div className="list-container">
+      {checkList.map((item, index) => (
+         <div key={index}>
+          <input value={item} type="checkbox" />
+           <span>{item}</span>
+        </div>
+      ))}
+    </div>
+  </div>
     </>
   )
 }
