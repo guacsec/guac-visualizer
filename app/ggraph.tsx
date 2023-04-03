@@ -180,7 +180,7 @@ export function parseArtifact(n: Artifact) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: (n.algorithm + ":"+ n.digest).slice(0, 10), type: "Source"}}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: (n.algorithm + ":"+ n.digest).slice(0, 10), type: "Artifact"}}];
   target = nodes.at(-1);
 
   return [ { nodes: nodes, edges: edges }, target];

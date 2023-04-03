@@ -6,7 +6,7 @@ import COSEBilkent from 'cytoscape-cose-bilkent'
 import cola from 'cytoscape-cola';
 
 import { useState, useEffect } from 'react';
-import cytoscape, { EventObject } from 'cytoscape';
+import cytoscape, { EdgeCollection, EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
 import { Node as gqlNode, GetNeighborsDocument } from '../gql/__generated__/graphql';
@@ -116,8 +116,8 @@ const defaultStyleSheet = [
     style: {
       "border-width": "6px",
       "border-color": "#AAD8FF",
-      "border-opacity": "0.5",
-      "background-color": "#77828C",
+      //"border-opacity": "0.5",
+      //"background-color": "#77828C",
       width: 30,
       height: 30,
       //text props
@@ -154,7 +154,7 @@ const defaultStyleSheet = [
   {
     selector: "node[type='Artifact']",
     style: {
-      "background-color": "red",
+      "background-color": "magenta",
     }
   },
   {
@@ -216,6 +216,21 @@ const defaultStyleSheet = [
       height: 30,
     }
   },
+  {
+    selector: "edge.path",
+    style: {
+      "line-color": "red",
+      width: 5,
+      "z-index": 1,
+    }
+  },
+  {
+    selector: "node.path",
+    style: {
+      width: 50,
+      height: 50,
+    }
+  }
 ];
 
 let refCy :cytoscape.Core;
@@ -227,8 +242,15 @@ export default function Graph(props: GraphProps) {
   const [expandOptions, setExpandOptions] = useState("expandDepMetadata");
   const [dataCount, setDataCount] = useState(0);
   const [expandDepth, setExpandDepth] = useState("3");
-  const [styleSheet, setStyleSheet] = useState(defaultStyleSheet);
 
+  // PATH STUFF
+  const [pathStartToggle, setPathStartToggle] = useState(false);
+  const [pathStartNode, setPathStartNode] = useState("");
+  const [pathEndToggle, setPathEndToggle] = useState(false);
+  const [pathEndNode, setPathEndNode] = useState("");
+
+  // GRAPH STUFF
+  const [styleSheet, setStyleSheet] = useState(defaultStyleSheet);
   const [graphData, setGraphData] = useState({nodes: new Map(), edges:new Map()});
   //const graphData = props.graphData;
   
@@ -268,6 +290,14 @@ export default function Graph(props: GraphProps) {
 
   let nodeTapHandler = (evt: EventObject) => {
     var node = evt.target;    
+    if (pathStartToggle) {
+        setPathStartNode(evt.target.id());
+        setPathStartToggle(false);
+    }
+    if (pathEndToggle) {
+      setPathEndNode(evt.target.id());
+      setPathEndToggle(false);
+  }
     //expandNode2([evt.target.id()]);
     if (props.writeDetails != undefined) {
       props.writeDetails(node.data());
@@ -483,7 +513,7 @@ export default function Graph(props: GraphProps) {
     }
   }
 
-  const checkList = ["Artifact", "Builder", "Cve", "CertifyBad", "CertifyGood", "CertifyScorecard", "CertifyVexStatement", "CertifyVuln", "Ghsa", "HasSbom", "HasSlsa", "HasSourceAt", "HashEqual", "IsDependency", "IsOccurrence", "IsVulnerability", "Osv", "Package", "PkgEqual", "Source"];
+  const checkList = ["Artifact", "Builder", "Cve", "CertifyBad", "CertifyGood", "CertifyScorecard", "CertifyVexStatement", "CertifyVuln", "Ghsa", "HasSbom", "HasSlsa", "HasSourceAt", "HashEqual", "IsDependency", "IsOccurrence", "IsVulnerability", "Osv", "PkgEqual", "Source"];
   
   function setHighlightNodes (nodeType: string, checked: boolean) {
     let gNodes = [...graphData.nodes].filter(([idx, v]) => v.data.type == nodeType).map(([idx,v]) => idx);
@@ -493,26 +523,40 @@ export default function Graph(props: GraphProps) {
     //console.log(refCy.style().selector("node[type='software']"));
     
     let newStyle = {
-      "border-width": checked? "10px" : "0px",
+      "border-width": checked? "20px" : "0px",
+      //"overlay-color": checked? "yellow" : "white",
     }
     if (refCy != undefined) {
-      //setStyleSheet(refCy.style().selector("node[type='" + nodeType + "']").style(newStyle));
-      console.log((refCy.style().selector("node[type='" + nodeType + "']").style(newStyle).json()));
       setStyleSheet(refCy.style().selector("node[type='" + nodeType + "']").style(newStyle).json());
-
     }
-
+  }
+  function clearPath() {
+    setPathStartNode("");
+    setPathEndNode("");
+    setPathStartToggle(false);
+    setPathEndToggle(false);
   }
 
   console.log(graphData);
   return (
     <>
-    <input type="text" pattern="[0-9]*" onChange={e => setExpandDepth(e.target.value)} value={expandDepth}/>
-    <button onClick={expandFrontier}> Expand </button>
     <select value={expandOptions}  onChange={e => setExpandOptions(e.target.value)}>
       <option value="expandDepMetadata">Expand Dep metadata</option>
       <option value="expandAll">Expand all</option>
     </select>
+
+    <input type="text" pattern="[0-9]*" maxLength={3} onChange={e => setExpandDepth(e.target.value)} value={expandDepth}/>
+    <button onClick={expandFrontier}> Expand </button>
+    <br />
+
+    <div id="path">
+        <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
+        <p> {pathStartToggle? "click node to set" : (pathStartNode!="" ?  pathStartNode:"NONE")} </p>
+
+        <button onClick={() => { setPathEndToggle (!pathEndToggle); setPathStartToggle(false); }} >Set target node</button>
+        <p> {pathEndToggle? "click node to set" : (pathEndNode!="" ?  pathEndNode:"NONE")} </p>
+        <button onClick={clearPath}>CLEAR</button>
+    </div>
     <CytoscapeComponent
       elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
       style={{ width: width, height: height , float: "left"}}
@@ -529,6 +573,28 @@ export default function Graph(props: GraphProps) {
         cy.removeListener('cxttap');
         cy.on("tap", "node", evt => nodeTapHandler(evt));
         cy.on("cxttap", "node", evt => nodeCxttapHandler(evt));
+        if (pathStartNode != "" && pathEndNode != "") {
+          console.log('running astar');
+          var aStar = cy.elements().aStar({ root: "#" + pathStartNode, goal: "#" + pathEndNode, weight: (e:EdgeCollection)=>{ 
+            // Set weight on software tree edges as lower weight since we favor finding the path that goes through
+            // evidence instead of going through the sw tree.
+            let badEdgeSet = new Set([
+              "pkgVersion", "pkgName", "pkgNs",
+              "srcVersion", "srcName", "srcNs",
+            ])
+            if (badEdgeSet.has(e[0].data().label)) {
+              return 100;
+            } else {
+              return 1;
+            }
+          } 
+          });
+          aStar.path.select();
+          cy.elements().not( aStar.path ).removeClass('path');
+          aStar.path.addClass('path');
+        } else {
+          cy.elements().removeClass('path');
+        }
         cy.batch(() => {cy.layout(layout).run()});
       }}
     />
