@@ -94,6 +94,130 @@ const defaultGraphData: GraphData = {
   ]
 };
 
+const defaultStyleSheet = [
+  {
+    selector: "node",
+    style: {
+      backgroundColor: "#4a56a6",
+      width: 30,
+      height: 30,
+      label: "data(label)",
+      "overlay-padding": "6px",
+      "z-index": "10",
+      //text props
+      "text-outline-color": "#4a56a6",
+      "text-outline-width": "2px",
+      color: "white",
+      fontSize: 20
+    }
+  },
+  {
+    selector: "node:selected",
+    style: {
+      "border-width": "6px",
+      "border-color": "#AAD8FF",
+      "border-opacity": "0.5",
+      "background-color": "#77828C",
+      width: 30,
+      height: 30,
+      //text props
+      "text-outline-color": "#77828C",
+      "text-outline-width": 8
+    }
+  },
+  {
+    selector: "node[type='software']",
+    style: {
+      shape: "rectangle"
+    }
+  },
+  {
+    selector: "node[type='IsDependency']",
+    style: {
+      shape: "rectangle",
+      "background-color": "yellow",
+    }
+  },
+  {
+    selector: "node[type='IsOccurrence']",
+    style: {
+      shape: "square",
+      "background-color": "pink",
+    }
+  },
+  {
+    selector: "node[type='Source']",
+    style: {
+      "background-color": "green",
+    }
+  },
+  {
+    selector: "node[type='Artifact']",
+    style: {
+      "background-color": "red",
+    }
+  },
+  {
+    selector: "node[type='CertifyPkg']",
+    style: {
+      shape: "triangle",
+      "background-color": "white",
+    }
+  },
+  {
+    selector: "node[type='PackageVersion']",
+    style: {
+      shape: "hexagon",
+      "background-color": "orange",
+    }
+  },
+  {
+    selector: "node[type='PackageName']",
+    style: {
+      shape: "hexagon",
+      "background-color": "purple",
+    }
+  },
+  {
+    selector: "node[type='id']",
+    style: {
+      shape: "triangle",
+      "background-color": "#EB3434"
+    }
+  },
+  {
+    selector: "edge",
+    style: {
+      width: 3,
+      'font-size': 5,
+      'text-rotation': 'autorotate',
+      'text-margin-y': '-10px',
+      'text-background-color': '#fff',
+      'text-background-opacity': 0.7,
+      'text-background-padding': '1px',
+      'text-background-shape': 'roundrectangle',
+      'text-border-color': '#000',
+      'text-border-opacity': 0.1,
+      'text-border-width': '0.5px',
+      "label": "data(label)",
+      "line-color": "#AAD8FF",
+      "target-arrow-color": "#6774cb",
+      "target-arrow-shape": "triangle",
+      "curve-style": "bezier"
+    }
+  },
+  {
+    selector: "node[expanded!='true']",
+    style: {
+      "border-width": "6px",
+      "border-color": "#AAD8FF",
+      "border-opacity": "0.5",
+      width: 30,
+      height: 30,
+    }
+  },
+];
+
 let refCy :cytoscape.Core;
 export default function Graph(props: GraphProps) {
   
@@ -103,6 +227,8 @@ export default function Graph(props: GraphProps) {
   const [expandOptions, setExpandOptions] = useState("expandDepMetadata");
   const [dataCount, setDataCount] = useState(0);
   const [expandDepth, setExpandDepth] = useState("3");
+  const [styleSheet, setStyleSheet] = useState(defaultStyleSheet);
+
   const [graphData, setGraphData] = useState({nodes: new Map(), edges:new Map()});
   //const graphData = props.graphData;
   
@@ -138,129 +264,7 @@ export default function Graph(props: GraphProps) {
     }
   });
 
-  const styleSheet = [
-    {
-      selector: "node",
-      style: {
-        backgroundColor: "#4a56a6",
-        width: 30,
-        height: 30,
-        label: "data(label)",
-        "overlay-padding": "6px",
-        "z-index": "10",
-        //text props
-        "text-outline-color": "#4a56a6",
-        "text-outline-width": "2px",
-        color: "white",
-        fontSize: 20
-      }
-    },
-    {
-      selector: "node:selected",
-      style: {
-        "border-width": "6px",
-        "border-color": "#AAD8FF",
-        "border-opacity": "0.5",
-        "background-color": "#77828C",
-        width: 30,
-        height: 30,
-        //text props
-        "text-outline-color": "#77828C",
-        "text-outline-width": 8
-      }
-    },
-    {
-      selector: "node[type='software']",
-      style: {
-        shape: "rectangle"
-      }
-    },
-    {
-      selector: "node[type='IsDependency']",
-      style: {
-        shape: "rectangle",
-        "background-color": "yellow",
-      }
-    },
-    {
-      selector: "node[type='IsOccurrence']",
-      style: {
-        shape: "square",
-        "background-color": "pink",
-      }
-    },
-    {
-      selector: "node[type='Source']",
-      style: {
-        "background-color": "green",
-      }
-    },
-    {
-      selector: "node[type='Artifact']",
-      style: {
-        "background-color": "red",
-      }
-    },
-    {
-      selector: "node[type='CertifyPkg']",
-      style: {
-        shape: "triangle",
-        "background-color": "white",
-      }
-    },
-    {
-      selector: "node[type='PackageVersion']",
-      style: {
-        shape: "hexagon",
-        "background-color": "orange",
-      }
-    },
-    {
-      selector: "node[type='PackageName']",
-      style: {
-        shape: "hexagon",
-        "background-color": "purple",
-      }
-    },
-    {
-      selector: "node[type='id']",
-      style: {
-        shape: "triangle",
-        "background-color": "#EB3434"
-      }
-    },
-    {
-      selector: "edge",
-      style: {
-        width: 3,
-        'font-size': 5,
-        'text-rotation': 'autorotate',
-        'text-margin-y': '-10px',
-        'text-background-color': '#fff',
-        'text-background-opacity': 0.7,
-        'text-background-padding': '1px',
-        'text-background-shape': 'roundrectangle',
-        'text-border-color': '#000',
-        'text-border-opacity': 0.1,
-        'text-border-width': '0.5px',
-        "label": "data(label)",
-        "line-color": "#AAD8FF",
-        "target-arrow-color": "#6774cb",
-        "target-arrow-shape": "triangle",
-        "curve-style": "bezier"
-      }
-    },
-    {
-      selector: "node[expanded!='true']",
-      style: {
-        "border-width": "6px",
-        "border-color": "#AAD8FF",
-        "border-opacity": "0.5",
-        width: 30,
-        height: 30,
-      }
-    },
-  ];
+  
 
   let nodeTapHandler = (evt: EventObject) => {
     var node = evt.target;    
@@ -478,7 +482,24 @@ export default function Graph(props: GraphProps) {
 
   const checkList = ["Artifact", "Builder", "Cve", "CertifyBad", "CertifyGood", "CertifyScorecard", "CertifyVexStatement", "CertifyVuln", "Ghsa", "HasSbom", "HasSlsa", "HasSourceAt", "HashEqual", "IsDependency", "IsOccurrence", "IsVulnerability", "Osv", "Package", "PkgEqual", "Source"];
   
+  function setHighlightNodes (nodeType: string, checked: boolean) {
+    let gNodes = [...graphData.nodes].filter(([idx, v]) => v.data.type == nodeType).map(([idx,v]) => idx);
+    console.log(nodeType);
+    console.log(gNodes);
 
+    //console.log(refCy.style().selector("node[type='software']"));
+    
+    let newStyle = {
+      "border-width": checked? "10px" : "0px",
+    }
+    if (refCy != undefined) {
+      //setStyleSheet(refCy.style().selector("node[type='" + nodeType + "']").style(newStyle));
+      console.log((refCy.style().selector("node[type='" + nodeType + "']").style(newStyle).json()));
+      setStyleSheet(refCy.style().selector("node[type='" + nodeType + "']").style(newStyle).json());
+
+    }
+
+  }
 
   console.log(graphData);
   return (
@@ -513,7 +534,7 @@ export default function Graph(props: GraphProps) {
     <div className="list-container">
       {checkList.map((item, index) => (
          <div key={index}>
-          <input value={item} onChange={(e)=> console.log(e.target.checked)} type="checkbox" />
+          <input value={item} onChange={(e)=> setHighlightNodes(item, e.target.checked)} type="checkbox" />
            <span>{item}</span>
         </div>
       ))}
