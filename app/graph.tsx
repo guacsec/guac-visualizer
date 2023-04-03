@@ -317,6 +317,9 @@ export default function Graph(props: GraphProps) {
           [gd, target] = parsePackage(n);
           if (target.data.type == "PackageVersion") {
             console.log("target",target);
+            if (versions == undefined) {
+              return false;
+            }
             if (versions.has(target.data.version)) {
               return true;
             } else {
