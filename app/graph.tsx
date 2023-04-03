@@ -13,6 +13,11 @@ import { Node as gqlNode, GetNeighborsDocument } from '../gql/__generated__/grap
 import { Node, Edge, GraphData, ParseNode, parsePackage} from "./ggraph";
 import { gql, useQuery, useLazyQuery, ApolloQueryResult} from '@apollo/client';
 import client from 'apollo/client'
+import { MultiSelect } from "react-multi-select-component";
+
+
+
+
 
 
 
@@ -230,13 +235,27 @@ const defaultStyleSheet = [
       width: 50,
       height: 50,
     }
+  },
+  {
+    selector: "node.pathTarget",
+    style: {
+      width: 100,
+      height: 100,
+    }
+  },
+  {
+    selector: "node.pathSource",
+    style: {
+      width: 100,
+      height: 100,
+    }
   }
 ];
 
 let refCy :cytoscape.Core;
 export default function Graph(props: GraphProps) {
   
-
+  // STATES
   const [width, setWidth] = useState("80%");
   const [height, setHeight] = useState("800px");
   const [expandOptions, setExpandOptions] = useState("expandDepMetadata");
@@ -248,6 +267,11 @@ export default function Graph(props: GraphProps) {
   const [pathStartNode, setPathStartNode] = useState("");
   const [pathEndToggle, setPathEndToggle] = useState(false);
   const [pathEndNode, setPathEndNode] = useState("");
+
+  // Explorer stuff
+  const toEOpt = (s: string) => {return { label: s, value: s}}
+  const explorerOptions = ["Artifact", "Builder", "Cve", "CertifyBad", "CertifyGood", "CertifyScorecard", "CertifyVexStatement", "CertifyVuln", "Ghsa", "HasSbom", "HasSlsa", "HasSourceAt", "HashEqual", "IsDependency", "IsOccurrence", "IsVulnerability", "Osv", "PkgEqual", "PackageVersion", "SourceName","PackageName"].map(toEOpt);
+  const [explorerList, setExplorerList] = useState([]);
 
   // GRAPH STUFF
   const [styleSheet, setStyleSheet] = useState(defaultStyleSheet);
@@ -535,27 +559,47 @@ export default function Graph(props: GraphProps) {
     setPathEndNode("");
     setPathStartToggle(false);
     setPathEndToggle(false);
+    setExplorerList([]);
   }
 
+
+  console.log("explorerOpts", explorerOptions);
   console.log(graphData);
   return (
     <>
-    <select value={expandOptions}  onChange={e => setExpandOptions(e.target.value)}>
-      <option value="expandDepMetadata">Expand Dep metadata</option>
-      <option value="expandAll">Expand all</option>
-    </select>
+    <div id="expander">
+      <h3>node expander</h3>
+      <select value={expandOptions}  onChange={e => setExpandOptions(e.target.value)}>
+        <option value="expandDepMetadata">Expand Dep metadata</option>
+        <option value="expandAll">Expand all</option>
+      </select>
 
-    <input type="text" pattern="[0-9]*" maxLength={3} onChange={e => setExpandDepth(e.target.value)} value={expandDepth}/>
-    <button onClick={expandFrontier}> Expand </button>
-    <br />
-
+      <input type="text" pattern="[0-9]*" maxLength={3} onChange={e => setExpandDepth(e.target.value)} value={expandDepth}/>
+      <button onClick={expandFrontier}> Expand </button>
+      <br />
+    </div>
     <div id="path">
+      <h3>node pather</h3>
         <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
         <p> {pathStartToggle? "click node to set" : (pathStartNode!="" ?  pathStartNode:"NONE")} </p>
 
         <button onClick={() => { setPathEndToggle (!pathEndToggle); setPathStartToggle(false); }} >Set target node</button>
         <p> {pathEndToggle? "click node to set" : (pathEndNode!="" ?  pathEndNode:"NONE")} </p>
-        <button onClick={clearPath}>CLEAR</button>
+        <button onClick={clearPath}>CLEAR ALL</button>
+    </div>
+    <div id="explorer">
+      <h3>node explorer</h3>
+        <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
+        <p> {pathStartToggle? "click node to set" : (pathStartNode!="" ?  pathStartNode:"NONE")} </p>
+        
+        <pre>{JSON.stringify(explorerList)}</pre>
+        <MultiSelect
+          options={explorerOptions}
+          value={explorerList}
+          onChange={(setExplorerList)}
+          labelledBy="Select"
+        />
+        <button onClick={clearPath}>CLEAR ALL</button>
     </div>
     <CytoscapeComponent
       elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
@@ -573,9 +617,9 @@ export default function Graph(props: GraphProps) {
         cy.removeListener('cxttap');
         cy.on("tap", "node", evt => nodeTapHandler(evt));
         cy.on("cxttap", "node", evt => nodeCxttapHandler(evt));
-        if (pathStartNode != "" && pathEndNode != "") {
-          console.log('running astar');
-          var aStar = cy.elements().aStar({ root: "#" + pathStartNode, goal: "#" + pathEndNode, weight: (e:EdgeCollection)=>{ 
+        if (pathStartNode != "" ) {
+
+          const weightFn = (e:EdgeCollection)=>{ 
             // Set weight on software tree edges as lower weight since we favor finding the path that goes through
             // evidence instead of going through the sw tree.
             let badEdgeSet = new Set([
@@ -587,13 +631,43 @@ export default function Graph(props: GraphProps) {
             } else {
               return 1;
             }
-          } 
-          });
-          aStar.path.select();
-          cy.elements().not( aStar.path ).removeClass('path');
-          aStar.path.addClass('path');
+          }
+
+          // based on what's set, depends what type of paths we're calculating
+          if (pathEndNode != "") {
+            // this is pather
+            console.log('running path');
+            var aStar = cy.elements().aStar({ root: "#" + pathStartNode, goal: "#" + pathEndNode, weight: weightFn});
+            aStar.path.select();
+            cy.elements().not( aStar.path ).removeClass('path');
+            aStar.path.addClass('path');
+            cy.getElementById(pathStartNode).addClass('pathSource');
+            cy.getElementById(pathEndNode).addClass('pathTarget');
+
+          } else if (explorerList.length > 0) {
+            // this is explorer
+            // TODO: Figure out what are best weights for bellmanford (since it allows -ve weights)
+            // Going to avoid negative edges for now since i think it can cause infinite loops? (something something proof from class lol)
+            cy.elements().removeClass(['path','pathSource', 'pathTarget']);
+
+            let bf = cy.elements().bellmanFord({ root: "#" + pathStartNode, weight: weightFn, directed: false});
+            const filterSet = new Set(explorerList.map((v)=> v.value));
+            const targetNodes = cy.nodes().filter((n)=> { return filterSet.has(n.data().type); });
+            cy.getElementById(pathStartNode).addClass('pathSource');
+            console.log("bf");
+            targetNodes.forEach((n)=> {
+              const t = n.id();
+              const path = bf.pathTo(n);
+              n.addClass('pathTarget');
+              path.addClass('path');
+            });
+            
+          } else {
+            // this is nothing
+          }
         } else {
-          cy.elements().removeClass('path');
+          //cy.elements().removeClass('path');
+          cy.elements().removeClass(['path','pathSource', 'pathTarget']);
         }
         cy.batch(() => {cy.layout(layout).run()});
       }}
