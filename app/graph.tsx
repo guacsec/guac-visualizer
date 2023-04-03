@@ -100,15 +100,9 @@ export default function Graph(props: GraphProps) {
 
   const [width, setWidth] = useState("80%");
   const [height, setHeight] = useState("800px");
+  const [expandOptions, setExpandOptions] = useState("expandDepMetadata");
   const [dataCount, setDataCount] = useState(0);
   const [expandDepth, setExpandDepth] = useState("3");
-
-  const [graphDesiredState, setGraphDesiredState] = useState([1,2,3,4,5,6,7,8,9,10,11,12]);
-  const [neighborsDesired, setNeighborsDesired] = useState([]);
-  const [gotNeighbors, setGotNeighbors] = useState(new Set<number>());
-
-
-
   const [graphData, setGraphData] = useState({nodes: new Map(), edges:new Map()});
   //const graphData = props.graphData;
   
@@ -277,6 +271,10 @@ export default function Graph(props: GraphProps) {
   }
 
   function getFilters(startNode : Node, graphRep : GraphRep) : (n:gqlNode) => boolean {
+
+    if (expandOptions=="expandAll") {
+      return (n) => true;
+    }
     
     let startType = startNode.data.type;
     let startId = startNode.data.id;
@@ -333,7 +331,6 @@ export default function Graph(props: GraphProps) {
     let addedNodes : Node[][] =[];
     let addedEdges : Edge[][] =[];
     let ret: GraphRep;
-
 
     let promises = ids.map((id) =>  
       client.query({
@@ -488,7 +485,10 @@ export default function Graph(props: GraphProps) {
     <>
     <input type="text" pattern="[0-9]*" onChange={e => setExpandDepth(e.target.value)} value={expandDepth}/>
     <button onClick={expandFrontier}> Expand </button>
-    
+    <select value={expandOptions}  onChange={e => setExpandOptions(e.target.value)}>
+      <option value="expandDepMetadata">Expand Dep metadata</option>
+      <option value="expandAll">Expand all</option>
+    </select>
     <CytoscapeComponent
       elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
       style={{ width: width, height: height , float: "left"}}
@@ -509,11 +509,11 @@ export default function Graph(props: GraphProps) {
       }}
     />
     <div className="checkList">
-    <div className="title">Your CheckList:</div>
+    <div className="title">Highlight nodes</div>
     <div className="list-container">
       {checkList.map((item, index) => (
          <div key={index}>
-          <input value={item} type="checkbox" />
+          <input value={item} onChange={(e)=> console.log(e.target.checked)} type="checkbox" />
            <span>{item}</span>
         </div>
       ))}
