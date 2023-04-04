@@ -249,7 +249,19 @@ const defaultStyleSheet = [
       width: 100,
       height: 100,
     }
-  }
+  },
+  {
+    selector: "node.not-path",
+    style: {
+      opacity: 0,
+    }
+  },
+  {
+    selector: "edge.not-path",
+    style: {
+      opacity: 0,
+    }
+  },
 ];
 
 let refCy :cytoscape.Core;
@@ -267,6 +279,7 @@ export default function Graph(props: GraphProps) {
   const [pathStartNode, setPathStartNode] = useState("");
   const [pathEndToggle, setPathEndToggle] = useState(false);
   const [pathEndNode, setPathEndNode] = useState("");
+  const [hideNonPathNodes, setHideNonPathNodes] = useState(false);
 
   // Explorer stuff
   const toEOpt = (s: string) => {return { label: s, value: s}}
@@ -562,6 +575,13 @@ export default function Graph(props: GraphProps) {
     setExplorerList([]);
   }
 
+  function hideNonPath() {
+    // 
+    setHideNonPathNodes(!hideNonPathNodes);
+
+
+  }
+
 
   console.log("explorerOpts", explorerOptions);
   console.log(graphData);
@@ -585,7 +605,6 @@ export default function Graph(props: GraphProps) {
 
         <button onClick={() => { setPathEndToggle (!pathEndToggle); setPathStartToggle(false); }} >Set target node</button>
         <p> {pathEndToggle? "click node to set" : (pathEndNode!="" ?  pathEndNode:"NONE")} </p>
-        <button onClick={clearPath}>CLEAR ALL</button>
     </div>
     <div id="explorer">
       <h3>node explorer</h3>
@@ -599,8 +618,14 @@ export default function Graph(props: GraphProps) {
           onChange={(setExplorerList)}
           labelledBy="Select"
         />
-        <button onClick={clearPath}>CLEAR ALL</button>
     </div>
+    <div> 
+      <h3>path shared controls</h3>
+      <button onClick={clearPath}>CLEAR ALL</button>
+      <button onClick={hideNonPath}>Hide non-path nodes</button>
+    </div>
+    
+
     <CytoscapeComponent
       elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
       style={{ width: width, height: height , float: "left"}}
@@ -660,6 +685,7 @@ export default function Graph(props: GraphProps) {
               const path = bf.pathTo(n);
               n.addClass('pathTarget');
               path.addClass('path');
+              path.select();
             });
             
           } else {
@@ -668,6 +694,14 @@ export default function Graph(props: GraphProps) {
         } else {
           //cy.elements().removeClass('path');
           cy.elements().removeClass(['path','pathSource', 'pathTarget']);
+        }
+
+        if (hideNonPathNodes) {
+          const pathNodes = cy.elements().filter(".path");
+          cy.elements().not(pathNodes).addClass("not-path");
+          
+        } else {
+          cy.elements().filter(".not-path").removeClass("not-path");
         }
         cy.batch(() => {cy.layout(layout).run()});
       }}
