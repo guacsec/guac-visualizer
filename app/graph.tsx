@@ -6,15 +6,14 @@ import COSEBilkent from 'cytoscape-cose-bilkent'
 import cola from 'cytoscape-cola';
 
 import { useState, useEffect } from 'react';
-import cytoscape, { EventObject } from 'cytoscape';
+import cytoscape, { EdgeCollection, EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
-import { Node as gqlNode, GetNeighborsDocument, IsDependency,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageNamespace, PackageName, PackageVersion ,CertifyPkg, GetNeighborsQuery} from '../gql/__generated__/graphql';
-import { Node, Edge, GraphData, ParseNode} from "./ggraph";
+import { Node as gqlNode, GetNeighborsDocument, IsDependency } from '../gql/__generated__/graphql';
+import { Node, Edge, GraphData, ParseNode, parsePackage} from "./ggraph";
 import { gql, useQuery, useLazyQuery, ApolloQueryResult} from '@apollo/client';
 import client from 'apollo/client'
-
-
+import { MultiSelect } from "react-multi-select-component";
 
 Cytoscape.use(Spread);
 Cytoscape.use(COSEBilkent);
@@ -94,21 +93,195 @@ const defaultGraphData: GraphData = {
   ]
 };
 
+const defaultStyleSheet = [
+  {
+    selector: "node",
+    style: {
+      backgroundColor: "#4a56a6",
+      width: 30,
+      height: 30,
+      label: "data(label)",
+      "overlay-padding": "6px",
+      "z-index": "10",
+      //text props
+      "text-outline-color": "#4a56a6",
+      "text-outline-width": "2px",
+      color: "white",
+      fontSize: 20
+    }
+  },
+  {
+    selector: "node:selected",
+    style: {
+      "border-width": "6px",
+      "border-color": "#AAD8FF",
+      //"border-opacity": "0.5",
+      //"background-color": "#77828C",
+      width: 30,
+      height: 30,
+      //text props
+      "text-outline-color": "#77828C",
+      "text-outline-width": 8
+    }
+  },
+  {
+    selector: "node[type='software']",
+    style: {
+      shape: "rectangle"
+    }
+  },
+  {
+    selector: "node[type='IsDependency']",
+    style: {
+      shape: "rectangle",
+      "background-color": "yellow",
+    }
+  },
+  {
+    selector: "node[type='IsOccurrence']",
+    style: {
+      shape: "square",
+      "background-color": "pink",
+    }
+  },
+  {
+    selector: "node[type='Source']",
+    style: {
+      "background-color": "green",
+    }
+  },
+  {
+    selector: "node[type='Artifact']",
+    style: {
+      "background-color": "magenta",
+    }
+  },
+  {
+    selector: "node[type='CertifyPkg']",
+    style: {
+      shape: "triangle",
+      "background-color": "white",
+    }
+  },
+  {
+    selector: "node[type='PackageVersion']",
+    style: {
+      shape: "hexagon",
+      "background-color": "orange",
+    }
+  },
+  {
+    selector: "node[type='PackageName']",
+    style: {
+      shape: "hexagon",
+      "background-color": "purple",
+    }
+  },
+  {
+    selector: "node[type='id']",
+    style: {
+      shape: "triangle",
+      "background-color": "#EB3434"
+    }
+  },
+  {
+    selector: "edge",
+    style: {
+      width: 3,
+      'font-size': 5,
+      'text-rotation': 'autorotate',
+      'text-margin-y': '-10px',
+      'text-background-color': '#fff',
+      'text-background-opacity': 0.7,
+      'text-background-padding': '1px',
+      'text-background-shape': 'roundrectangle',
+      'text-border-color': '#000',
+      'text-border-opacity': 0.1,
+      'text-border-width': '0.5px',
+      "label": "data(label)",
+      "line-color": "#AAD8FF",
+      "target-arrow-color": "#6774cb",
+      "target-arrow-shape": "triangle",
+      "curve-style": "bezier"
+    }
+  },
+  {
+    selector: "node[expanded!='true']",
+    style: {
+      "border-width": "6px",
+      "border-color": "#AAD8FF",
+      "border-opacity": "0.5",
+      width: 30,
+      height: 30,
+    }
+  },
+  {
+    selector: "edge.path",
+    style: {
+      "line-color": "red",
+      width: 5,
+      "z-index": 1,
+    }
+  },
+  {
+    selector: "node.path",
+    style: {
+      width: 50,
+      height: 50,
+    }
+  },
+  {
+    selector: "node.pathTarget",
+    style: {
+      width: 100,
+      height: 100,
+    }
+  },
+  {
+    selector: "node.pathSource",
+    style: {
+      width: 100,
+      height: 100,
+    }
+  },
+  {
+    selector: "node.not-path",
+    style: {
+      opacity: 0,
+    }
+  },
+  {
+    selector: "edge.not-path",
+    style: {
+      opacity: 0,
+    }
+  },
+];
+
 let refCy :cytoscape.Core;
 export default function Graph(props: GraphProps) {
   
-
-  const [width, setWidth] = useState("100%");
+  // STATES
+  const [width, setWidth] = useState("80%");
   const [height, setHeight] = useState("800px");
+  const [expandOptions, setExpandOptions] = useState("expandDepMetadata");
   const [dataCount, setDataCount] = useState(0);
   const [expandDepth, setExpandDepth] = useState("3");
 
-  const [graphDesiredState, setGraphDesiredState] = useState([1,2,3,4,5,6,7,8,9,10,11,12]);
-  const [neighborsDesired, setNeighborsDesired] = useState([]);
-  const [gotNeighbors, setGotNeighbors] = useState(new Set<number>());
+  // PATH STUFF
+  const [pathStartToggle, setPathStartToggle] = useState(false);
+  const [pathStartNode, setPathStartNode] = useState("");
+  const [pathEndToggle, setPathEndToggle] = useState(false);
+  const [pathEndNode, setPathEndNode] = useState("");
+  const [hideNonPathNodes, setHideNonPathNodes] = useState(false);
 
+  // Explorer stuff
+  const toEOpt = (s: string) => {return { label: s, value: s}}
+  const explorerOptions = ["Artifact", "Builder", "Cve", "CertifyBad", "CertifyGood", "CertifyScorecard", "CertifyVexStatement", "CertifyVuln", "Ghsa", "HasSbom", "HasSlsa", "HasSourceAt", "HashEqual", "IsDependency", "IsOccurrence", "IsVulnerability", "Osv", "PkgEqual", "PackageVersion", "SourceName","PackageName"].map(toEOpt);
+  const [explorerList, setExplorerList] = useState([]);
 
-
+  // GRAPH STUFF
+  const [styleSheet, setStyleSheet] = useState(defaultStyleSheet);
   const [graphData, setGraphData] = useState({nodes: new Map(), edges:new Map()});
   //const graphData = props.graphData;
   
@@ -144,145 +317,99 @@ export default function Graph(props: GraphProps) {
     }
   });
 
-  const styleSheet = [
-    {
-      selector: "node",
-      style: {
-        backgroundColor: "#4a56a6",
-        width: 30,
-        height: 30,
-        label: "data(label)",
-        "overlay-padding": "6px",
-        "z-index": "10",
-        //text props
-        "text-outline-color": "#4a56a6",
-        "text-outline-width": "2px",
-        color: "white",
-        fontSize: 20
-      }
-    },
-    {
-      selector: "node:selected",
-      style: {
-        "border-width": "6px",
-        "border-color": "#AAD8FF",
-        "border-opacity": "0.5",
-        "background-color": "#77828C",
-        width: 30,
-        height: 30,
-        //text props
-        "text-outline-color": "#77828C",
-        "text-outline-width": 8
-      }
-    },
-    {
-      selector: "node[type='software']",
-      style: {
-        shape: "rectangle"
-      }
-    },
-    {
-      selector: "node[type='IsDependency']",
-      style: {
-        shape: "rectangle",
-        "background-color": "yellow",
-      }
-    },
-    {
-      selector: "node[type='IsOccurrence']",
-      style: {
-        shape: "square",
-        "background-color": "pink",
-      }
-    },
-    {
-      selector: "node[type='Source']",
-      style: {
-        "background-color": "green",
-      }
-    },
-    {
-      selector: "node[type='Artifact']",
-      style: {
-        "background-color": "red",
-      }
-    },
-    {
-      selector: "node[type='CertifyPkg']",
-      style: {
-        shape: "triangle",
-        "background-color": "white",
-      }
-    },
-    {
-      selector: "node[type='PackageVersion']",
-      style: {
-        shape: "hexagon",
-        "background-color": "orange",
-      }
-    },
-    {
-      selector: "node[type='PackageName']",
-      style: {
-        shape: "hexagon",
-        "background-color": "purple",
-      }
-    },
-    {
-      selector: "node[type='id']",
-      style: {
-        shape: "triangle",
-        "background-color": "#EB3434"
-      }
-    },
-    {
-      selector: "edge",
-      style: {
-        width: 3,
-        'font-size': 5,
-        'text-rotation': 'autorotate',
-        'text-margin-y': '-10px',
-        'text-background-color': '#fff',
-        'text-background-opacity': 0.7,
-        'text-background-padding': '1px',
-        'text-background-shape': 'roundrectangle',
-        'text-border-color': '#000',
-        'text-border-opacity': 0.1,
-        'text-border-width': '0.5px',
-        "label": "data(label)",
-        "line-color": "#AAD8FF",
-        "target-arrow-color": "#6774cb",
-        "target-arrow-shape": "triangle",
-        "curve-style": "bezier"
-      }
-    },
-    {
-      selector: "node[expanded!='true']",
-      style: {
-        "border-width": "6px",
-        "border-color": "#AAD8FF",
-        "border-opacity": "0.5",
-        width: 30,
-        height: 30,
-      }
-    },
-  ];
+  
 
   let nodeTapHandler = (evt: EventObject) => {
     var node = evt.target;    
+    if (pathStartToggle) {
+        setPathStartNode(evt.target.id());
+        setPathStartToggle(false);
+    }
+    if (pathEndToggle) {
+      setPathEndNode(evt.target.id());
+      setPathEndToggle(false);
+  }
     //expandNode2([evt.target.id()]);
     if (props.writeDetails != undefined) {
       props.writeDetails(node.data());
     }    
   }
 
+  function getFilters(startNode : Node, graphRep : GraphRep) : (n:gqlNode) => boolean {
 
+    if (expandOptions=="expandAll") {
+      return (n) => true;
+    }
+    
+    let startType = startNode.data.type;
+    let startId = startNode.data.id;
+    const alwaysFalse = (_:gqlNode) => {return false};
+    // do not expand top level nodes
+    if (startType == "PackageType" || startType == "PackageNamespace") {
+      return alwaysFalse;
+    }
+    if (startType == "SourceType" || startType == "SourceNamespace") {
+      return alwaysFalse;
+    }
+
+    let versions : Set<string>;
+    if (startType == "PackageName") {
+      const depNodes = [...graphRep.edges].map(([_,value]) => value).filter((d)=> d.data.target == startId && d.data.label == "depends_on");
+      versions = new Set(depNodes.map((d) => graphRep.nodes.get(d.data.source).data.versionRange));
+    }
+    console.log("versions",versions);
+
+    const nFilter = (n: gqlNode) => {
+      const nType = n.__typename;
+
+      
+      // need to add special case for name expandsion with IsDepedency
+
+      // TODO: need to revisit logic
+      let gd, target;
+      switch (nType) {
+        // TODO: do HasSLSA, HasSourceAt to be the right way
+        case "HasSLSA":
+          return n.subject.id == startId;
+        case "HasSourceAt":
+          return startType != "SourceName" && startType != "SourceType" && startType != "SourceNamespace";
+        case "IsDependency":
+          // only return true if start node is the subject 
+          [gd, target] = parsePackage(n.package);
+          return target.data.id == startId;
+        case "CertifyVuln":
+          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa")
+        case "CertifyVEXStatement":
+          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa")
+  
+        case "Package":
+          console.log("the node", n);
+        
+          [gd, target] = parsePackage(n);
+          if (target.data.type == "PackageVersion") {
+            console.log("target",target);
+            if (versions == undefined) {
+              return false;
+            }
+            if (versions.has(target.data.version)) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+
+      }
+      
+      return true;
+    };
+    return nFilter;
+  }
   async function expandNode (ids : string[], graphRep : GraphRep | undefined) : Promise<GraphRep> {
 
     let addedNodes : Node[][] =[];
+    let resetExpand : string[][] =[];
     let addedEdges : Edge[][] =[];
     let ret: GraphRep;
-
 
     let promises = ids.map((id) =>  
       client.query({
@@ -300,15 +427,31 @@ export default function Graph(props: GraphProps) {
           const neighbors = result.data.neighbors;
           addedNodes[idx] =[];
           addedEdges[idx] = [];
+          resetExpand[idx] = [];
+
+          // have filter here on type of nodes
+          const nFilter = getFilters(graphRep.nodes.get(id), graphRep);
           neighbors.forEach((n,i) => {
+
+              if (!nFilter(n as gqlNode)) { return };
               let gd = ParseNode(n as gqlNode);
 
               if (gd == undefined) {
                 return;
               }
+
+              // in special case we need to set expand property of a PackageName node
+              // to "false" again since there is a new depedent on it
+              if (n.__typename == "IsDependency") {
+                const nn : IsDependency = n as IsDependency;
+                // set depends_on node to expanded = "false" again
+                console.log("resetExpand", nn);
+                resetExpand[idx] = [...resetExpand[idx], nn.dependentPackage.namespaces[0].names[0].id];
+              }
               
+              const excludeNodes = new Set<string>();
               gd.nodes.forEach((nn) =>{
-                  addedNodes[idx] = [...addedNodes[idx], nn];
+                addedNodes[idx] = [...addedNodes[idx], nn];
               });
 
               gd.edges.forEach((e) =>{
@@ -328,12 +471,21 @@ export default function Graph(props: GraphProps) {
         addEdges.forEach((n) =>  {if (!eMap.has(n.data.id)) {eMap.set(n.data.id, n)}});
         // set original node as expanded
         ids.forEach((k)=> {
-        const origNode = nMap.get(k);
-        if (origNode != undefined) {
-          origNode.data.expanded = "true";
-          nMap.set(k, origNode);
-        }
+          const origNode = nMap.get(k);
+          if (origNode != undefined) {
+            origNode.data.expanded = "true";
+            nMap.set(k, origNode);
+          }
         });
+
+        resetExpand.forEach((l)=> l.forEach((pid)=> {
+          const origNode = nMap.get(pid);
+          if (origNode != undefined) {
+            origNode.data.expanded = "false";
+            nMap.set(pid, origNode);
+          }
+        }));
+
 
         // move outside so that it can be done in a single call event for frontier
         ret =({
@@ -416,14 +568,85 @@ export default function Graph(props: GraphProps) {
     }
   }
 
+  const checkList = ["Artifact", "Builder", "Cve", "CertifyBad", "CertifyGood", "CertifyScorecard", "CertifyVexStatement", "CertifyVuln", "Ghsa", "HasSbom", "HasSlsa", "HasSourceAt", "HashEqual", "IsDependency", "IsOccurrence", "IsVulnerability", "Osv", "PkgEqual", "Source"];
+  
+  function setHighlightNodes (nodeType: string, checked: boolean) {
+    let gNodes = [...graphData.nodes].filter(([idx, v]) => v.data.type == nodeType).map(([idx,v]) => idx);
+    console.log(nodeType);
+    console.log(gNodes);
+
+    //console.log(refCy.style().selector("node[type='software']"));
+    
+    let newStyle = {
+      "border-width": checked? "20px" : "0px",
+      //"overlay-color": checked? "yellow" : "white",
+    }
+    if (refCy != undefined) {
+      setStyleSheet(refCy.style().selector("node[type='" + nodeType + "']").style(newStyle).json());
+    }
+  }
+  function clearPath() {
+    setPathStartNode("");
+    setPathEndNode("");
+    setPathStartToggle(false);
+    setPathEndToggle(false);
+    setExplorerList([]);
+  }
+
+  function hideNonPath() {
+    // 
+    setHideNonPathNodes(!hideNonPathNodes);
+
+
+  }
+
+
+  console.log("explorerOpts", explorerOptions);
   console.log(graphData);
   return (
     <>
-    <input type="text" pattern="[0-9]*" onChange={e => setExpandDepth(e.target.value)} value={expandDepth}/>
-    <button onClick={expandFrontier}> Expand </button>
+    <div id="expander">
+      <h3>node expander</h3>
+      <select value={expandOptions}  onChange={e => setExpandOptions(e.target.value)}>
+        <option value="expandDepMetadata">Expand Dep metadata</option>
+        <option value="expandAll">Expand all</option>
+      </select>
+
+      <input type="text" pattern="[0-9]*" maxLength={3} onChange={e => setExpandDepth(e.target.value)} value={expandDepth}/>
+      <button onClick={expandFrontier}> Expand </button>
+      <br />
+    </div>
+    <div id="path">
+      <h3>node pather</h3>
+        <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
+        <p> {pathStartToggle? "click node to set" : (pathStartNode!="" ?  pathStartNode:"NONE")} </p>
+
+        <button onClick={() => { setPathEndToggle (!pathEndToggle); setPathStartToggle(false); }} >Set target node</button>
+        <p> {pathEndToggle? "click node to set" : (pathEndNode!="" ?  pathEndNode:"NONE")} </p>
+    </div>
+    <div id="explorer">
+      <h3>node explorer</h3>
+        <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
+        <p> {pathStartToggle? "click node to set" : (pathStartNode!="" ?  pathStartNode:"NONE")} </p>
+        
+        <pre>{JSON.stringify(explorerList)}</pre>
+        <MultiSelect
+          options={explorerOptions}
+          value={explorerList}
+          onChange={(setExplorerList)}
+          labelledBy="Select"
+        />
+    </div>
+    <div> 
+      <h3>path shared controls</h3>
+      <button onClick={clearPath}>CLEAR ALL</button>
+      <button onClick={hideNonPath}>Hide non-path nodes</button>
+    </div>
+    
+
     <CytoscapeComponent
       elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
-      style={{ width: width, height: height }}
+      style={{ width: width, height: height , float: "left"}}
       zoomingEnabled={true}
       maxZoom={3}
       minZoom={0.1}
@@ -437,9 +660,81 @@ export default function Graph(props: GraphProps) {
         cy.removeListener('cxttap');
         cy.on("tap", "node", evt => nodeTapHandler(evt));
         cy.on("cxttap", "node", evt => nodeCxttapHandler(evt));
+        if (pathStartNode != "" ) {
+
+          const weightFn = (e:EdgeCollection)=>{ 
+            // Set weight on software tree edges as lower weight since we favor finding the path that goes through
+            // evidence instead of going through the sw tree.
+            let badEdgeSet = new Set([
+              "pkgVersion", "pkgName", "pkgNs",
+              "srcVersion", "srcName", "srcNs",
+            ])
+            if (badEdgeSet.has(e[0].data().label)) {
+              return 100;
+            } else {
+              return 1;
+            }
+          }
+
+          // based on what's set, depends what type of paths we're calculating
+          if (pathEndNode != "") {
+            // this is pather
+            console.log('running path');
+            var aStar = cy.elements().aStar({ root: "#" + pathStartNode, goal: "#" + pathEndNode, weight: weightFn});
+            aStar.path.select();
+            cy.elements().not( aStar.path ).removeClass('path');
+            aStar.path.addClass('path');
+            cy.getElementById(pathStartNode).addClass('pathSource');
+            cy.getElementById(pathEndNode).addClass('pathTarget');
+
+          } else if (explorerList.length > 0) {
+            // this is explorer
+            // TODO: Figure out what are best weights for bellmanford (since it allows -ve weights)
+            // Going to avoid negative edges for now since i think it can cause infinite loops? (something something proof from class lol)
+            cy.elements().removeClass(['path','pathSource', 'pathTarget']);
+
+            let bf = cy.elements().bellmanFord({ root: "#" + pathStartNode, weight: weightFn, directed: false});
+            const filterSet = new Set(explorerList.map((v)=> v.value));
+            const targetNodes = cy.nodes().filter((n)=> { return filterSet.has(n.data().type); });
+            cy.getElementById(pathStartNode).addClass('pathSource');
+            console.log("bf");
+            targetNodes.forEach((n)=> {
+              const t = n.id();
+              const path = bf.pathTo(n);
+              n.addClass('pathTarget');
+              path.addClass('path');
+              path.select();
+            });
+            
+          } else {
+            // this is nothing
+          }
+        } else {
+          //cy.elements().removeClass('path');
+          cy.elements().removeClass(['path','pathSource', 'pathTarget']);
+        }
+
+        if (hideNonPathNodes) {
+          const pathNodes = cy.elements().filter(".path");
+          cy.elements().not(pathNodes).addClass("not-path");
+          
+        } else {
+          cy.elements().filter(".not-path").removeClass("not-path");
+        }
         cy.batch(() => {cy.layout(layout).run()});
       }}
     />
+    <div className="checkList">
+    <div className="title">Highlight nodes</div>
+    <div className="list-container">
+      {checkList.map((item, index) => (
+         <div key={index}>
+          <input value={item} onChange={(e)=> setHighlightNodes(item, e.target.checked)} type="checkbox" />
+           <span>{item}</span>
+        </div>
+      ))}
+    </div>
+  </div>
     </>
   )
 }

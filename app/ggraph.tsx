@@ -1,4 +1,4 @@
-import { GetNeighborsDocument, IsDependency,  Source, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageNamespace, PackageName, PackageVersion ,CertifyPkg, Node as gqlNode, SourceNamespace, SourceName, Artifact, IsOccurrence, Builder, Osv, Ghsa, IsVulnerability, CertifyVexStatement, HashEqual, CertifyBad, CertifyScorecard, CertifyVuln, HasSourceAt, HasSbom, HasSlsa, OsvId, GhsaId, Cve, CveId} from '../gql/__generated__/graphql';
+import { IsDependency,  Source,  Package, PackageNamespace, PackageName, PackageVersion ,PkgEqual, CertifyGood, Node as gqlNode, SourceNamespace, SourceName, Artifact, IsOccurrence, Builder, Osv, Ghsa, IsVulnerability, CertifyVexStatement, HashEqual, CertifyBad, CertifyScorecard, CertifyVuln, HasSourceAt, HasSbom, HasSlsa, OsvId, GhsaId, Cve, CveId} from '../gql/__generated__/graphql';
 
 
 export type Node = {
@@ -25,8 +25,7 @@ export type GraphData = {
   edges: Edge[];
 }
 
-export function ParseNode (n : gqlNode) : GraphData | undefined {
-  
+export function ParseNode (n : gqlNode) : GraphData | undefined { 
   let gd : GraphData;
   let target : Node | undefined;
 
@@ -58,8 +57,8 @@ export function ParseNode (n : gqlNode) : GraphData | undefined {
     case "IsDependency":
       [gd, target] = parseIsDependency(n);
       break;
-    case "CertifyPkg":
-      [gd, target] = parseCertifyPkg(n);
+    case "PkgEqual":
+      [gd, target] = parsePkgEqual(n);
       break;
     case "IsOccurrence":
       [gd, target] = parseIsOccurrence(n);
@@ -75,6 +74,9 @@ export function ParseNode (n : gqlNode) : GraphData | undefined {
       break;
     case "CertifyBad":
       [gd, target] = parseCertifyBad(n);
+      break;
+    case "CertifyGood":
+      [gd, target] = parseCertifyGood(n);
       break;
     case "CertifyScorecard":
       [gd, target] = parseCertifyScorecard(n);
@@ -99,7 +101,6 @@ export function ParseNode (n : gqlNode) : GraphData | undefined {
 
   gd.edges.forEach(e => {e.data.id = e.data.source + "->" + e.data.target});
 
-
   return gd;
 }
 
@@ -113,13 +114,13 @@ export function parsePackage(n: Package) : [GraphData, Node | undefined] {
   
   
     const typ : Package = n;
-    nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "Package"}}];
+    nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "PackageType"}}];
     if (typ.namespaces.length == 0) {
       target = nodes.at(-1);
     }
   
     typ.namespaces.forEach((ns : PackageNamespace) =>{
-      nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "Package"}}];
+      nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "PackageNamespace"}}];
       edges = [...edges, {data: {source:typ.id, target:ns.id, label:"pkgNs"}}]
       if (ns.names.length == 0) {
         target = nodes.at(-1);
@@ -152,13 +153,13 @@ export function parseSource(n: Source) : [GraphData, Node | undefined] {
 
 
   const typ : Source = n;
-  nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "Source"}}];
+  nodes = [...nodes, {data: {id: typ.id, label: typ.type, type: "SourceType"}}];
   if (typ.namespaces.length == 0) {
     target = nodes.at(-1);
   }
 
   typ.namespaces.forEach((ns : SourceNamespace) =>{
-    nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "Source"}}];
+    nodes = [...nodes, {data: {id: ns.id, label: ns.namespace, type: "SourceNamespace"}}];
     edges = [...edges, {data: {source:typ.id, target:ns.id, label:"srcNs"}}]
     if (ns.names.length == 0) {
       target = nodes.at(-1);
@@ -179,7 +180,7 @@ export function parseArtifact(n: Artifact) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: (n.algorithm + ":"+ n.digest).slice(0, 10), type: "Source"}}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: (n.algorithm + ":"+ n.digest).slice(0, 10), type: "Artifact"}}];
   target = nodes.at(-1);
 
   return [ { nodes: nodes, edges: edges }, target];
@@ -202,16 +203,8 @@ export function parseOsv(n: Osv) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {id: n.id, label: "osv", type: "Osv"}}];
-  if (n.osvIds.length == 0) {
-    target = nodes.at(-1);
-  }
-
-  n.osvIds.forEach((nn : OsvId) =>{
-    nodes = [...nodes, {data: {id: nn.id, label: nn.osvId, type: "Osv"}}];
-    edges = [...edges, {data: {source:n.id, target:nn.id, label:"osvId"}}]
-      target = nodes.at(-1);
-  });
+  nodes = [...nodes, {data: {id: n.id, label: n.osvId, type: "Osv"}}];
+  target = nodes.at(-1);
 
   return [ { nodes: nodes, edges: edges }, target];
 }
@@ -221,16 +214,8 @@ export function parseGhsa(n: Ghsa) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {id: n.id, label: "ghsa", type: "Ghsa"}}];
-  if (n.ghsaIds.length == 0) {
-    target = nodes.at(-1);
-  }
-
-  n.ghsaIds.forEach((nn : GhsaId) =>{
-    nodes = [...nodes, {data: {id: nn.id, label: nn.ghsaId, type: "Ghsa"}}];
-    edges = [...edges, {data: {source:n.id, target:nn.id, label:"ghsaId"}}];
-    target = nodes.at(-1);
-  });
+  nodes = [...nodes, {data: {id: n.id, label: n.ghsaId, type: "Ghsa"}}];
+  target = nodes.at(-1);
 
   return [ { nodes: nodes, edges: edges }, target];
 }
@@ -241,16 +226,8 @@ export function parseCve(n: Cve) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {id: n.id, label: n.year.toString(), type: "Cve"}}];
-  if (n.cveIds.length == 0) {
-    target = nodes.at(-1);
-  }
-
-  n.cveIds.forEach((nn : CveId) =>{
-    nodes = [...nodes, {data: {id: nn.id, label: nn.cveId, type: "Cve"}}];
-    edges = [...edges, {data: {source:n.id, target:nn.id, label:"cveId"}}];
-    target = nodes.at(-1);
-  });
+  nodes = [...nodes, {data: {id: n.id, label: n.cveId, type: "Cve"}}];
+  target = nodes.at(-1);
 
   return [ { nodes: nodes, edges: edges }, target];
 }
@@ -424,7 +401,7 @@ export function parseCertifyBad(n: CertifyBad) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyVuln", type: "CertifyVuln" , expanded: "true"}}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyBad", type: "CertifyBad" , expanded: "true"}}];
   target = nodes.at(-1);
 
   let gd : GraphData;
@@ -435,21 +412,58 @@ export function parseCertifyBad(n: CertifyBad) : [GraphData, Node | undefined] {
     nodes = [...nodes, ...gd.nodes];
     edges = [...edges, ...gd.edges];
     if (t != undefined) {
-      edges = [...edges, {data: {source: n.id, target: t.data.id, label:"is_vulnerability"}}]
+      edges = [...edges, {data: {source: n.id, target: t.data.id, label:"is_bad"}}]
     }
   } else if (n.subject.__typename == "Source") {
     [gd, t] = parseSource(n.subject);
     nodes = [...nodes, ...gd.nodes];
     edges = [...edges, ...gd.edges];
     if (t != undefined) {
-      edges = [...edges, {data: {source: n.id, target: t.data.id, label:"is_vulnerability"}}]
+      edges = [...edges, {data: {source: n.id, target: t.data.id, label:"is_bad"}}]
     }
   } else if (n.subject.__typename == "Package") {
     [gd, t] = parsePackage(n.subject);
     nodes = [...nodes, ...gd.nodes];
     edges = [...edges, ...gd.edges];
     if (t != undefined) {
-      edges = [...edges, {data: {source: n.id, target: t.data.id, label:"is_vulnerability"}}]
+      edges = [...edges, {data: {source: n.id, target: t.data.id, label:"is_bad"}}]
+    }
+  }
+
+  return [ { nodes: nodes, edges: edges }, target];
+}
+
+export function parseCertifyGood(n: CertifyGood) : [GraphData, Node | undefined] {
+  let nodes : Node[] = [];
+  let edges : Edge[] = [];
+  let target : Node | undefined = undefined;
+
+  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyGood", type: "CertifyGood" , expanded: "true"}}];
+  target = nodes.at(-1);
+
+  let gd : GraphData;
+  let t : Node | undefined;
+  
+  if (n.subject.__typename == "Artifact") {
+    [gd, t] = parseArtifact(n.subject);
+    nodes = [...nodes, ...gd.nodes];
+    edges = [...edges, ...gd.edges];
+    if (t != undefined) {
+      edges = [...edges, {data: {source: n.id, target: t.data.id, label:"is_good"}}]
+    }
+  } else if (n.subject.__typename == "Source") {
+    [gd, t] = parseSource(n.subject);
+    nodes = [...nodes, ...gd.nodes];
+    edges = [...edges, ...gd.edges];
+    if (t != undefined) {
+      edges = [...edges, {data: {source: n.id, target: t.data.id, label:"is_good"}}]
+    }
+  } else if (n.subject.__typename == "Package") {
+    [gd, t] = parsePackage(n.subject);
+    nodes = [...nodes, ...gd.nodes];
+    edges = [...edges, ...gd.edges];
+    if (t != undefined) {
+      edges = [...edges, {data: {source: n.id, target: t.data.id, label:"is_good"}}]
     }
   }
 
@@ -607,14 +621,14 @@ export function parseIsDependency(n: IsDependency) : [GraphData, Node | undefine
   return [ { nodes: nodes, edges: edges }, target];
 }
 
-export function parseCertifyPkg(n: CertifyPkg) : [GraphData, Node | undefined] {
+export function parsePkgEqual(n: PkgEqual) : [GraphData, Node | undefined] {
   let nodes : Node[] = [];
   let edges : Edge[] = [];
   // for each check if its the leaf, and if its the leaf that's where the edge goes
   let target : Node | undefined = undefined;
 
 
-  nodes = [...nodes, {data: {...n, id: n.id, label: "CertifyPkg", type: "CertifyPkg" , expanded: "true"}}];
+  nodes = [...nodes, {data: {...n, id: n.id, label: "PkgEqual", type: "PkgEqual" , expanded: "true"}}];
   target = nodes.at(-1);
 
   n.packages.forEach((m) => {
