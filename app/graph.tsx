@@ -9,17 +9,11 @@ import { useState, useEffect } from 'react';
 import cytoscape, { EdgeCollection, EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
-import { Node as gqlNode, GetNeighborsDocument } from '../gql/__generated__/graphql';
+import { Node as gqlNode, GetNeighborsDocument, IsDependency } from '../gql/__generated__/graphql';
 import { Node, Edge, GraphData, ParseNode, parsePackage} from "./ggraph";
 import { gql, useQuery, useLazyQuery, ApolloQueryResult} from '@apollo/client';
 import client from 'apollo/client'
 import { MultiSelect } from "react-multi-select-component";
-
-
-
-
-
-
 
 Cytoscape.use(Spread);
 Cytoscape.use(COSEBilkent);
@@ -375,6 +369,10 @@ export default function Graph(props: GraphProps) {
       let gd, target;
       switch (nType) {
         // TODO: do HasSLSA, HasSourceAt to be the right way
+        case "HasSLSA":
+          return n.subject.id == startId;
+        case "HasSourceAt":
+          return startType != "SourceName" && startType != "SourceType" && startType != "SourceNamespace";
         case "IsDependency":
           // only return true if start node is the subject 
           [gd, target] = parsePackage(n.package);
@@ -409,6 +407,7 @@ export default function Graph(props: GraphProps) {
   async function expandNode (ids : string[], graphRep : GraphRep | undefined) : Promise<GraphRep> {
 
     let addedNodes : Node[][] =[];
+    let resetExpand : string[][] =[];
     let addedEdges : Edge[][] =[];
     let ret: GraphRep;
 
@@ -428,6 +427,7 @@ export default function Graph(props: GraphProps) {
           const neighbors = result.data.neighbors;
           addedNodes[idx] =[];
           addedEdges[idx] = [];
+          resetExpand[idx] = [];
 
           // have filter here on type of nodes
           const nFilter = getFilters(graphRep.nodes.get(id), graphRep);
@@ -438,6 +438,15 @@ export default function Graph(props: GraphProps) {
 
               if (gd == undefined) {
                 return;
+              }
+
+              // in special case we need to set expand property of a PackageName node
+              // to "false" again since there is a new depedent on it
+              if (n.__typename == "IsDependency") {
+                const nn : IsDependency = n as IsDependency;
+                // set depends_on node to expanded = "false" again
+                console.log("resetExpand", nn);
+                resetExpand[idx] = [...resetExpand[idx], nn.dependentPackage.namespaces[0].names[0].id];
               }
               
               const excludeNodes = new Set<string>();
@@ -468,12 +477,21 @@ export default function Graph(props: GraphProps) {
         addEdges.forEach((n) =>  {if (!eMap.has(n.data.id)) {eMap.set(n.data.id, n)}});
         // set original node as expanded
         ids.forEach((k)=> {
-        const origNode = nMap.get(k);
-        if (origNode != undefined) {
-          origNode.data.expanded = "true";
-          nMap.set(k, origNode);
-        }
+          const origNode = nMap.get(k);
+          if (origNode != undefined) {
+            origNode.data.expanded = "true";
+            nMap.set(k, origNode);
+          }
         });
+
+        resetExpand.forEach((l)=> l.forEach((pid)=> {
+          const origNode = nMap.get(pid);
+          if (origNode != undefined) {
+            origNode.data.expanded = "false";
+            nMap.set(pid, origNode);
+          }
+        }));
+
 
         // move outside so that it can be done in a single call event for frontier
         ret =({

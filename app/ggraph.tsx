@@ -203,16 +203,8 @@ export function parseOsv(n: Osv) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {id: n.id, label: "osv", type: "Osv"}}];
-  if (n.osvIds.length == 0) {
-    target = nodes.at(-1);
-  }
-
-  n.osvIds.forEach((nn : OsvId) =>{
-    nodes = [...nodes, {data: {id: nn.id, label: nn.osvId, type: "Osv"}}];
-    edges = [...edges, {data: {source:n.id, target:nn.id, label:"osvId"}}]
-      target = nodes.at(-1);
-  });
+  nodes = [...nodes, {data: {id: n.id, label: n.osvId, type: "Osv"}}];
+  target = nodes.at(-1);
 
   return [ { nodes: nodes, edges: edges }, target];
 }
@@ -222,16 +214,8 @@ export function parseGhsa(n: Ghsa) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {id: n.id, label: "ghsa", type: "Ghsa"}}];
-  if (n.ghsaIds.length == 0) {
-    target = nodes.at(-1);
-  }
-
-  n.ghsaIds.forEach((nn : GhsaId) =>{
-    nodes = [...nodes, {data: {id: nn.id, label: nn.ghsaId, type: "Ghsa"}}];
-    edges = [...edges, {data: {source:n.id, target:nn.id, label:"ghsaId"}}];
-    target = nodes.at(-1);
-  });
+  nodes = [...nodes, {data: {id: n.id, label: n.ghsaId, type: "Ghsa"}}];
+  target = nodes.at(-1);
 
   return [ { nodes: nodes, edges: edges }, target];
 }
@@ -242,16 +226,8 @@ export function parseCve(n: Cve) : [GraphData, Node | undefined] {
   let edges : Edge[] = [];
   let target : Node | undefined = undefined;
 
-  nodes = [...nodes, {data: {id: n.id, label: n.year.toString(), type: "Cve"}}];
-  if (n.cveIds.length == 0) {
-    target = nodes.at(-1);
-  }
-
-  n.cveIds.forEach((nn : CveId) =>{
-    nodes = [...nodes, {data: {id: nn.id, label: nn.cveId, type: "Cve"}}];
-    edges = [...edges, {data: {source:n.id, target:nn.id, label:"cveId"}}];
-    target = nodes.at(-1);
-  });
+  nodes = [...nodes, {data: {id: n.id, label: n.cveId, type: "Cve"}}];
+  target = nodes.at(-1);
 
   return [ { nodes: nodes, edges: edges }, target];
 }
