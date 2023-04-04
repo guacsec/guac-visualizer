@@ -374,10 +374,16 @@ export default function Graph(props: GraphProps) {
       // TODO: need to revisit logic
       let gd, target;
       switch (nType) {
+        // TODO: do HasSLSA, HasSourceAt to be the right way
         case "IsDependency":
           // only return true if start node is the subject 
           [gd, target] = parsePackage(n.package);
           return target.data.id == startId;
+        case "CertifyVuln":
+          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa")
+        case "CertifyVEXStatement":
+          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa")
+  
         case "Package":
           console.log("the node", n);
         
