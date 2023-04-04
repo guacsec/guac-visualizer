@@ -451,17 +451,11 @@ export default function Graph(props: GraphProps) {
               
               const excludeNodes = new Set<string>();
               gd.nodes.forEach((nn) =>{
-               
-                  addedNodes[idx] = [...addedNodes[idx], nn];
-               
+                addedNodes[idx] = [...addedNodes[idx], nn];
               });
 
               gd.edges.forEach((e) =>{
-                // console.log(excludeNodes);
-                // console.log(e.data);
-                // if (!excludeNodes.has(e.data.source) && !excludeNodes.has(e.data.target)) {
-                  addedEdges[idx] = [...addedEdges[idx], e];
-                // }
+                addedEdges[idx] = [...addedEdges[idx], e];
               });
             });
         });
