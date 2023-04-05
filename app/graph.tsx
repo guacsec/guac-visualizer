@@ -442,12 +442,12 @@ export default function Graph(props: GraphProps) {
 
               // in special case we need to set expand property of a PackageName node
               // to "false" again since there is a new depedent on it
-              if (n.__typename == "IsDependency") {
-                const nn : IsDependency = n as IsDependency;
-                // set depends_on node to expanded = "false" again
-                console.log("resetExpand", nn);
-                resetExpand[idx] = [...resetExpand[idx], nn.dependentPackage.namespaces[0].names[0].id];
-              }
+              // if (n.__typename == "IsDependency") {
+              //   const nn : IsDependency = n as IsDependency;
+              //   // set depends_on node to expanded = "false" again
+              //   //console.log("resetExpand", nn);
+              //   resetExpand[idx] = [...resetExpand[idx], nn.dependentPackage.namespaces[0].names[0].id];
+              // }
               
               const excludeNodes = new Set<string>();
               gd.nodes.forEach((nn) =>{
@@ -642,6 +642,7 @@ export default function Graph(props: GraphProps) {
       <button onClick={clearPath}>CLEAR ALL</button>
       <button onClick={hideNonPath}>Hide non-path nodes</button>
     </div>
+    <button onClick={() => refCy.layout(layout).run()}>layout run</button>
     
 
     <CytoscapeComponent
@@ -721,7 +722,7 @@ export default function Graph(props: GraphProps) {
         } else {
           cy.elements().filter(".not-path").removeClass("not-path");
         }
-        cy.batch(() => {cy.layout(layout).run()});
+        // cy.batch(() => {cy.layout(layout).run()});
       }}
     />
     <div className="checkList">

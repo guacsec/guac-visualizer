@@ -13,56 +13,6 @@ const inter = Inter({ subsets: ['latin'] });
 
 // TODO (mlieberman85): Some of the below still requires type definitions.
 
-// TODO (mlieberman85): Change this query to use the generated code
-const TEST_QUERY = gql`
-fragment allIsDependencyTree on IsDependency {
-  justification
-  package {
-    type
-    namespaces {
-      namespace
-      names {
-        name
-        versions {
-          version
-          qualifiers {
-            key
-            value
-          }
-          subpath
-        }
-      }
-    }
-  }
-dependentPackage {
-      type
-    namespaces {
-      namespace
-      names {
-        name
-        versions {
-          version
-          qualifiers {
-            key
-            value
-          }
-          subpath
-        }
-      }
-    }
-  }
-versionRange
-origin
-collector
-}
-
-query Q1 {
-  IsDependency(isDependencySpec: {}) {
-    ...allIsDependencyTree
-  }
-}`;
-
-
 const processDataForCytoscape = (data) => {
 
   
@@ -93,15 +43,19 @@ export default function Home() {
   // TODO (mlieberman85): Validate if SWR is better in this use case than alternatives like react query
   const [detailsText, setDetailsText] = useState("detailsText");
   const [inputText, setInputText] = useState(`{
-    "type":"deb",
-    "namespace":"ubuntu",
-    "name": "dpkg",
-    "qualifiers": [{"key":"arch", "value":"amd64"}]
+    "type":"guac", "namespace":"spdx/k8s.gcr.io",
+"name": "kube-proxy-v1.24.1"
   }`);
   const [buttonHit, setButtonHit] = useState(false);
   const [requested, setRequested] = useState("{}");
   const [data, setData] = useState<GetPkgQuery>({ packages: []});
-  let graph = <Graph layout="cola" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(data)} />
+
+  const other = `{
+    "type":"deb",
+    "namespace":"ubuntu",
+    "name": "dpkg",
+    "qualifiers": [{"key":"arch", "value":"amd64"}]
+  }`;
 
 
   function initGraph (s : string) {
@@ -145,7 +99,7 @@ export default function Home() {
           }}
         >
           {/* skip sending in data which will be delegated to the graph object by passing in a way to retrieve the data instead */}
-          { graph }
+          <Graph layout="cola" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(data)} />
         </div>
       </div>
       
