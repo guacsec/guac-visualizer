@@ -46,13 +46,10 @@ function toVersionString (v :PackageVersion) {
 export default function Home() {
   // TODO (mlieberman85): Validate if SWR is better in this use case than alternatives like react query
   const [detailsText, setDetailsText] = useState("detailsText");
-  const [inputText, setInputText] = useState(`{
-    "type":"guac", "namespace":"spdx/k8s.gcr.io",
-"name": "kube-proxy-v1.24.1"
-  }`);
   const [buttonHit, setButtonHit] = useState(false);
   const [requested, setRequested] = useState("{}");
   const [data, setData] = useState<GetPkgQuery>({ packages: []});
+  const [graphData, setGraphData] = useState([]);
 
 
   // Package Selectors
@@ -101,7 +98,7 @@ export default function Home() {
   }`;
 
 
-  function initGraph (s : string) {
+  function initGraph () {
     setData({packages: []});
     let spec = {};
     if (selectPackageType != "<NULL>"){
@@ -125,6 +122,8 @@ export default function Home() {
     }).then( res => {
       console.log("res data", res.data);
       setData(res.data);
+      
+      setGraphData([{key: crypto.randomUUID(), data: res.data}]);
     });
   }
 
@@ -167,9 +166,9 @@ export default function Home() {
             {([...packageTrie.get(selectPackageType).get(selectPackageNamespace).get(selectPackageName)]).map(([k,v]) => <option key={k}>{toVersionString(v)}</option>)}
           </select>
         }
+        {selectPackageVersion != "<NULL>" && <button onClick={e => initGraph()}>submit</button>}
         <br />
-        <textarea name="text" rows={10} cols={50} value={inputText} onChange={e => setInputText(e.target.value)} />
-        <button onClick={e => initGraph(inputText)}>submit</button>
+        
         <textarea name="details-text" rows={10} cols={50} value={JSON.stringify(data)} onChange={() => {}} />
 
         <textarea name="details-text" rows={10} cols={50} value={detailsText} onChange={e => setDetailsText(e.target.value)}/>
@@ -181,7 +180,12 @@ export default function Home() {
           }}
         >
           {/* skip sending in data which will be delegated to the graph object by passing in a way to retrieve the data instead */}
-          <Graph layout="dagre" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(data)} />
+          {
+            graphData.map((d)=>
+            <Graph key={d.key} layout="dagre" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(d.data)} />
+            //<Graph layout="dagre" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(d)} />
+            )
+          } 
         </div>
       </div>
       
