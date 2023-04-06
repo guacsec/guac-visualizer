@@ -4,6 +4,8 @@ import CytoscapeComponent from 'react-cytoscapejs'
 import Spread from 'cytoscape-spread';
 import COSEBilkent from 'cytoscape-cose-bilkent'
 import cola from 'cytoscape-cola';
+import dagre from 'cytoscape-dagre';
+
 
 import { useState, useEffect } from 'react';
 import cytoscape, { EdgeCollection, EventObject } from 'cytoscape';
@@ -15,8 +17,11 @@ import { gql, useQuery, useLazyQuery, ApolloQueryResult} from '@apollo/client';
 import client from 'apollo/client'
 import { MultiSelect } from "react-multi-select-component";
 
-Cytoscape.use(Spread);
-Cytoscape.use(COSEBilkent);
+// Cytoscape.use(Spread);
+// Cytoscape.use(COSEBilkent);
+Cytoscape.use(dagre);
+
+
 Cytoscape.use(cola);
 
 type GraphProps = {
@@ -267,6 +272,9 @@ export default function Graph(props: GraphProps) {
   const [expandOptions, setExpandOptions] = useState("expandDepMetadata");
   const [dataCount, setDataCount] = useState(0);
   const [expandDepth, setExpandDepth] = useState("3");
+  const [loading, setLoading] = useState(false);
+  const headless = false;
+
 
   // PATH STUFF
   const [pathStartToggle, setPathStartToggle] = useState(false);
@@ -296,14 +304,16 @@ export default function Graph(props: GraphProps) {
   
   //console.log(props.graphData)
   const layout = {
-    name: props?.layout ?? "breadthfirst",
+    //name: props?.layout ?? "breadthfirst",
+    name: "dagre",
     fit: true,
     directed: true,
     padding: 50,
     idealEdgeLength: 100,
-    animate: true,
+    animate: !headless,
     animationDuration: 1000,
     avoidOverlap: true,
+    ready: ()=>setLoading(false),
     nodeDimensionsIncludeLabels: false,
   }
   //refCy.layout(layout).run()
@@ -513,6 +523,7 @@ export default function Graph(props: GraphProps) {
 
 
   let expandFrontier = () => {
+    setLoading(true);
     console.log("expand frontier");
     if (refCy === undefined){
       return;
@@ -601,10 +612,11 @@ export default function Graph(props: GraphProps) {
   }
 
 
-  console.log("explorerOpts", explorerOptions);
+  
   console.log(graphData);
   return (
     <>
+    <h2>{loading? "Loading" : ""}</h2>
     <div id="expander">
       <h3>node expander</h3>
       <select value={expandOptions}  onChange={e => setExpandOptions(e.target.value)}>
@@ -642,8 +654,18 @@ export default function Graph(props: GraphProps) {
       <button onClick={clearPath}>CLEAR ALL</button>
       <button onClick={hideNonPath}>Hide non-path nodes</button>
     </div>
-    <button onClick={() => refCy.layout(layout).run()}>layout run</button>
-    
+    <button onClick={() =>{
+      const pathElements = refCy.elements(".path");
+      
+      if (pathElements == undefined || pathElements.length == 0) {
+        setLoading(true);
+        refCy.layout(layout).run();
+      } else {
+        setLoading(true);
+        pathElements.layout(layout).run();
+      }
+      }}>layout run</button>
+
 
     <CytoscapeComponent
       elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
@@ -655,6 +677,7 @@ export default function Graph(props: GraphProps) {
       boxSelectionEnabled={true}
       layout={layout}
       stylesheet={styleSheet}
+      headless={headless}
       cy={cy => {
         refCy = cy;
         cy.removeListener('tap');
@@ -718,11 +741,12 @@ export default function Graph(props: GraphProps) {
         if (hideNonPathNodes) {
           const pathNodes = cy.elements().filter(".path");
           cy.elements().not(pathNodes).addClass("not-path");
+          pathNodes.layout(layout).run();
           
         } else {
           cy.elements().filter(".not-path").removeClass("not-path");
         }
-        // cy.batch(() => {cy.layout(layout).run()});
+        //cy.batch(() => {cy.layout(layout).run()});
       }}
     />
     <div className="checkList">

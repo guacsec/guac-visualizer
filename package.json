@@ -46,7 +46,9 @@
     "@graphql-codegen/typescript-resolvers": "^3.1.1",
     "@types/cytoscape": "3.19.9",
     "@types/uuid": "^9.0.1",
+    "cosmos-over-cytoscape": "^1.0.3",
     "cytoscape-cola": "^2.5.1",
+    "cytoscape-dagre": "^2.5.0",
     "react-multi-select-component": "^4.3.4"
   }
 }
