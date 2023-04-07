@@ -208,7 +208,7 @@ const defaultStyleSheet = [
       "line-color": "#AAD8FF",
       "target-arrow-color": "#6774cb",
       "target-arrow-shape": "triangle",
-      "curve-style": "bezier"
+      "curve-style": "haystack"
     }
   },
   {
@@ -308,6 +308,7 @@ export default function Graph(props: GraphProps) {
     animate: !headless,
     animationDuration: 1000,
     avoidOverlap: true,
+    layoutstart: () => {setLoading(true); console.log("layout start")},
     ready: ()=>{setLoading(false); console.log("layout ready")},
     stop: ()=>{setLoading(false); console.log("layout stop")},
     nodeDimensionsIncludeLabels: false,
@@ -414,7 +415,7 @@ export default function Graph(props: GraphProps) {
 
     let addedNodes : Node[][] =[];
     let resetExpand : string[][] =[];
-    let addedEdges : Edge[][] =[];
+    let addedEdges : Edge[][] =Array(ids.length);
     let ret: GraphRep;
 
     let promises = ids.map((id) =>  
@@ -427,6 +428,8 @@ export default function Graph(props: GraphProps) {
 
     await Promise.all(promises).then((values) => {
         console.log(values);
+        let nMap : Map<string, Node> = new Map(graphRep.nodes);
+        let eMap : Map<string, Edge> = new Map(graphRep.edges);
         values.forEach((result,idx) => {
           const id = ids[idx];
           console.log(id, "neighbors", result.data);
@@ -436,6 +439,8 @@ export default function Graph(props: GraphProps) {
           resetExpand[idx] = [];
 
           // have filter here on type of nodes
+          console.log("processing neighbors");
+
           const nFilter = getFilters(graphRep.nodes.get(id), graphRep);
           neighbors.forEach((n,i) => {
 
@@ -445,36 +450,11 @@ export default function Graph(props: GraphProps) {
               if (gd == undefined) {
                 return;
               }
-
-              // in special case we need to set expand property of a PackageName node
-              // to "false" again since there is a new depedent on it
-              // if (n.__typename == "IsDependency") {
-              //   const nn : IsDependency = n as IsDependency;
-              //   // set depends_on node to expanded = "false" again
-              //   //console.log("resetExpand", nn);
-              //   resetExpand[idx] = [...resetExpand[idx], nn.dependentPackage.namespaces[0].names[0].id];
-              // }
-              
-              const excludeNodes = new Set<string>();
-              gd.nodes.forEach((nn) =>{
-                addedNodes[idx] = [...addedNodes[idx], nn];
-              });
-
-              gd.edges.forEach((e) =>{
-                addedEdges[idx] = [...addedEdges[idx], e];
-              });
+              gd.nodes.forEach(n=> {if (!nMap.has(n.data.id)) {nMap.set(n.data.id, n)}});
+              gd.edges.forEach((n) =>  {if (!eMap.has(n.data.id)) {eMap.set(n.data.id, n)}});
             });
         });
 
-        let addNodes : Node[] = [];
-        let addEdges : Edge[] = [];
-        addedNodes.forEach((n) => addNodes = [...addNodes, ...n]);
-        addedEdges.forEach((n) => addEdges = [...addEdges, ...n]);
-        let nMap : Map<string, Node> = new Map(graphRep.nodes);
-        let eMap : Map<string, Edge> = new Map(graphRep.edges);
-  
-        addNodes.forEach((n) =>  {if (!nMap.has(n.data.id)) {nMap.set(n.data.id, n)}});
-        addEdges.forEach((n) =>  {if (!eMap.has(n.data.id)) {eMap.set(n.data.id, n)}});
         // set original node as expanded
         ids.forEach((k)=> {
           const origNode = nMap.get(k);
@@ -498,7 +478,10 @@ export default function Graph(props: GraphProps) {
           nodes: nMap,
           edges: eMap,
         });
+        console.log("done processing new graph");
+
     });
+    console.log(ret);
     return ret;
   }
 
@@ -513,7 +496,7 @@ export default function Graph(props: GraphProps) {
     //evt.cy.data(node.data);
 
     const gr = expandNode([evt.target.id()], graphData);
-    gr.then((v) => setGraphData(v));
+    gr.then((v) => {console.log("setting graph data");setGraphData(v)});
     return;
   }
 
@@ -542,7 +525,7 @@ export default function Graph(props: GraphProps) {
     //expandNode(ids);
     let cacheGraph = graphData;
     let grPromise = wrapPromise(Promise.resolve(graphData), parseInt(expandDepth));
-    grPromise.then((g) => setGraphData(g));
+    grPromise.then((g) => { console.log("setGraphData"); setGraphData(g);});
     /*
     for (let i=0; i<parseInt(expandDepth); i++) {
       //const frontier = refCy.nodes().filter('[expanded!="true"]');
@@ -686,7 +669,8 @@ export default function Graph(props: GraphProps) {
         cy.removeListener('cxttap');
         cy.on("tap", "node", evt => nodeTapHandler(evt));
         cy.on("cxttap", "node", evt => nodeCxttapHandler(evt));
-        
+        cy.removeListener('layoutstart');
+        cy.on("layoutstart", ()=> console.log('layoutstart'));
         if (pathStartNode != "" ) {
 
           const weightFn = (e:EdgeCollection)=>{ 
