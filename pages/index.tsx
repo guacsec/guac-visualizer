@@ -35,8 +35,9 @@ function processDataForCytoscape (data : any) : [string | undefined, any] {
 
   });
 
-  const pVers = nodes.filter((v)=> v.data.type == "PackageVersion");
-  if (pVers.length == 1) {
+  const pVers = nodes.filter((v)=> v.data.type == "PackageName");
+  console.log(pVers);
+  if (pVers.length >0) {
     startNode = pVers[0].data.id;
   }
 

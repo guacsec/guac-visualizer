@@ -7,6 +7,7 @@ import cola from 'cytoscape-cola';
 import dagre from 'cytoscape-dagre';
 
 
+import { graphStyleSheet } from './style';
 import { useState, useEffect } from 'react';
 import cytoscape, { EdgeCollection, EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
@@ -55,214 +56,7 @@ function gRepToData (d : GraphRep) :GraphData {
   return g;
 }
 
-const defaultGraphData: GraphData = {
-  nodes: [
-    { data: { id: "1", label: "Identity 1", type: "id" } },
-    { data: { id: "2", label: "Software 1", type: "software" } },
-    { data: { id: "3", label: "Identity 2", type: "id" } },
-    { data: { id: "4", label: "Software 2", type: "software" } },
-    { data: { id: "5", label: "Software 3", type: "software" } },
-    { data: { id: "6", label: "Identity 3", type: "id" } },
-    { data: { id: "7", label: "Software 5", type: "software" } },
-    { data: { id: "8", label: "Software 6", type: "software" } },
-    { data: { id: "9", label: "Software 7", type: "software" } },
-    { data: { id: "10", label: "Software 8", type: "software" } },
-    { data: { id: "11", label: "Software 9", type: "software" } },
-    { data: { id: "12", label: "Identity 3", type: "id" } },
-    { data: { id: "13", label: "Software 10", type: "software" } }
-  ],
-  edges: [
-    {
-      data: { source: "1", target: "2", label: "Node2" }
-    },
-    {
-      data: { source: "3", target: "4", label: "Node4" }
-    },
-    {
-      data: { source: "3", target: "5", label: "Node5" }
-    },
-    {
-      data: { source: "6", target: "5", label: " 6 -> 5" }
-    },
-    {
-      data: { source: "6", target: "7", label: " 6 -> 7" }
-    },
-    {
-      data: { source: "6", target: "8", label: " 6 -> 8" }
-    },
-    {
-      data: { source: "6", target: "9", label: " 6 -> 9" }
-    },
-    {
-      data: { source: "3", target: "13", label: " 3 -> 13" }
-    }
-  ]
-};
-
-const defaultStyleSheet = [
-  {
-    selector: "node",
-    style: {
-      backgroundColor: "#4a56a6",
-      width: 30,
-      height: 30,
-      label: "data(label)",
-      "overlay-padding": "6px",
-      "z-index": "10",
-      //text props
-      "text-outline-color": "#4a56a6",
-      "text-outline-width": "2px",
-      color: "white",
-      fontSize: 20
-    }
-  },
-  {
-    selector: "node:selected",
-    style: {
-      "border-width": "6px",
-      "border-color": "#AAD8FF",
-      //"border-opacity": "0.5",
-      //"background-color": "#77828C",
-      width: 30,
-      height: 30,
-      //text props
-      "text-outline-color": "#77828C",
-      "text-outline-width": 8
-    }
-  },
-  {
-    selector: "node[type='software']",
-    style: {
-      shape: "rectangle"
-    }
-  },
-  {
-    selector: "node[type='IsDependency']",
-    style: {
-      shape: "rectangle",
-      "background-color": "yellow",
-    }
-  },
-  {
-    selector: "node[type='IsOccurrence']",
-    style: {
-      shape: "square",
-      "background-color": "pink",
-    }
-  },
-  {
-    selector: "node[type='Source']",
-    style: {
-      "background-color": "green",
-    }
-  },
-  {
-    selector: "node[type='Artifact']",
-    style: {
-      "background-color": "magenta",
-    }
-  },
-  {
-    selector: "node[type='CertifyPkg']",
-    style: {
-      shape: "triangle",
-      "background-color": "white",
-    }
-  },
-  {
-    selector: "node[type='PackageVersion']",
-    style: {
-      shape: "hexagon",
-      "background-color": "orange",
-    }
-  },
-  {
-    selector: "node[type='PackageName']",
-    style: {
-      shape: "hexagon",
-      "background-color": "purple",
-    }
-  },
-  {
-    selector: "node[type='id']",
-    style: {
-      shape: "triangle",
-      "background-color": "#EB3434"
-    }
-  },
-  {
-    selector: "edge",
-    style: {
-      width: 3,
-      'font-size': 5,
-      'text-rotation': 'autorotate',
-      'text-margin-y': '-10px',
-      'text-background-color': '#fff',
-      'text-background-opacity': 0.7,
-      'text-background-padding': '1px',
-      'text-background-shape': 'roundrectangle',
-      'text-border-color': '#000',
-      'text-border-opacity': 0.1,
-      'text-border-width': '0.5px',
-      "label": "data(label)",
-      "line-color": "#AAD8FF",
-      "target-arrow-color": "#6774cb",
-      "target-arrow-shape": "triangle",
-      "curve-style": "haystack"
-    }
-  },
-  {
-    selector: "node[expanded!='true']",
-    style: {
-      "border-width": "6px",
-      "border-color": "#AAD8FF",
-      "border-opacity": "0.5",
-      width: 30,
-      height: 30,
-    }
-  },
-  {
-    selector: "edge.path",
-    style: {
-      "line-color": "red",
-      width: 5,
-      "z-index": 1,
-    }
-  },
-  {
-    selector: "node.path",
-    style: {
-      width: 50,
-      height: 50,
-    }
-  },
-  {
-    selector: "node.pathTarget",
-    style: {
-      width: 100,
-      height: 100,
-    }
-  },
-  {
-    selector: "node.pathSource",
-    style: {
-      width: 100,
-      height: 100,
-    }
-  },
-  {
-    selector: "node.not-path",
-    style: {
-      opacity: 0,
-    }
-  },
-  {
-    selector: "edge.not-path",
-    style: {
-      opacity: 0,
-    }
-  },
-];
+const defaultStyleSheet = graphStyleSheet;
 
 let refCy :cytoscape.Core;
 export default function Graph(props: GraphProps) {
@@ -414,7 +208,7 @@ export default function Graph(props: GraphProps) {
   async function expandNode (ids : string[], graphRep : GraphRep | undefined) : Promise<GraphRep> {
 
     let addedNodes : Node[][] =[];
-    let resetExpand : string[][] =[];
+    let resetExpand : Set<string> = new Set();
     let addedEdges : Edge[][] =Array(ids.length);
     let ret: GraphRep;
 
@@ -436,7 +230,6 @@ export default function Graph(props: GraphProps) {
           const neighbors = result.data.neighbors;
           addedNodes[idx] =[];
           addedEdges[idx] = [];
-          resetExpand[idx] = [];
 
           // have filter here on type of nodes
           console.log("processing neighbors");
@@ -447,6 +240,11 @@ export default function Graph(props: GraphProps) {
               if (!nFilter(n as gqlNode)) { return };
               let gd = ParseNode(n as gqlNode);
 
+
+              if (n.__typename == "IsDependency") {
+                const nn : IsDependency = n as IsDependency;
+                resetExpand.add(nn.dependentPackage.namespaces[0].names[0].id);
+              }
               if (gd == undefined) {
                 return;
               }
@@ -464,13 +262,13 @@ export default function Graph(props: GraphProps) {
           }
         });
 
-        resetExpand.forEach((l)=> l.forEach((pid)=> {
+        resetExpand.forEach((pid)=> {
           const origNode = nMap.get(pid);
           if (origNode != undefined) {
             origNode.data.expanded = "false";
             nMap.set(pid, origNode);
           }
-        }));
+        });
 
 
         // move outside so that it can be done in a single call event for frontier
