@@ -7,7 +7,7 @@ import useSWR from 'swr'
 import client from 'apollo/client'
 import { Node, Edge, ParseNode } from 'app/ggraph'
 import SBOMViewer from '@/app/sbom';
-import { PackageQualifier, PackageVersion, GetPkgVersionsDocument,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageQualifier} from '../gql/__generated__/graphql';
+import { PackageQualifier, PackageVersion, GetPkgTypesDocument, GetPkgNamesDocument, GetPkgNamespacesDocument, GetPkgVersionsDocument,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageQualifier} from '../gql/__generated__/graphql';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -53,13 +53,29 @@ export default function Home() {
 
 
   // Package Selectors
+  const defaultNull = "<NULL>";
 
-  const [selectPackageType, setSelectPackageType] = useState("<NULL>");
-  const [selectPackageNamespace, setSelectPackageNamespace] = useState("<NULL>");
-  const [selectPackageName, setSelectPackageName] = useState("<NULL>");
-  const [selectPackageVersion, setSelectPackageVersion] = useState("<NULL>");
+  const [selectPackageType, setSelectPackageType] = useState(defaultNull);
+  const [selectPackageNamespace, setSelectPackageNamespace] = useState(defaultNull);
+  const [selectPackageName, setSelectPackageName] = useState(defaultNull);
+  const [selectPackageVersion, setSelectPackageVersion] = useState(defaultNull);
 
-  const queryReturn = useQuery(GetPkgVersionsDocument, { variables: {}});
+  let query = GetPkgTypesDocument;
+  let queryVariables = {};
+  if (selectPackageType != defaultNull) {
+    query = GetPkgNamespacesDocument;
+    queryVariables.type = selectPackageType;
+  }
+  if (selectPackageNamespace != defaultNull) {
+    query = GetPkgNamesDocument;
+    queryVariables.namespace = selectPackageNamespace;
+  }
+  if (selectPackageName != defaultNull) {
+    query = GetPkgVersionsDocument;
+    queryVariables.name = selectPackageName;
+  }
+  
+  const queryReturn = useQuery(GetPkgVersionsDocument, { variables: queryVariables});
   const pkgLoading = queryReturn.loading;
   const pkgError  = queryReturn.error;
   const pkgData = queryReturn.data;
@@ -101,12 +117,12 @@ export default function Home() {
   function initGraph () {
     setData({packages: []});
     let spec = {};
-    if (selectPackageType != "<NULL>"){
+    if (selectPackageType != defaultNull){
       spec.type = selectPackageType;
 
-      if (selectPackageNamespace != "<NULL>") {
+      if (selectPackageNamespace != defaultNull) {
         spec.namespace = selectPackageNamespace;
-        if (selectPackageName != "<NULL>") {
+        if (selectPackageName != defaultNull) {
           spec.name = selectPackageName;
         }
       }
@@ -142,31 +158,31 @@ export default function Home() {
     <>
       <div>
         <h1>GUAC Visualizer</h1>
-        <select value={selectPackageType} onChange={(e)=> {setSelectPackageType(e.target.value); setSelectPackageNamespace("<NULL>"); setSelectPackageName("<NULL>"); setSelectPackageVersion("<NULL>");}}>
-          <option key="<NULL>" value="<NULL>"></option>
+        <select value={selectPackageType} onChange={(e)=> {setSelectPackageType(e.target.value); setSelectPackageNamespace(defaultNull); setSelectPackageName(defaultNull); setSelectPackageVersion(defaultNull);}}>
+          <option key={defaultNull} value={defaultNull}></option>
           {([...packageTrie]).map(([k,v]) => <option key={k}>{k}</option>)}
         </select>
         
         
-        {selectPackageType!="<NULL>" && 
-          <select value={selectPackageNamespace} onChange={(e)=> {setSelectPackageNamespace(e.target.value); setSelectPackageName("<NULL>"); setSelectPackageVersion("<NULL>");}}>
-            <option key="<NULL>" value="<NULL>"></option>
+        {selectPackageType!=defaultNull && 
+          <select value={selectPackageNamespace} onChange={(e)=> {setSelectPackageNamespace(e.target.value); setSelectPackageName(defaultNull); setSelectPackageVersion(defaultNull);}}>
+            <option key={defaultNull} value={defaultNull}></option>
             {([...packageTrie.get(selectPackageType)]).map(([k,v]) => <option key={k}>{k}</option>)}
           </select>
         }
-        {selectPackageNamespace!="<NULL>" && 
-          <select value={selectPackageName} onChange={(e)=> {setSelectPackageName(e.target.value); setSelectPackageVersion("<NULL>");}}>
-            <option key="<NULL>" value="<NULL>"></option>
+        {selectPackageNamespace!=defaultNull && 
+          <select value={selectPackageName} onChange={(e)=> {setSelectPackageName(e.target.value); setSelectPackageVersion(defaultNull);}}>
+            <option key={defaultNull} value={defaultNull}></option>
             {([...packageTrie.get(selectPackageType).get(selectPackageNamespace)]).map(([k,v]) => <option key={k}>{k}</option>)}
           </select>
         }
-        {selectPackageName!="<NULL>" && 
+        {selectPackageName!=defaultNull && 
           <select value={selectPackageVersion} onChange={(e)=> setSelectPackageVersion(e.target.value)}>
-            <option key="<NULL>" value="<NULL>"></option>
+            <option key={defaultNull} value={defaultNull}></option>
             {([...packageTrie.get(selectPackageType).get(selectPackageNamespace).get(selectPackageName)]).map(([k,v]) => <option key={k}>{toVersionString(v)}</option>)}
           </select>
         }
-        {selectPackageVersion != "<NULL>" && <button onClick={e => initGraph()}>submit</button>}
+        {selectPackageVersion != defaultNull && <button onClick={e => initGraph()}>submit</button>}
         <br />
         
         <textarea name="details-text" rows={10} cols={50} value={JSON.stringify(data)} onChange={() => {}} />
