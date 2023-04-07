@@ -27,6 +27,7 @@ Cytoscape.use(cola);
 type GraphProps = {
   graphData?: GraphData;
   layout?: string;
+  startNode?: string;
   writeDetails?: (x: any) => void;
 };
 
@@ -278,7 +279,7 @@ export default function Graph(props: GraphProps) {
 
   // PATH STUFF
   const [pathStartToggle, setPathStartToggle] = useState(false);
-  const [pathStartNode, setPathStartNode] = useState("");
+  const [pathStartNode, setPathStartNode] = useState(props.startNode? props.startNode : "");
   const [pathEndToggle, setPathEndToggle] = useState(false);
   const [pathEndNode, setPathEndNode] = useState("");
   const [hideNonPathNodes, setHideNonPathNodes] = useState(false);
@@ -290,14 +291,8 @@ export default function Graph(props: GraphProps) {
 
   // GRAPH STUFF
   const [styleSheet, setStyleSheet] = useState(defaultStyleSheet);
-  const [graphData, setGraphData] = useState({nodes: new Map(), edges:new Map()});
+  const [graphData, setGraphData] = useState(props.graphData? gDataToRep(props.graphData): {nodes: new Map(), edges:new Map()});
   //const graphData = props.graphData;
-  
-  useEffect( () => {
-    if (props.graphData && props.graphData.nodes.length > 0 && graphData.nodes.size ==0) {
-      setGraphData(gDataToRep(props.graphData));
-    }
-  }, [props.graphData, graphData]);
   
 
   //console.log("gdata", graphData);
@@ -313,7 +308,8 @@ export default function Graph(props: GraphProps) {
     animate: !headless,
     animationDuration: 1000,
     avoidOverlap: true,
-    ready: ()=>setLoading(false),
+    ready: ()=>{setLoading(false); console.log("layout ready")},
+    stop: ()=>{setLoading(false); console.log("layout stop")},
     nodeDimensionsIncludeLabels: false,
   }
   //refCy.layout(layout).run()
@@ -617,6 +613,9 @@ export default function Graph(props: GraphProps) {
   return (
     <>
     <h2>{loading? "Loading" : ""}</h2>
+    <div key="controls" style={{
+      float: "left",
+    }}>
     <div id="expander">
       <h3>node expander</h3>
       <select value={expandOptions}  onChange={e => setExpandOptions(e.target.value)}>
@@ -665,7 +664,8 @@ export default function Graph(props: GraphProps) {
         pathElements.layout(layout).run();
       }
       }}>layout run</button>
-
+  {/* end controls block */}
+  </div> 
 
     <CytoscapeComponent
       elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
@@ -686,6 +686,7 @@ export default function Graph(props: GraphProps) {
         cy.removeListener('cxttap');
         cy.on("tap", "node", evt => nodeTapHandler(evt));
         cy.on("cxttap", "node", evt => nodeCxttapHandler(evt));
+        
         if (pathStartNode != "" ) {
 
           const weightFn = (e:EdgeCollection)=>{ 
@@ -748,6 +749,7 @@ export default function Graph(props: GraphProps) {
         } else {
           cy.elements().filter(".not-path").removeClass("not-path");
         }
+        
         //cy.batch(() => {cy.layout(layout).run()});
       }}
     />

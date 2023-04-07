@@ -5,7 +5,7 @@ import { gql, useQuery, useLazyQuery } from '@apollo/client'
 import styles from "../styles/Home.module.css";
 import useSWR from 'swr'
 import client from 'apollo/client'
-import { Node, Edge, ParseNode } from 'app/ggraph'
+import { Node, Edge, ParseNode, parsePackage } from 'app/ggraph'
 import SBOMViewer from '@/app/sbom';
 import { PackageQualifier, PackageVersion, GetPkgTypesDocument, GetPkgNamesDocument, GetPkgNamespacesDocument, GetPkgVersionsDocument,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageQualifier} from '../gql/__generated__/graphql';
 
@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 // TODO (mlieberman85): Some of the below still requires type definitions.
 
-const processDataForCytoscape = (data) => {
+function processDataForCytoscape (data : any) : [string | undefined, any] {
 
   
   //console.log("GQL DATA:", data);
@@ -21,11 +21,12 @@ const processDataForCytoscape = (data) => {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
 
+  let startNode : string = undefined;
   data.packages.forEach((p :Package, index) => {
-    const sourceNodeId = `pkg-${index}`;
-    const targetNodeId = `depPkg-${index}`;
 
-    let gd = ParseNode(p);
+    const gd  = ParseNode(p);
+    //let [gd, target] = parsePackage(p);
+    //startNode = target.data.id;
     if (gd!= undefined) {
       nodes = [...nodes, ...gd.nodes];
       edges = [...edges, ...gd.edges];
@@ -34,8 +35,13 @@ const processDataForCytoscape = (data) => {
 
   });
 
+  const pVers = nodes.filter((v)=> v.data.type == "PackageVersion");
+  if (pVers.length == 1) {
+    startNode = pVers[0].data.id;
+  }
 
-  return { nodes, edges };
+
+  return [startNode, { nodes, edges }];
 };
 
 function toVersionString (v :PackageVersion) {
@@ -219,15 +225,14 @@ export default function Home() {
           style={{
 //            border: "1px solid",
             backgroundColor: "#F0F0F0",
-            
           }}
         >
           {/* skip sending in data which will be delegated to the graph object by passing in a way to retrieve the data instead */}
           {
-            graphData.map((d)=>
-            <Graph key={d.key} layout="dagre" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(d.data)} />
-            //<Graph layout="dagre" writeDetails={writeDetailsHandler} graphData={processDataForCytoscape(d)} />
-            )
+            graphData.map((d)=> {
+            const [start, graphData] = processDataForCytoscape(d.data);
+            return <Graph key={d.key} layout="dagre" writeDetails={writeDetailsHandler} startNode={start} graphData={graphData} />
+          })
           } 
         </div>
       </div>
