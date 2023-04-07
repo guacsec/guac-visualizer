@@ -16,7 +16,7 @@ const inter = Inter({ subsets: ['latin'] });
 const processDataForCytoscape = (data) => {
 
   
-  console.log("GQL DATA:", data);
+  //console.log("GQL DATA:", data);
 
   let nodes: Node[] = [];
   let edges: Edge[] = [];
@@ -42,6 +42,7 @@ function toVersionString (v :PackageVersion) {
   return v.version + JSON.stringify(v.qualifiers.map((l :PackageQualifier)=>l.key +"=" + l.value));
 
 }
+let packageTrie = new Map();
 
 export default function Home() {
   // TODO (mlieberman85): Validate if SWR is better in this use case than alternatives like react query
@@ -75,34 +76,38 @@ export default function Home() {
     queryVariables.name = selectPackageName;
   }
   
-  const queryReturn = useQuery(GetPkgVersionsDocument, { variables: queryVariables});
+  const queryReturn = useQuery(query, { variables: {spec: queryVariables}});
   const pkgLoading = queryReturn.loading;
   const pkgError  = queryReturn.error;
   const pkgData = queryReturn.data;
   //console.log("ALL PACKAGES", allPackages);
   
   //console.log("ALL data", allPackages.data.packages);
-  let packageTrie = new Map();
+  
 
   if (!pkgError && !pkgLoading) {
   
     pkgData.packages.forEach((t)=> {
-      const tMap = new Map();
-      t.namespaces.forEach((ns) => {
-        const nsMap = new Map();
-        ns.names.forEach((n) => {
-          const nMap = new Map();
-          n.versions.forEach((version)=> {
+      
+      const tMap = packageTrie.has(t.type)? packageTrie.get(t.type) : new Map();
+      packageTrie.set(t.type, tMap);
+
+      (t.namespaces != undefined) && t.namespaces.forEach((ns) => {
+        const nsMap = tMap.has(ns.namspace)? tMap.get(ns.namespace) : new Map();
+        tMap.set(ns.namespace, nsMap);
+
+        (ns.names != undefined) && ns.names.forEach((n) => {
+          const nMap = nsMap.has(n.name)? nsMap.get(n.name) : new Map();
+          nsMap.set(n.name, nMap);
+
+          (n.versions != undefined) && n.versions.forEach((version)=> {
             nMap.set(toVersionString(version), version)
           });
-          nsMap.set(n.name, nMap);
         })
-        tMap.set(ns.namespace, nsMap);
       });
-      packageTrie.set(t.type, tMap);
     })
 
-    console.log("PKGTRIE:", packageTrie);
+    //console.log("PKGTRIE:", packageTrie);
   }
 
 
@@ -148,6 +153,28 @@ export default function Home() {
 
   }
 
+  function getPkgData(trieDepth : string) : Map<any,any> {
+      if (trieDepth == "type") {
+        return packageTrie
+      }
+
+      
+      const nsMap = packageTrie.has(selectPackageType)? packageTrie.get(selectPackageType) : new Map();
+      if (trieDepth == "namespace") {
+        return nsMap;
+      }
+
+      const nameMap = nsMap.has(selectPackageNamespace)? nsMap.get(selectPackageNamespace) : new Map();
+      if (trieDepth == "name"){
+        return nameMap;
+      }
+
+      if (nameMap.has(selectPackageName)) {
+        return nameMap.get(selectPackageName);
+      } else {
+        return new Map();
+      }
+  }
     
   
 
@@ -160,26 +187,26 @@ export default function Home() {
         <h1>GUAC Visualizer</h1>
         <select value={selectPackageType} onChange={(e)=> {setSelectPackageType(e.target.value); setSelectPackageNamespace(defaultNull); setSelectPackageName(defaultNull); setSelectPackageVersion(defaultNull);}}>
           <option key={defaultNull} value={defaultNull}></option>
-          {([...packageTrie]).map(([k,v]) => <option key={k}>{k}</option>)}
+          {[...getPkgData("type")].map(([k,v]) => <option key={k}>{k}</option>)}
         </select>
         
         
         {selectPackageType!=defaultNull && 
           <select value={selectPackageNamespace} onChange={(e)=> {setSelectPackageNamespace(e.target.value); setSelectPackageName(defaultNull); setSelectPackageVersion(defaultNull);}}>
             <option key={defaultNull} value={defaultNull}></option>
-            {([...packageTrie.get(selectPackageType)]).map(([k,v]) => <option key={k}>{k}</option>)}
+            {([...getPkgData("namespace")]).map(([k,v]) => <option key={k}>{k}</option>)}
           </select>
         }
         {selectPackageNamespace!=defaultNull && 
           <select value={selectPackageName} onChange={(e)=> {setSelectPackageName(e.target.value); setSelectPackageVersion(defaultNull);}}>
             <option key={defaultNull} value={defaultNull}></option>
-            {([...packageTrie.get(selectPackageType).get(selectPackageNamespace)]).map(([k,v]) => <option key={k}>{k}</option>)}
+            {([...getPkgData("name")]).map(([k,v]) => <option key={k}>{k}</option>)}
           </select>
         }
         {selectPackageName!=defaultNull && 
           <select value={selectPackageVersion} onChange={(e)=> setSelectPackageVersion(e.target.value)}>
             <option key={defaultNull} value={defaultNull}></option>
-            {([...packageTrie.get(selectPackageType).get(selectPackageNamespace).get(selectPackageName)]).map(([k,v]) => <option key={k}>{toVersionString(v)}</option>)}
+            {([...getPkgData("version")]).map(([k,v]) => <option key={k}>{toVersionString(v)}</option>)}
           </select>
         }
         {selectPackageVersion != defaultNull && <button onClick={e => initGraph()}>submit</button>}

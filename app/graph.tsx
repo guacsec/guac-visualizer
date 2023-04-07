@@ -669,7 +669,7 @@ export default function Graph(props: GraphProps) {
 
     <CytoscapeComponent
       elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
-      style={{ width: width, height: height , float: "left"}}
+      style={{ width: width, height: height , float: "right"}}
       zoomingEnabled={true}
       maxZoom={3}
       minZoom={0.1}
@@ -677,6 +677,8 @@ export default function Graph(props: GraphProps) {
       boxSelectionEnabled={true}
       layout={layout}
       stylesheet={styleSheet}
+      hideEdgesOnViewport={true}
+      textureOnViewport={true}
       headless={headless}
       cy={cy => {
         refCy = cy;
