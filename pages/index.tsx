@@ -219,9 +219,9 @@ export default function Home() {
         {selectPackageVersion != defaultNull && <button onClick={e => initGraph()}>submit</button>}
         <br />
         
-        <textarea name="details-text" rows={10} cols={50} value={JSON.stringify(data)} onChange={() => {}} />
+        <textarea name="details-text" rows={3} cols={50} value={JSON.stringify(data)} onChange={() => {}} />
 
-        <textarea name="details-text" rows={10} cols={50} value={detailsText} onChange={e => setDetailsText(e.target.value)}/>
+        <textarea name="details-text" rows={3} cols={50} value={detailsText} onChange={e => setDetailsText(e.target.value)}/>
         <div
           style={{
 //            border: "1px solid",

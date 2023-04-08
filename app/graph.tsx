@@ -7,8 +7,8 @@ import cola from 'cytoscape-cola';
 import dagre from 'cytoscape-dagre';
 
 
-import { graphStyleSheet } from './style';
-import { useState, useEffect } from 'react';
+import { graphStyleSheet , hiddenGraphStyleSheet } from './style';
+import { useState, useEffect, useMemo, memo} from 'react';
 import cytoscape, { EdgeCollection, EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
@@ -24,6 +24,16 @@ Cytoscape.use(dagre);
 
 
 Cytoscape.use(cola);
+/*
+const MemoedGraph = memo(CytoscapeComponent, (prev, next)=> {
+  console.log(prev.elements,next.elements);
+  console.log(next);
+  const check = JSON.stringify(prev.elements) == JSON.stringify(next.elements);
+  if (check) { next.cy(refCy); }
+  console.log("memo check",check);
+  return false;
+});
+*/
 
 type GraphProps = {
   graphData?: GraphData;
@@ -64,11 +74,14 @@ export default function Graph(props: GraphProps) {
   // STATES
   const [width, setWidth] = useState("80%");
   const [height, setHeight] = useState("800px");
+  const [frontierEmpty, setFrontierEmpty] = useState(false);
+  const [expandedDepth, setExpandedDepth] = useState(0);
   const [expandOptions, setExpandOptions] = useState("expandDepMetadata");
   const [dataCount, setDataCount] = useState(0);
   const [expandDepth, setExpandDepth] = useState("3");
   const [loading, setLoading] = useState(false);
   const headless = false;
+  const [paths, setPaths] = useState<cytoscape.CollectionReturnValue[]>([]);
 
 
   // PATH STUFF
@@ -88,6 +101,12 @@ export default function Graph(props: GraphProps) {
   const [graphData, setGraphData] = useState(props.graphData? gDataToRep(props.graphData): {nodes: new Map(), edges:new Map()});
   //const graphData = props.graphData;
   
+  const processedGraphData = useMemo(() => {
+    console.log("memo process graphdata");
+    return CytoscapeComponent.normalizeElements(gRepToData(graphData));
+  }, [graphData]);
+
+  const showGraph = processedGraphData.length <= 3000;
 
   //console.log("gdata", graphData);
   
@@ -99,7 +118,7 @@ export default function Graph(props: GraphProps) {
     directed: true,
     padding: 50,
     idealEdgeLength: 100,
-    animate: !headless,
+    animate: true,
     animationDuration: 1000,
     avoidOverlap: true,
     layoutstart: () => {setLoading(true); console.log("layout start")},
@@ -129,8 +148,7 @@ export default function Graph(props: GraphProps) {
     if (pathEndToggle) {
       setPathEndNode(evt.target.id());
       setPathEndToggle(false);
-  }
-    //expandNode2([evt.target.id()]);
+    }
     if (props.writeDetails != undefined) {
       props.writeDetails(node.data());
     }    
@@ -314,6 +332,11 @@ export default function Graph(props: GraphProps) {
       return wrapPromise(p, depth-1)
        .then((graph) => {
          const frontier = [...graph.nodes].map(([_,v])=> v).filter((v)=> v.data.expanded != "true")
+         if (frontier.length == 0) {
+          console.log("frontier empty")
+          setFrontierEmpty(true)
+          return graph;
+         }
          const ids = frontier.map((n)=>n.data.id);
          console.log("frontier", ids);
          return expandNode(ids, graph);
@@ -387,13 +410,72 @@ export default function Graph(props: GraphProps) {
 
 
   }
+  const weightFn = (e:EdgeCollection)=>{ 
+    // Set weight on software tree edges as lower weight since we favor finding the path that goes through
+    // evidence instead of going through the sw tree.
+    let badEdgeSet = new Set([
+      "pkgVersion", "pkgName", "pkgNs",
+      "srcVersion", "srcName", "srcNs",
+    ])
+    if (badEdgeSet.has(e[0].data().label)) {
+      return 100;
+    } else {
+      return 1;
+    }
+  }
 
+  function headlessPath() {
+    const cy = refCy;
+    if (cy == undefined) { return; }
+    
+    cy.elements().removeClass(['path','pathSource', 'pathTarget']);
+
+    let bf = cy.elements().bellmanFord({ root: "#" + pathStartNode, weight: weightFn, directed: false});
+    const filterSet = new Set(explorerList.map((v)=> v.value));
+    const targetNodes = cy.nodes().filter((n)=> { return filterSet.has(n.data().type); });
+    cy.getElementById(pathStartNode).addClass('pathSource');
+
+    console.log("bf", targetNodes);
+    let paths : cytoscape.CollectionReturnValue[] = [];
+    targetNodes.forEach((n)=> {
+      const t = n.id();
+      const path = bf.pathTo(n);
+
+      n.addClass('pathTarget');
+      path.addClass('path');
+      //path.select();
+      paths = [...paths,path];
+    });
+    console.log(paths);
+    setPaths(paths);
+
+  }
+
+  function collectionToPathString (p : cytoscape.CollectionReturnValue) {
+    return p.filter(e => e.isEdge()).map(e => e.id()).join(",")
+  }
 
   
   console.log(graphData);
   return (
     <>
+    <h1>Node count: {graphData.nodes.size}, Edge count: {graphData.edges.size}</h1>
+    <h2>{frontierEmpty && "Frontier is empty"}</h2>
+    {!showGraph && 
+    <div>
+      <h4>Graph is too big to show on Web UI, you may still perform operations on it but it will not show</h4>
+      <p>For example, the path controls will still work, with the exception that finding the path will require clicking
+        the below button, which will show paths directly here.
+      </p>
+      <p>These path strings can then be opened in the graph viewer</p>
+      <button onClick={headlessPath}>find paths</button>
+      <p>explore paths (limited to 20):</p>
+      {paths.filter((_,i)=> i< 20).map((p,i)=> <p key={"path"+i}>
+        {collectionToPathString(p)}
+        </p>)}
+    </div>}
     <h2>{loading? "Loading" : ""}</h2>
+    
     <div key="controls" style={{
       float: "left",
     }}>
@@ -433,6 +515,8 @@ export default function Graph(props: GraphProps) {
       <h3>path shared controls</h3>
       <button onClick={clearPath}>CLEAR ALL</button>
       <button onClick={hideNonPath}>Hide non-path nodes</button>
+
+      
     </div>
     <button onClick={() =>{
       const pathElements = refCy.elements(".path");
@@ -447,9 +531,9 @@ export default function Graph(props: GraphProps) {
       }}>layout run</button>
   {/* end controls block */}
   </div> 
-
+  { (showGraph) &&
     <CytoscapeComponent
-      elements={CytoscapeComponent.normalizeElements(gRepToData(graphData))}
+      elements={processedGraphData}
       style={{ width: width, height: height , float: "right"}}
       zoomingEnabled={true}
       maxZoom={3}
@@ -460,7 +544,7 @@ export default function Graph(props: GraphProps) {
       stylesheet={styleSheet}
       hideEdgesOnViewport={true}
       textureOnViewport={true}
-      headless={headless}
+      headless={false}
       cy={cy => {
         refCy = cy;
         cy.removeListener('tap');
@@ -471,20 +555,6 @@ export default function Graph(props: GraphProps) {
         cy.on("layoutstart", ()=> console.log('layoutstart'));
         if (pathStartNode != "" ) {
 
-          const weightFn = (e:EdgeCollection)=>{ 
-            // Set weight on software tree edges as lower weight since we favor finding the path that goes through
-            // evidence instead of going through the sw tree.
-            let badEdgeSet = new Set([
-              "pkgVersion", "pkgName", "pkgNs",
-              "srcVersion", "srcName", "srcNs",
-            ])
-            if (badEdgeSet.has(e[0].data().label)) {
-              return 100;
-            } else {
-              return 1;
-            }
-          }
-
           // based on what's set, depends what type of paths we're calculating
           if (pathEndNode != "") {
             // this is pather
@@ -493,8 +563,10 @@ export default function Graph(props: GraphProps) {
             aStar.path.select();
             cy.elements().not( aStar.path ).removeClass('path');
             aStar.path.addClass('path');
+            console.log(aStar);
             cy.getElementById(pathStartNode).addClass('pathSource');
             cy.getElementById(pathEndNode).addClass('pathTarget');
+            
 
           } else if (explorerList.length > 0) {
             // this is explorer
@@ -510,10 +582,13 @@ export default function Graph(props: GraphProps) {
             targetNodes.forEach((n)=> {
               const t = n.id();
               const path = bf.pathTo(n);
+              console.log(path);
               n.addClass('pathTarget');
               path.addClass('path');
               path.select();
+              console.log("bfpath", path);
             });
+
             
           } else {
             // this is nothing
@@ -534,8 +609,20 @@ export default function Graph(props: GraphProps) {
         
         //cy.batch(() => {cy.layout(layout).run()});
       }}
+      
     />
-    <div className="checkList">
+  }
+  { (!showGraph) &&
+    <CytoscapeComponent
+      elements={processedGraphData}
+      headless={true}
+      cy={cy => {
+        refCy = cy;
+        }}
+    />
+  }
+  
+    {(showGraph) && <div className="checkList">
     <div className="title">Highlight nodes</div>
     <div className="list-container">
       {checkList.map((item, index) => (
@@ -545,7 +632,7 @@ export default function Graph(props: GraphProps) {
         </div>
       ))}
     </div>
-  </div>
+    </div>}
     </>
   )
 }
