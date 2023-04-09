@@ -42,7 +42,7 @@ type GraphProps = {
   writeDetails?: (x: any) => void;
 };
 
-type GraphRep = {
+export type GraphRep = {
   nodes : Map<string, Node>;
   edges: Map<string, Edge>;
 }

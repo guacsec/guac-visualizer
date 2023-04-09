@@ -8,43 +8,13 @@ import client from 'apollo/client'
 import { Node, Edge, ParseNode, parsePackage } from 'app/ggraph'
 import SBOMViewer from '@/app/sbom';
 import { useRouter } from 'next/router';
+import {GraphData, Node, Edge} from "../../app/ggraph";
 import { GetNodeDocument, Node as gqlNode, PackageQualifier, PackageVersion, GetPkgTypesDocument, GetPkgNamesDocument, GetPkgNamespacesDocument, GetPkgVersionsDocument,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageQualifier} from '../../gql/__generated__/graphql';
 
 const inter = Inter({ subsets: ['latin'] });
 
 // TODO (mlieberman85): Some of the below still requires type definitions.
 
-function processDataForCytoscape (data : any) : [string | undefined, any] {
-
-  
-  //console.log("GQL DATA:", data);
-
-  let nodes: Node[] = [];
-  let edges: Edge[] = [];
-
-  let startNode : string = undefined;
-  data.packages.forEach((p :Package, index) => {
-
-    const gd  = ParseNode(p);
-    //let [gd, target] = parsePackage(p);
-    //startNode = target.data.id;
-    if (gd!= undefined) {
-      nodes = [...nodes, ...gd.nodes];
-      edges = [...edges, ...gd.edges];
-    }
-    // Create nodes for package and dependentPackage
-
-  });
-
-  const pVers = nodes.filter((v)=> v.data.type == "PackageName");
-  console.log(pVers);
-  if (pVers.length >0) {
-    startNode = pVers[0].data.id;
-  }
-
-
-  return [startNode, { nodes, edges }];
-};
 
 function toVersionString (v :PackageVersion) {
   return v.version + JSON.stringify(v.qualifiers.map((l :PackageQualifier)=>l.key +"=" + l.value));
@@ -56,10 +26,6 @@ export default function Home() {
 
   const router = useRouter();
   const {path} = router.query;
-  
-
-  
-  
 
   // TODO (mlieberman85): Validate if SWR is better in this use case than alternatives like react query
   const [detailsText, setDetailsText] = useState("detailsText");
@@ -92,8 +58,10 @@ export default function Home() {
       }
     }
   
-    const processedPaths = paths.map(p => JSON.parse(p));
+    let processedPaths = paths.map(p => JSON.parse(p));
+    processedPaths = processedPaths.map(l => l.map((x:number)=> x.toString()))
     console.log(processedPaths);  
+    // JSON parses as int[] want it to be string[]
     setInputPath(processedPaths);
   }, [path]);
 
@@ -137,39 +105,19 @@ export default function Home() {
     setDetailsText(JSON.stringify(x,null,2));
 
   }
-
-  function getPkgData(trieDepth : string) : Map<any,any> {
-      if (trieDepth == "type") {
-        return packageTrie
-      }
-
-      
-      const nsMap = packageTrie.has(selectPackageType)? packageTrie.get(selectPackageType) : new Map();
-      if (trieDepth == "namespace") {
-        return nsMap;
-      }
-
-      const nameMap = nsMap.has(selectPackageNamespace)? nsMap.get(selectPackageNamespace) : new Map();
-      if (trieDepth == "name"){
-        return nameMap;
-      }
-
-      if (nameMap.has(selectPackageName)) {
-        return nameMap.get(selectPackageName);
-      } else {
-        return new Map();
-      }
-  }
         
   useEffect(()=>{
     console.log("update input path");
+
+    // assemble a new graph data
     
     let ret : gqlNode;
+
     async function fetchNode(nodeId :string) : Promise<gqlNode> {
       await client.query({
         query: GetNodeDocument,
         variables: {
-          nodeId: "1",
+          nodeId: nodeId,
         }
       }).then( res => {
         ret= res.data.node as gqlNode;
@@ -177,27 +125,54 @@ export default function Home() {
 
       return ret;
     }
-    
-    // assemble a new graph data
-
-    inputPath.forEach((path)=> {
-      const nodeSet : Set<string> = new Set(path);
-
-      // make a call to query the nodes and filter by set
-      const promises = path.map((nid) =>{
-          return  fetchNode(nid);
+    async function fetchNodeAndProcess(nodeId :string, nodeSet : Set<string>) :Promise<[Map<string,Node>,Map<string,Edge>]> {
+      let nodes = new Map<string, Node>();
+      let edges = new Map<string, Edge>();
+      await client.query({
+        query: GetNodeDocument,
+        variables: {
+          nodeId: nodeId,
+        }
+      }).then( res => {
+        ret= res.data.node as gqlNode;
       });
+
+      const n: gqlNode = ret;
+      const parsedGd = ParseNode(n);
       
-      Promise.all(promises).then((values)=>{
-        // add this to the graph data 
-        console.log(values);
+      // only include nodes and edges that are part of path set
+      const filteredNodes = parsedGd.nodes.filter((nn)=> nodeSet.has(nn.data.id));
+      const filteredEdges = parsedGd.edges.filter((e)=> nodeSet.has(e.data.source) && nodeSet.has(e.data.target));
+      
+      // add into a set to deduplicate
+      filteredNodes.map(nn=> nodes.set(nn.data.id,nn));
+      filteredEdges.map(e=> edges.set(e.data.id,e));
+      return [nodes, edges];
+    }
 
-      });
+    const promises = inputPath.map((path) => path.map((nid)=>fetchNodeAndProcess(nid, new Set(path))));
+    const flattenPromises = promises.flat();
 
-    });
-
-
-    // set graph data
+    Promise.all(flattenPromises).then((values)=>{
+      let nodes = new Map<string, Node>();
+      let edges = new Map<string, Edge>();
+      
+      values.forEach(([nmap,emap]) => {
+        nmap.forEach((v,k)=>nodes.set(k,v));
+        emap.forEach((v,k)=>edges.set(k,v));
+      })  
+      
+      const gd : GraphData = {
+        nodes: [...nodes.values()],
+        edges: [...edges.values()],
+      }
+    
+      console.log("settin graph data", nodes, edges, gd);
+      setGraphData([{
+        key: crypto.randomUUID(), 
+        gd: gd,
+      }]);
+    })
   }, [inputPath])
   
 
@@ -220,8 +195,8 @@ export default function Home() {
           {/* skip sending in data which will be delegated to the graph object by passing in a way to retrieve the data instead */}
           {
             graphData.map((d)=> {
-            const [start, graphData] = processDataForCytoscape(d.data);
-            return <Graph key={d.key} layout="dagre" writeDetails={writeDetailsHandler} startNode={start} graphData={graphData} />
+              console.log("redner", d.gd);
+            return <Graph key={d.key} layout="dagre" writeDetails={writeDetailsHandler} graphData={d.gd} />
           })
           } 
         </div>

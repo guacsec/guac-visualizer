@@ -1,4 +1,4 @@
-import { IsDependency,  Source,  Package, PackageNamespace, PackageName, PackageVersion ,PkgEqual, CertifyGood, Node as gqlNode, SourceNamespace, SourceName, Artifact, IsOccurrence, Builder, Osv, Ghsa, IsVulnerability, CertifyVexStatement, HashEqual, CertifyBad, CertifyScorecard, CertifyVuln, HasSourceAt, HasSbom, HasSlsa, OsvId, GhsaId, Cve, CveId} from '../gql/__generated__/graphql';
+import { IsDependency,  Source,  Package, PackageNamespace, PackageName, PackageVersion ,PkgEqual, CertifyGood, Node as gqlNode, SourceNamespace, SourceName, Artifact, IsOccurrence, Builder, Osv, Ghsa, IsVulnerability, CertifyVexStatement, HashEqual, CertifyBad, CertifyScorecard, CertifyVuln, HasSourceAt, HasSbom, HasSlsa, OsvId, GhsaId, Cve, CveId, NoVuln} from '../gql/__generated__/graphql';
 
 
 export type Node = {
@@ -92,6 +92,9 @@ export function ParseNode (n : gqlNode) : GraphData | undefined {
       break;
     case "HasSLSA":
       [gd, target] = parseHasSlsa(n);
+      break;
+    case "NoVuln":
+      [gd, target] = parseNoVuln(n);
       break;
     default:
       // not handled
@@ -204,6 +207,17 @@ export function parseOsv(n: Osv) : [GraphData, Node | undefined] {
   let target : Node | undefined = undefined;
 
   nodes = [...nodes, {data: {id: n.id, label: n.osvId, type: "Osv"}}];
+  target = nodes.at(-1);
+
+  return [ { nodes: nodes, edges: edges }, target];
+}
+
+export function parseNoVuln(n: NoVuln) : [GraphData, Node | undefined] {
+  let nodes : Node[] = [];
+  let edges : Edge[] = [];
+  let target : Node | undefined = undefined;
+
+  nodes = [...nodes, {data: {id: n.id, label: "NoVuln", type: "NoVuln"}}];
   target = nodes.at(-1);
 
   return [ { nodes: nodes, edges: edges }, target];
