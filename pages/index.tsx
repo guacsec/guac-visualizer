@@ -225,7 +225,7 @@ export default function Home() {
         <div
           style={{
 //            border: "1px solid",
-            backgroundColor: "#F0F0F0",
+            //backgroundColor: "#F0F0F0",
           }}
         >
           {/* skip sending in data which will be delegated to the graph object by passing in a way to retrieve the data instead */}

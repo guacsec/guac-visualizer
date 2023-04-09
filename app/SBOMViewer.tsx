@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { JsonViewer } from '@textea/json-viewer';
 import { useApolloClient } from '@apollo/client';
-import { TEST_QUERY } from './graphql/queries';
+/*import { TEST_QUERY } from './graphql/queries';
 
 
 
@@ -31,4 +31,4 @@ export default function SBOMViewer({ initialSBOMData }) {
         />
       </div>
     );
-  }
+  }*/
