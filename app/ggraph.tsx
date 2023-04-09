@@ -99,7 +99,10 @@ export function ParseNode (n : gqlNode) : GraphData | undefined {
       return undefined;
   }
 
-  gd.edges.forEach(e => {e.data.id = e.data.source + "->" + e.data.target});
+  gd.nodes.forEach(n => {n.id = n.data.id; n.label = n.data.label; n.type = n.data.type; n.expanded = n.data.expanded; n.data = n.data;})
+  gd.edges.forEach(e => {e.source = e.data.source; e.target = e.data.target; e.label = e.data.label})
+
+  //gd.edges.forEach(e => {e.data.id = e.data.source + "->" + e.data.target});
 
   return gd;
 }
@@ -129,11 +132,11 @@ export function parsePackage(n: Package) : [GraphData, Node | undefined] {
       ns.names.forEach((name: PackageName)=>{
         nodes = [...nodes, {data: {id: name.id, label: name.name, type: "PackageName"}}];
         edges = [...edges, {data: { source:ns.id, target:name.id, label:"pkgName"}}]
-        if (name.versions.length == 0) {
+        const v = name.versions ?? [];
+        if (v.length == 0) {
           target = nodes.at(-1);
         }
-  
-        name.versions.forEach((version: PackageVersion) => {
+        v.forEach((version: PackageVersion) => {
           nodes = [...nodes, {data: {...version, id: version.id, label: version.version, type: "PackageVersion" }}];
           edges = [...edges, {data: { source:name.id, target:version.id, label:"pkgVersion"}}]
           target = nodes.at(-1);
