@@ -1,5 +1,5 @@
 import { Inter } from '@next/font/google'
-import React, { useState, memo } from "react";
+import React, { useState, useEffect, useMemo, memo } from "react";
 import Graph from 'app/graph'
 import { gql, useQuery, useLazyQuery } from '@apollo/client'
 import styles from "../styles/Home.module.css";
@@ -7,7 +7,8 @@ import useSWR from 'swr'
 import client from 'apollo/client'
 import { Node, Edge, ParseNode, parsePackage } from 'app/ggraph'
 import SBOMViewer from '@/app/sbom';
-import { PackageQualifier, PackageVersion, GetPkgTypesDocument, GetPkgNamesDocument, GetPkgNamespacesDocument, GetPkgVersionsDocument,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageQualifier} from '../gql/__generated__/graphql';
+import { useRouter } from 'next/router';
+import { GetNodeDocument, Node as gqlNode, PackageQualifier, PackageVersion, GetPkgTypesDocument, GetPkgNamesDocument, GetPkgNamespacesDocument, GetPkgVersionsDocument,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageQualifier} from '../../gql/__generated__/graphql';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -52,12 +53,22 @@ function toVersionString (v :PackageVersion) {
 let packageTrie = new Map();
 
 export default function Home() {
+
+  const router = useRouter();
+  const {path} = router.query;
+  
+
+  
+  
+
   // TODO (mlieberman85): Validate if SWR is better in this use case than alternatives like react query
   const [detailsText, setDetailsText] = useState("detailsText");
   const [buttonHit, setButtonHit] = useState(false);
   const [requested, setRequested] = useState("{}");
   const [data, setData] = useState<GetPkgQuery>({ packages: []});
   const [graphData, setGraphData] = useState([]);
+  const [inputPath, setInputPath] = useState<string[][]>([]);
+
 
 
   // Package Selectors
@@ -68,54 +79,23 @@ export default function Home() {
   const [selectPackageName, setSelectPackageName] = useState(defaultNull);
   const [selectPackageVersion, setSelectPackageVersion] = useState(defaultNull);
 
-  let query = GetPkgTypesDocument;
-  let queryVariables = {};
-  if (selectPackageType != defaultNull) {
-    query = GetPkgNamespacesDocument;
-    queryVariables.type = selectPackageType;
-  }
-  if (selectPackageNamespace != defaultNull) {
-    query = GetPkgNamesDocument;
-    queryVariables.namespace = selectPackageNamespace;
-  }
-  if (selectPackageName != defaultNull) {
-    query = GetPkgVersionsDocument;
-    queryVariables.name = selectPackageName;
-  }
+  useEffect(()=>{
+    console.log("path change:", path)
+    let paths : string[] = [];
+
+    if (path != undefined) {
+
+      if (typeof(path) === "string") {
+        paths = [path];
+      } else { // type string[]
+        paths = path
+      }
+    }
   
-  const queryReturn = useQuery(query, { variables: {spec: queryVariables}});
-  const pkgLoading = queryReturn.loading;
-  const pkgError  = queryReturn.error;
-  const pkgData = queryReturn.data;
-  //console.log("ALL PACKAGES", allPackages);
-  
-  //console.log("ALL data", allPackages.data.packages);
-  
-
-  if (!pkgError && !pkgLoading) {
-  
-    pkgData.packages.forEach((t)=> {
-      
-      const tMap = packageTrie.has(t.type)? packageTrie.get(t.type) : new Map();
-      packageTrie.set(t.type, tMap);
-
-      (t.namespaces != undefined) && t.namespaces.forEach((ns) => {
-        const nsMap = tMap.has(ns.namspace)? tMap.get(ns.namespace) : new Map();
-        tMap.set(ns.namespace, nsMap);
-
-        (ns.names != undefined) && ns.names.forEach((n) => {
-          const nMap = nsMap.has(n.name)? nsMap.get(n.name) : new Map();
-          nsMap.set(n.name, nMap);
-
-          (n.versions != undefined) && n.versions.forEach((version)=> {
-            nMap.set(toVersionString(version), version)
-          });
-        })
-      });
-    })
-
-    //console.log("PKGTRIE:", packageTrie);
-  }
+    const processedPaths = paths.map(p => JSON.parse(p));
+    console.log(processedPaths);  
+    setInputPath(processedPaths);
+  }, [path]);
 
 
   const other = `{
@@ -144,8 +124,6 @@ export default function Home() {
       query: GetPkgDocument,
       variables: {
         spec: spec,
-
-        // spec: JSON.parse(s),
       }
     }).then( res => {
       console.log("res data", res.data);
@@ -182,6 +160,46 @@ export default function Home() {
         return new Map();
       }
   }
+        
+  useEffect(()=>{
+    console.log("update input path");
+    
+    let ret : gqlNode;
+    async function fetchNode(nodeId :string) : Promise<gqlNode> {
+      await client.query({
+        query: GetNodeDocument,
+        variables: {
+          nodeId: "1",
+        }
+      }).then( res => {
+        ret= res.data.node as gqlNode;
+      });
+
+      return ret;
+    }
+    
+    // assemble a new graph data
+
+    inputPath.forEach((path)=> {
+      const nodeSet : Set<string> = new Set(path);
+
+      // make a call to query the nodes and filter by set
+      const promises = path.map((nid) =>{
+          return  fetchNode(nid);
+      });
+      
+      Promise.all(promises).then((values)=>{
+        // add this to the graph data 
+        console.log(values);
+
+      });
+
+    });
+
+
+    // set graph data
+  }, [inputPath])
+  
 
   //const { data, error } = useSWR(TEST_QUERY, fetcher)
   //if (error) return <div>failed to load</div>
@@ -190,39 +208,12 @@ export default function Home() {
     <>
       <div>
         <h1>GUAC Visualizer</h1>
-        <select value={selectPackageType} onChange={(e)=> {setSelectPackageType(e.target.value); setSelectPackageNamespace(defaultNull); setSelectPackageName(defaultNull); setSelectPackageVersion(defaultNull);}}>
-          <option key={defaultNull} value={defaultNull}></option>
-          {[...getPkgData("type")].map(([k,v]) => <option key={k}>{k}</option>)}
-        </select>
-        
-        
-        {selectPackageType!=defaultNull && 
-          <select value={selectPackageNamespace} onChange={(e)=> {setSelectPackageNamespace(e.target.value); setSelectPackageName(defaultNull); setSelectPackageVersion(defaultNull);}}>
-            <option key={defaultNull} value={defaultNull}></option>
-            {([...getPkgData("namespace")]).map(([k,v]) => <option key={k}>{k}</option>)}
-          </select>
-        }
-        {selectPackageNamespace!=defaultNull && 
-          <select value={selectPackageName} onChange={(e)=> {setSelectPackageName(e.target.value); setSelectPackageVersion(defaultNull);}}>
-            <option key={defaultNull} value={defaultNull}></option>
-            {([...getPkgData("name")]).map(([k,v]) => <option key={k}>{k}</option>)}
-          </select>
-        }
-        {selectPackageName!=defaultNull && 
-          <select value={selectPackageVersion} onChange={(e)=> setSelectPackageVersion(e.target.value)}>
-            <option key={defaultNull} value={defaultNull}></option>
-            {([...getPkgData("version")]).map(([k,v]) => <option key={k}>{toVersionString(v)}</option>)}
-          </select>
-        }
-        {selectPackageVersion != defaultNull && <button onClick={e => initGraph()}>submit</button>}
+        <p>Input Route: {JSON.stringify(inputPath)}</p>
         <br />
-        
-        <textarea name="details-text" rows={3} cols={50} value={JSON.stringify(data)} onChange={() => {}} />
-
         <textarea name="details-text" rows={3} cols={50} value={detailsText} onChange={e => setDetailsText(e.target.value)}/>
         <div
           style={{
-//            border: "1px solid",
+            border: "1px solid",
             backgroundColor: "#F0F0F0",
           }}
         >
