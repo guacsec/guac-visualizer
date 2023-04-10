@@ -239,6 +239,7 @@ export default function Graph(props: GraphProps) {
     );
 
     await Promise.all(promises).then((values) => {
+        // TODO: make as much of this baked into the promise as well so it will run in parallel.
         console.log(values);
         let nMap : Map<string, Node> = new Map(graphRep.nodes);
         let eMap : Map<string, Edge> = new Map(graphRep.edges);
