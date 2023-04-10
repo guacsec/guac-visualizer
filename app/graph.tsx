@@ -452,7 +452,20 @@ export default function Graph(props: GraphProps) {
   }
 
   function collectionToPathString (p : cytoscape.CollectionReturnValue) {
-    return p.filter(e => e.isEdge()).map(e => e.id()).join(",")
+    
+    let pathName = "";
+    if (p.first().isNode() && p.last().isNode()) {
+      pathName = p.first().data().type + " to " + p.last().data().type + ":";
+    }
+    return pathName + p.filter(e => e.isEdge()).map(e => e.id()).join(",");
+  }
+
+  function getVisualizeLink (p : cytoscape.CollectionReturnValue) {
+    return "visualize?path=" + "[" + p.filter(e => e.isNode()).map(e => e.id()).join(",") + "]";
+  }
+
+  function pathToOutput (p : cytoscape.CollectionReturnValue) {
+    return <><p><a href={getVisualizeLink(p)} target="_blank" rel="noreferrer">[Click to visualize]   </a>{collectionToPathString(p)}</p></>
   }
 
   
@@ -470,9 +483,10 @@ export default function Graph(props: GraphProps) {
       <p>These path strings can then be opened in the graph viewer</p>
       <button onClick={headlessPath}>find paths</button>
       <p>explore paths (limited to 20):</p>
-      {paths.filter((_,i)=> i< 20).map((p,i)=> <p key={"path"+i}>
-        {collectionToPathString(p)}
-        </p>)}
+      {paths.filter((_,i)=> i< 20).map((p,i)=> 
+      <p key={"path"+i}>
+        {pathToOutput(p)}
+      </p>)}
     </div>}
     <h2>{loading? "Loading" : ""}</h2>
     

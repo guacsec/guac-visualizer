@@ -113,23 +113,13 @@ export default function Home() {
     
     let ret : gqlNode;
 
-    async function fetchNode(nodeId :string) : Promise<gqlNode> {
-      await client.query({
-        query: GetNodeDocument,
-        variables: {
-          nodeId: nodeId,
-        }
-      }).then( res => {
-        ret= res.data.node as gqlNode;
-      });
 
-      return ret;
-    }
     async function fetchNodeAndProcess(nodeId :string, nodeSet : Set<string>) :Promise<[Map<string,Node>,Map<string,Edge>]> {
       let nodes = new Map<string, Node>();
       let edges = new Map<string, Edge>();
       await client.query({
         query: GetNodeDocument,
+        fetchPolicy: "no-cache" ,
         variables: {
           nodeId: nodeId,
         }
@@ -139,6 +129,8 @@ export default function Home() {
 
       const n: gqlNode = ret;
       const parsedGd = ParseNode(n);
+      
+      console.log("parsedGD", n.id, n, parsedGd);
       
       // only include nodes and edges that are part of path set
       const filteredNodes = parsedGd.nodes.filter((nn)=> nodeSet.has(nn.data.id));
