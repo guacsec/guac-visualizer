@@ -176,7 +176,6 @@ export default function Graph(props: GraphProps) {
       const depNodes = [...graphRep.edges].map(([_,value]) => value).filter((d)=> d.data.target == startId && d.data.label == "depends_on");
       versions = new Set(depNodes.map((d) => graphRep.nodes.get(d.data.source).data.versionRange));
     }
-    console.log("versions",versions);
 
     const nFilter = (n: gqlNode) => {
       const nType = n.__typename;
@@ -204,7 +203,6 @@ export default function Graph(props: GraphProps) {
         case "Package":        
           [gd, target] = parsePackage(n);
           if (target.data.type == "PackageVersion") {
-            console.log("target",target);
             if (versions == undefined) {
               return false;
             }
@@ -228,31 +226,30 @@ export default function Graph(props: GraphProps) {
     let addedEdges : Edge[][] =Array(ids.length);
     let ret: GraphRep;
 
-    let promises = ids.map((id) =>  
-      client.query({
+    // let promises = ids.map((id) =>  
+    //   client.query({
+    //     query: GetNeighborsDocument,
+    //     fetchPolicy: "no-cache" ,
+    //     variables: { nodeId: id},
+    //   })
+    // );
+    let nMap : Map<string, Node> = new Map(graphRep.nodes);
+    let eMap : Map<string, Edge> = new Map(graphRep.edges);
+
+    let promises = ids.map((id,idx) =>  {
+      console.log("handling neighbor");
+      
+      return client.query({
         query: GetNeighborsDocument,
-        fetchPolicy: "no-cache" ,
+        //fetchPolicy: "no-cache" ,
         variables: { nodeId: id},
-      })
-    );
-
-    // TODO: can make this just return without await
-
-    await Promise.all(promises).then((values) => {
-        // TODO: make as much of this baked into the promise as well so it will run in parallel.
-        console.log(values);
-        let nMap : Map<string, Node> = new Map(graphRep.nodes);
-        let eMap : Map<string, Edge> = new Map(graphRep.edges);
-        values.forEach((result,idx) => {
-          const id = ids[idx];
-          console.log(id, "neighbors", result.data);
+      }).then((result)=>{
+          // console.log(id, "neighbors", result.data);
           const neighbors = result.data.neighbors;
           addedNodes[idx] =[];
           addedEdges[idx] = [];
 
           // have filter here on type of nodes
-          console.log("processing neighbors");
-
           const nFilter = getFilters(graphRep.nodes.get(id), graphRep);
           neighbors.forEach((n,i) => {
 
@@ -270,8 +267,15 @@ export default function Graph(props: GraphProps) {
               gd.nodes.forEach(n=> {if (!nMap.has(n.data.id)) {nMap.set(n.data.id, n)}});
               gd.edges.forEach((n) =>  {if (!eMap.has(n.data.id)) {eMap.set(n.data.id, n)}});
             });
-        });
+            
 
+
+        });
+    });
+
+    // TODO: can make this just return without await
+
+    return Promise.all(promises).then((values) => {
         // set original node as expanded
         ids.forEach((k)=> {
           const origNode = nMap.get(k);
@@ -296,10 +300,9 @@ export default function Graph(props: GraphProps) {
           edges: eMap,
         });
         console.log("done processing new graph");
-
+        return ret;
     });
-    console.log(ret);
-    return ret;
+    
   }
 
 

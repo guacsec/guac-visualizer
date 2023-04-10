@@ -103,7 +103,6 @@ export default function Home() {
       (t.namespaces != undefined) && t.namespaces.forEach((ns) => {
         const nsMap = tMap.has(ns.namespace)? tMap.get(ns.namespace) : new Map();
         tMap.set(ns.namespace, nsMap);
-        
 
         (ns.names != undefined) && ns.names.forEach((n) => {
           const nMap = nsMap.has(n.name)? nsMap.get(n.name) : new Map();
