@@ -1,5 +1,5 @@
 import { Inter } from '@next/font/google'
-import React, { useState, memo } from "react";
+import React, { useState, memo, useEffect } from "react";
 import Graph from 'app/graph'
 import { gql, useQuery, useLazyQuery } from '@apollo/client'
 import styles from "../styles/Home.module.css";
@@ -58,6 +58,7 @@ export default function Home() {
   const [requested, setRequested] = useState("{}");
   const [data, setData] = useState<GetPkgQuery>({ packages: []});
   const [graphData, setGraphData] = useState([]);
+  const [packageTrie, setPackageTrie] = useState(new Map());
 
 
   // Package Selectors
@@ -91,7 +92,7 @@ export default function Home() {
   
   //console.log("ALL data", allPackages.data.packages);
   
-
+  
   if (!pkgError && !pkgLoading) {
   
     pkgData.packages.forEach((t)=> {
@@ -100,8 +101,9 @@ export default function Home() {
       packageTrie.set(t.type, tMap);
 
       (t.namespaces != undefined) && t.namespaces.forEach((ns) => {
-        const nsMap = tMap.has(ns.namspace)? tMap.get(ns.namespace) : new Map();
+        const nsMap = tMap.has(ns.namespace)? tMap.get(ns.namespace) : new Map();
         tMap.set(ns.namespace, nsMap);
+        
 
         (ns.names != undefined) && ns.names.forEach((n) => {
           const nMap = nsMap.has(n.name)? nsMap.get(n.name) : new Map();
@@ -116,6 +118,7 @@ export default function Home() {
 
     //console.log("PKGTRIE:", packageTrie);
   }
+
 
 
   const other = `{
