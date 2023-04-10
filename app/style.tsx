@@ -50,6 +50,27 @@ export const graphStyleSheet = [
       }
     },
     {
+        selector: "node[type='Osv']",
+        style: {
+          shape: "diamond",
+          "background-color": "red",
+        }
+    },
+    {
+        selector: "node[type='Ghsa']",
+        style: {
+          shape: "diamond",
+          "background-color": "red",
+        }
+    },
+    {
+        selector: "node[type='Cve']",
+        style: {
+          shape: "diamond",
+          "background-color": "red",
+        }
+    },
+    {
       selector: "node[type='Source']",
       style: {
         "background-color": "green",

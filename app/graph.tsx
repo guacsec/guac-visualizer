@@ -112,8 +112,8 @@ export default function Graph(props: GraphProps) {
   
   //console.log(props.graphData)
   const layout = {
-    //name: props?.layout ?? "breadthfirst",
-    name: "dagre",
+    name: props?.layout ?? "dagre",
+    // name: "dagre",
     fit: true,
     directed: true,
     padding: 50,
@@ -201,9 +201,7 @@ export default function Graph(props: GraphProps) {
         case "CertifyVEXStatement":
           return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa")
   
-        case "Package":
-          console.log("the node", n);
-        
+        case "Package":        
           [gd, target] = parsePackage(n);
           if (target.data.type == "PackageVersion") {
             console.log("target",target);
@@ -237,6 +235,8 @@ export default function Graph(props: GraphProps) {
         variables: { nodeId: id},
       })
     );
+
+    // TODO: can make this just return without await
 
     await Promise.all(promises).then((values) => {
         // TODO: make as much of this baked into the promise as well so it will run in parallel.
@@ -461,14 +461,20 @@ export default function Graph(props: GraphProps) {
     return pathName + p.filter(e => e.isEdge()).map(e => e.id()).join(",");
   }
 
+  function getPathString (p : cytoscape.CollectionReturnValue) {
+    return "path=" + "[" + p.filter(e => e.isNode()).map(e => e.id()).join(",") + "]";
+  }
   function getVisualizeLink (p : cytoscape.CollectionReturnValue) {
-    return "visualize?path=" + "[" + p.filter(e => e.isNode()).map(e => e.id()).join(",") + "]";
+    return "visualize?" + getPathString(p);
   }
 
   function pathToOutput (p : cytoscape.CollectionReturnValue) {
     return <><p><a href={getVisualizeLink(p)} target="_blank" rel="noreferrer">[Click to visualize]   </a>{collectionToPathString(p)}</p></>
   }
 
+  function getMultiPath(paths : cytoscape.CollectionReturnValue[]) {
+    return "visualize?" + paths.map(getPathString).join('&');
+  }
   
   console.log(graphData);
   return (
@@ -484,6 +490,7 @@ export default function Graph(props: GraphProps) {
       <p>These path strings can then be opened in the graph viewer</p>
       <button onClick={headlessPath}>find paths</button>
       <p>explore paths (limited to 20):</p>
+      {(paths.length <= 20 && paths.length >0) && <><p><a href={getMultiPath(paths)} target="_blank" rel="noreferrer">[Click to visualize]   </a>all paths</p></>}
       {paths.filter((_,i)=> i< 20).map((p,i)=> 
       <p key={"path"+i}>
         {pathToOutput(p)}

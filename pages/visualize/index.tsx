@@ -188,7 +188,7 @@ export default function Home() {
           {
             graphData.map((d)=> {
               console.log("redner", d.gd);
-            return <Graph key={d.key} layout="dagre" writeDetails={writeDetailsHandler} graphData={d.gd} />
+            return <Graph key={d.key} layout="cola" writeDetails={writeDetailsHandler} graphData={d.gd} />
           })
           } 
         </div>
