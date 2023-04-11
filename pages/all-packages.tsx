@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import React, { useState, useEffect } from 'react';
+import { useQuery } from '@apollo/client';
 import ForceGraph3D from '../app/ForceGraph3DWrapper';
-import { Node, Edge, ParseNode } from '../app/ggraph';
+import { ParseNode } from '../app/ggraph';
 import { useRouter } from 'next/router';
-import { GetPkgDocument, PkgQ1Document, PkgQ2Document, PkgQ3Document, PkgQ9Document, IsVulnerability, ArtifactM1Document, ArtifactQ1Document, GetNeighborsDocument, GetNeighborsQuery, PkgQ4Document, PkgQ7Document } from '@/gql/__generated__/graphql';
-import { ForceGraphMethods, GraphData } from 'react-force-graph-3d';
+import { PkgQ3Document, GetNeighborsDocument, GetNeighborsQuery } from '@/gql/__generated__/graphql';
+import { GraphData } from 'react-force-graph-3d';
 import client from '@/apollo/client';
 import Select from 'react-select';
 
@@ -47,12 +47,6 @@ const AllPackages = () => {
     const [neighborData, setNeighborData] = useState<GetNeighborsQuery>();
     const [selectedPackage, setSelectedPackage] = useState(null);
 
-    const nodesToOptions = (nodes) => {
-        return nodes.map((node) => ({
-            value: node.id,
-            label: node.label || node.id,
-        }));
-    };
     const filterNodesByType = (nodes, type) => {
         return nodes.filter((node) => node.type === type);
     };
@@ -62,13 +56,16 @@ const AllPackages = () => {
     const options = packageNodes.map((node) => ({
         value: node.id,
         label: node.label,
-    }));
+    })).sort(function (a, b) {
+        return a.label < b.label ? -1 : 1;
+    });
 
     const dataFetcher = (id: string) => {
         const q = client.query({
             query: GetNeighborsDocument,
             variables: {
-                nodeId: id
+                nodeId: id,
+                edges: [],
             }
         });
 
@@ -84,11 +81,6 @@ const AllPackages = () => {
     useEffect(() => {
         const mq = window.matchMedia('(prefers-color-scheme: dark)');
         setIsDark(mq.matches);
-        //const handleChange = (e) => setIsDark(e.matches);
-        /*mq.addListener(handleChange);
-        return () => {
-            mq.removeListener(handleChange);
-        };*/
     }, []);
     const themeStyles = getThemeStyles(isDark);
 
@@ -99,8 +91,6 @@ const AllPackages = () => {
             links: [],
         };
         if (data && !error && !isInitialDataProcessed) {
-            const uniqueNodeIds = new Set(newGraphData.nodes.map((node) => node.id));
-            const uniqueLinkIds = new Set(newGraphData.links.map((link) => `${link.source}-${link.target}-${link.label}`));
             data.packages.forEach((pkg: any) => {
                 const parsedGraphData = ParseNode(pkg);
                 if (parsedGraphData) {
