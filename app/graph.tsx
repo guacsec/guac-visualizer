@@ -241,7 +241,7 @@ export default function Graph(props: GraphProps) {
       
       return client.query({
         query: GetNeighborsDocument,
-        //fetchPolicy: "no-cache" ,
+        fetchPolicy: "no-cache" ,
         variables: { nodeId: id},
       }).then((result)=>{
           // console.log(id, "neighbors", result.data);

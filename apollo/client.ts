@@ -25,7 +25,6 @@ function createApolloClient() {
     ssrMode: typeof window === 'undefined',
     // link: createIsomorphLink(),
     uri: "http://localhost:3000/api/graphql",
-    assumeImmutableResults: true,
     cache: new InMemoryCache(),
   })
 }
@@ -35,7 +34,6 @@ const client = new ApolloClient({
     // link: createIsomorphLink(),
     uri: "http://localhost:3000/api/graphql",
     credentials: "same-origin",
-    assumeImmutableResults: true,
     cache: new InMemoryCache(),
   })
 
