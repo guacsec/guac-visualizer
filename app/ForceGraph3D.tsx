@@ -3,8 +3,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { ForceGraphMethods, GraphData, NodeObject } from 'react-force-graph-3d';
 import * as FG3D from 'react-force-graph-3d';
-import * as THREE from 'three';
-
 
 type ForceGraph3DWrapperProps = {
     graphData: GraphData;

@@ -8,6 +8,7 @@ import { ForceGraphMethods, GraphData } from 'react-force-graph-3d';
 import client from '@/apollo/client';
 import Select from 'react-select';
 
+
 const getThemeStyles = (isDark) => ({
     control: (styles) => ({
         ...styles,
