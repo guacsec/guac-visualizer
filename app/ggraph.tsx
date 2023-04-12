@@ -25,6 +25,22 @@ export type GraphData = {
   edges: Edge[];
 }
 
+export function IsSwTreeNode (n: gqlNode) : boolean {
+  switch (n.__typename) {
+    case "Package":    
+    case "Source":
+    case "Artifact":
+    case "Builder":
+    case "CVE":
+    case "OSV":
+    case "GHSA":
+    case "NoVuln":
+      return true;
+  }
+  return false
+      
+}
+
 export function ParseNode (n : gqlNode) : GraphData | undefined { 
   let gd : GraphData;
   let target : Node | undefined;
@@ -51,6 +67,9 @@ export function ParseNode (n : gqlNode) : GraphData | undefined {
       break;
     case "GHSA":
       [gd, target]  = parseGhsa(n);
+      break;
+    case "NoVuln":
+      [gd, target] = parseNoVuln(n);
       break;
 
     // Evidence trees
@@ -93,9 +112,7 @@ export function ParseNode (n : gqlNode) : GraphData | undefined {
     case "HasSLSA":
       [gd, target] = parseHasSlsa(n);
       break;
-    case "NoVuln":
-      [gd, target] = parseNoVuln(n);
-      break;
+
     default:
       // not handled
       console.log("unhandled node type:", n.__typename);
@@ -318,6 +335,13 @@ export function parseCertifyVuln(n: CertifyVuln) : [GraphData, Node | undefined]
     }
   } else if (n.vulnerability.__typename == "OSV") {
     [gd, t] = parseOsv(n.vulnerability);
+    nodes = [...nodes, ...gd.nodes];
+    edges = [...edges, ...gd.edges];
+    if (t != undefined) {
+      edges = [...edges, {data: {source: n.id, target: t.data.id, label:"is_vulnerability"}}]
+    }
+  } else if (n.vulnerability.__typename == "NoVuln") {
+    [gd, t] = parseNoVuln(n.vulnerability);
     nodes = [...nodes, ...gd.nodes];
     edges = [...edges, ...gd.edges];
     if (t != undefined) {
