@@ -12,7 +12,7 @@ export const graphStyleSheet = [
         "text-outline-color": "#4a56a6",
         "text-outline-width": "2px",
         color: "white",
-        fontSize: 20
+        fontSize: 10,
       }
     },
     {
