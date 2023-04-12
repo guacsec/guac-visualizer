@@ -5,10 +5,10 @@ import { gql, useQuery, useLazyQuery } from '@apollo/client'
 import styles from "../styles/Home.module.css";
 import useSWR from 'swr'
 import client from 'apollo/client'
-import { Node, Edge, ParseNode, parsePackage } from 'app/ggraph'
+import { Node, Edge, GraphData, ParseNode, IsSwTreeNode, parsePackage } from 'app/ggraph'
 import SBOMViewer from '@/app/sbom';
 import { useRouter } from 'next/router';
-import {GraphData, Node, Edge} from "../../app/ggraph";
+// import {GraphData, Node, Edge} from "../../app/ggraph";
 import { GetNodeDocument, Node as gqlNode, PackageQualifier, PackageVersion, GetPkgTypesDocument, GetPkgNamesDocument, GetPkgNamespacesDocument, GetPkgVersionsDocument,  GetPkgQuery, GetPkgQueryVariables, PkgSpec , GetPkgDocument, AllPkgTreeFragment, Package, PackageQualifier} from '../../gql/__generated__/graphql';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -132,9 +132,13 @@ export default function Home() {
       
       console.log("parsedGD", n.id, n, parsedGd);
       
+      let filteredNodes = parsedGd.nodes;
+      let filteredEdges = parsedGd.edges;
       // only include nodes and edges that are part of path set
-      const filteredNodes = parsedGd.nodes.filter((nn)=> nodeSet.has(nn.data.id));
-      const filteredEdges = parsedGd.edges.filter((e)=> nodeSet.has(e.data.source) && nodeSet.has(e.data.target));
+      if (!IsSwTreeNode(n)) {
+        filteredNodes = parsedGd.nodes.filter((nn)=> nodeSet.has(nn.data.id));
+        filteredEdges = parsedGd.edges.filter((e)=> nodeSet.has(e.data.source) && nodeSet.has(e.data.target));
+      }
       
       // add into a set to deduplicate
       filteredNodes.map(nn=> nodes.set(nn.data.id,nn));
