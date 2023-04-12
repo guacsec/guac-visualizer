@@ -49,6 +49,8 @@
     "cosmos-over-cytoscape": "^1.0.3",
     "cytoscape-cola": "^2.5.1",
     "cytoscape-dagre": "^2.5.0",
-    "react-multi-select-component": "^4.3.4"
+    "react-multi-select-component": "^4.3.4",
+    "react-paginated-list": "^1.1.6",
+    "styled-components": "^5.3.9"
   }
 }
