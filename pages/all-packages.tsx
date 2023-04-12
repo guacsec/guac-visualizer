@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 import ForceGraph3D from '../app/ForceGraph3DWrapper';
 import { ParseNode } from '../app/ggraph';
 import { useRouter } from 'next/router';
-import { PkgQ3Document, GetNeighborsDocument, GetNeighborsQuery } from '@/gql/__generated__/graphql';
+import { PkgQ3Document, GetNeighborsDocument, GetNeighborsQuery, PkgQ1Document, PkgQ8Document, PkgQ9Document, Slsaq1Document, PkgQ5Document } from '@/gql/__generated__/graphql';
 import { GraphData } from 'react-force-graph-3d';
 import client from '@/apollo/client';
 import Select from 'react-select';
+import { parse } from 'path';
 
 
 const getThemeStyles = (isDark) => ({
@@ -44,6 +45,7 @@ const AllPackages = () => {
     const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
     // NOTE: PkgQ9Document is the query that returns a handful of packages
     const { data, error, loading } = useQuery(PkgQ3Document);
+
     const [neighborData, setNeighborData] = useState<GetNeighborsQuery>();
     const [selectedPackage, setSelectedPackage] = useState(null);
 
@@ -84,6 +86,28 @@ const AllPackages = () => {
     }, []);
     const themeStyles = getThemeStyles(isDark);
 
+    const pruneGraph = (selectedNodeId, graphData) => {
+        if (!selectedNodeId) return graphData;
+
+        const connectedNodeIds = new Set();
+        const prunedLinks = graphData.links.filter((link) => {
+            if (link.source.id === selectedNodeId || link.target.id === selectedNodeId) {
+                connectedNodeIds.add(link.source.id);
+                connectedNodeIds.add(link.target.id);
+                return true;
+            }
+            return false;
+        });
+
+        const prunedNodes = graphData.nodes.filter((node) =>
+            connectedNodeIds.has(node.id)
+        );
+
+        return { nodes: prunedNodes, links: prunedLinks };
+    };
+
+    const [isInitialPruneDone, setIsInitialPruneDone] = useState(false);
+
 
     useEffect(() => {
         let newGraphData: GraphData = {
@@ -101,6 +125,9 @@ const AllPackages = () => {
 
             setGraphData(newGraphData);
             setIsInitialDataProcessed(true);
+        } else if (selectedPackage && !isInitialPruneDone) {
+            setGraphData((prevGraphData) => pruneGraph(selectedPackage.value, prevGraphData));
+            setIsInitialPruneDone(true);
         } else if (neighborData && !error) {
             setNeighborData(null);
             setGraphData((prevGraphData) => {
@@ -111,8 +138,8 @@ const AllPackages = () => {
                 const seenNodeIds = new Set();
                 const seenEdgeKeys = new Set();
 
-                neighborData.neighbors.forEach((pkg: any) => {
-                    const parsedGraphData = ParseNode(pkg);
+                neighborData.neighbors.forEach((neighbor: any) => {
+                    const parsedGraphData = ParseNode(neighbor);
                     if (parsedGraphData) {
                         const filteredNodes = parsedGraphData.nodes.filter((node) => {
                             if (seenNodeIds.has(node.id)) {
@@ -130,7 +157,6 @@ const AllPackages = () => {
                             seenEdgeKeys.add(edgeKey);
                             return true;
                         });
-
                         const uniqueNodes = filteredNodes.filter((node) => !uniqueNodeIds.has(node.id));
                         const uniqueEdges = filteredEdges.filter((edge) => !uniqueLinkKeys.has(linkKey(edge)));
 
@@ -142,11 +168,7 @@ const AllPackages = () => {
                 return updatedGraphData;
             });
         }
-
-        console.log('graphData', graphData);
-    }, [data, error, neighborData, isInitialDataProcessed, graphData]);
-
-
+    }, [data, error, neighborData, isInitialDataProcessed, selectedPackage, isInitialPruneDone, graphData]);
     if (error) return <div>failed to load</div>;
     if (loading) return <div>loading...</div>;
 
