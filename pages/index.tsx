@@ -1,5 +1,6 @@
 import { Inter } from '@next/font/google'
 import { useState } from 'react';
+import ForceGraph2D from '../app/ForceGraph2DWrapper'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import { GetPkgTypesDocument } from '../gql/__generated__/graphql';
 import PackageTypeSelect from '../components/guac/packageTypeSelect';
@@ -21,6 +22,9 @@ export default function Home() {
   const [packageNamespaces, setPackageNamespaces] = useState(initialPackageNamespaces)
   const [packageNames, setPackageNames] = useState(initialPackageNamespaces)
   const [packageVersions, setPackageVersions] = useState(initialPackageNamespaces)
+
+  // this is for the visual graph
+  const [graphData, setGraphData] = useState({nodes: [], links: []})
 
   const packageTypesQuery = useQuery(GetPkgTypesDocument, { variables: {}}); 
   const packageLoading = packageTypesQuery.loading;
@@ -63,9 +67,13 @@ export default function Home() {
             <PackageVersionSelect 
               label="Package Version" 
               options={packageVersions}
-              setPackageVersionFunc={setPackageVersion}/>
+              setPackageVersionFunc={setPackageVersion}
+              setGraphDataFunc={setGraphData}/>
           </div>
       </div>
+      <div>
+        <ForceGraph2D graphData={graphData}/>
+        </div>
     </main>
   )
 }
