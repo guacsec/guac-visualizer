@@ -12,11 +12,12 @@ import { useState, useEffect, useMemo, memo} from 'react';
 import cytoscape, { EdgeCollection, EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
-import { Node as gqlNode, GetNeighborsDocument, IsDependency } from '../gql/__generated__/graphql';
+import { Node as gqlNode, GetNeighborsDocument, IsDependency, Edge as GqlEdge, Package} from '../gql/__generated__/graphql';
 import { Node, Edge, GraphData, ParseNode, parsePackage} from "./ggraph";
 import { gql, useQuery, useLazyQuery, ApolloQueryResult} from '@apollo/client';
 import client from 'apollo/client'
 import { MultiSelect } from "react-multi-select-component";
+import { PaginatedList } from "react-paginated-list";
 
 // Cytoscape.use(Spread);
 // Cytoscape.use(COSEBilkent);
@@ -35,6 +36,8 @@ const MemoedGraph = memo(CytoscapeComponent, (prev, next)=> {
 });
 */
 
+
+
 type GraphProps = {
   graphData?: GraphData;
   layout?: string;
@@ -46,6 +49,42 @@ export type GraphRep = {
   nodes : Map<string, Node>;
   edges: Map<string, Edge>;
 }
+
+export function processDataForCytoscape (data : any) : [string | undefined, any] {
+  if (data == undefined) {
+    return ["", undefined];
+  }
+  let nodes: Node[] = [];
+  let edges: Edge[] = [];
+
+  console.log("PROCESS_DATA", data);
+  if (data.packages == undefined) {
+    return ["", undefined];
+  }
+  let startNode : string = undefined;
+  data.packages.forEach((p :Package, index) => {
+
+    const gd  = ParseNode(p);
+    //let [gd, target] = parsePackage(p);
+    //startNode = target.data.id;
+    if (gd!= undefined) {
+      nodes = [...nodes, ...gd.nodes];
+      edges = [...edges, ...gd.edges];
+    }
+    // Create nodes for package and dependentPackage
+
+  });
+
+  const pVers = nodes.filter((v)=> v.data.type == "PackageName");
+  console.log(pVers);
+  if (pVers.length >0) {
+    startNode = pVers[0].data.id;
+  }
+
+
+  return [startNode, { nodes, edges }];
+};
+
 
 function gDataToRep (d : GraphData) :GraphRep {
   const nTuple = d.nodes.map((v) => [v.data.id, v]);
@@ -76,7 +115,7 @@ export default function Graph(props: GraphProps) {
   const [height, setHeight] = useState("800px");
   const [frontierEmpty, setFrontierEmpty] = useState(false);
   const [expandedDepth, setExpandedDepth] = useState(0);
-  const [expandOptions, setExpandOptions] = useState("expandDepMetadata");
+  const [expandOptions, setExpandOptions] = useState("expandDependencies");
   const [dataCount, setDataCount] = useState(0);
   const [expandDepth, setExpandDepth] = useState("3");
   const [loading, setLoading] = useState(false);
@@ -154,12 +193,92 @@ export default function Graph(props: GraphProps) {
     }    
   }
 
+  // function getEdgeFilters() {
+  //   const allEdges : GqlEdge[] = Object.values(GqlEdge);
+
+  //   const someEdges : GqlEdge[] = [ 
+  //       "ARTIFACT_CERTIFY_BAD",
+  //       "ARTIFACT_CERTIFY_GOOD",
+  //       "ARTIFACT_CERTIFY_VEX_STATEMENT",
+  //       "ARTIFACT_HASH_EQUAL",
+  //       "ARTIFACT_HAS_SLSA",
+  //       "ARTIFACT_IS_OCCURRENCE",
+  //       "BUILDER_HAS_SLSA",
+  //       "CVE_CERTIFY_VEX_STATEMENT",
+  //       "CVE_CERTIFY_VULN",
+  //       "CVE_IS_VULNERABILITY",
+  //       "GHSA_CERTIFY_VEX_STATEMENT",
+  //       "GHSA_CERTIFY_VULN",
+  //       "GHSA_IS_VULNERABILITY",
+  //       "NO_VULN_CERTIFY_VULN",
+  //       "OSV_CERTIFY_VEX_STATEMENT",
+  //       "OSV_CERTIFY_VULN",
+  //       "OSV_IS_VULNERABILITY",
+  //       "PACKAGE_CERTIFY_BAD",
+  //       "PACKAGE_CERTIFY_GOOD",
+  //       "PACKAGE_CERTIFY_VEX_STATEMENT",
+  //       "PACKAGE_CERTIFY_VULN",
+  //       "PACKAGE_HAS_SBOM",
+  //       "PACKAGE_HAS_SOURCE_AT",
+  //       "PACKAGE_IS_DEPENDENCY",
+  //       "PACKAGE_IS_OCCURRENCE",
+  //       "PACKAGE_PKG_EQUAL",
+  //       "SOURCE_CERTIFY_BAD",
+  //       "SOURCE_CERTIFY_GOOD",
+  //       "SOURCE_CERTIFY_SCORECARD",
+  //       "SOURCE_HAS_SBOM",
+  //       "SOURCE_HAS_SOURCE_AT",
+  //       "SOURCE_IS_OCCURRENCE",
+  //       "CERTIFY_BAD_ARTIFACT",
+  //       "CERTIFY_BAD_PACKAGE",
+  //       "CERTIFY_BAD_SOURCE",
+  //       "CERTIFY_GOOD_ARTIFACT",
+  //       "CERTIFY_GOOD_PACKAGE",
+  //       "CERTIFY_GOOD_SOURCE",
+  //       "CERTIFY_SCORECARD_SOURCE",
+  //       "CERTIFY_VEX_STATEMENT_ARTIFACT",
+  //       "CERTIFY_VEX_STATEMENT_CVE",
+  //       "CERTIFY_VEX_STATEMENT_GHSA",
+  //       "CERTIFY_VEX_STATEMENT_OSV",
+  //       "CERTIFY_VEX_STATEMENT_PACKAGE",
+  //       "CERTIFY_VULN_CVE",
+  //       "CERTIFY_VULN_GHSA",
+  //       "CERTIFY_VULN_NO_VULN",
+  //       "CERTIFY_VULN_OSV",
+  //       "CERTIFY_VULN_PACKAGE",
+  //       "HASH_EQUAL_ARTIFACT",
+  //       "HAS_SBOM_PACKAGE",
+  //       "HAS_SBOM_SOURCE",
+  //       "HAS_SLSA_BUILT_BY",
+  //       "HAS_SLSA_MATERIALS",
+  //       "HAS_SLSA_SUBJECT",
+  //       "HAS_SOURCE_AT_PACKAGE",
+  //       "HAS_SOURCE_AT_SOURCE",
+  //       "IS_DEPENDENCY_PACKAGE",
+  //       "IS_OCCURRENCE_ARTIFACT",
+  //       "IS_OCCURRENCE_PACKAGE",
+  //       "IS_OCCURRENCE_SOURCE",
+  //       "IS_VULNERABILITY_CVE",
+  //       "IS_VULNERABILITY_GHSA",
+  //       "IS_VULNERABILITY_OSV",
+  //       "PKG_EQUAL_PACKAGE",
+  //   ].map(x => x as GqlEdge);
+  // }
   function getFilters(startNode : Node, graphRep : GraphRep) : (n:gqlNode) => boolean {
 
-    if (expandOptions=="expandAll") {
-      return (n) => true;
+    switch (expandOptions) {
+      case "expandAll":
+        return (n) => true;
+      case "expandDependencies":
+        return getExpandDependenciesFilter(startNode, graphRep);
+      case "expandDependents":
+        return getExpandDependentsFilter(startNode, graphRep);
     }
-    
+    console.log("error: invalid expand options", expandOptions)
+  }
+
+
+  function getExpandDependenciesFilter(startNode : Node, graphRep : GraphRep) : (n:gqlNode) => boolean {    
     let startType = startNode.data.type;
     let startId = startNode.data.id;
     const alwaysFalse = (_:gqlNode) => {return false};
@@ -196,9 +315,73 @@ export default function Graph(props: GraphProps) {
           [gd, target] = parsePackage(n.package);
           return target.data.id == startId;
         case "CertifyVuln":
-          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa")
+          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa" || startType == "NoVuln")
         case "CertifyVEXStatement":
-          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa")
+          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa" || startType == "NoVuln")
+  
+        case "Package":        
+          [gd, target] = parsePackage(n);
+          if (target.data.type == "PackageVersion") {
+            if (versions == undefined) {
+              return false;
+            }
+            if (versions.has(target.data.version)) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+
+      }
+      
+      return true;
+    };
+    return nFilter;
+  }
+
+  function getExpandDependentsFilter(startNode : Node, graphRep : GraphRep) : (n:gqlNode) => boolean {
+    let startType = startNode.data.type;
+    let startId = startNode.data.id;
+    const alwaysFalse = (_:gqlNode) => {return false};
+    // do not expand top level nodes
+    if (startType == "PackageType" || startType == "PackageNamespace") {
+      return alwaysFalse;
+    }
+    if (startType == "SourceType" || startType == "SourceNamespace") {
+      return alwaysFalse;
+    }
+
+    let versions : Set<string>;
+    if (startType == "PackageName") {
+      const depNodes = [...graphRep.edges].map(([_,value]) => value).filter((d)=> d.data.source == startId && d.data.label == "pkgVersion");
+      console.log(depNodes);
+      versions = new Set(depNodes.map((d) => graphRep.nodes.get(d.data.target).data.version));
+    }
+    console.log("VERSION_SET",versions);
+
+    const nFilter = (n: gqlNode) => {
+      const nType = n.__typename;
+
+      
+      // need to add special case for name expandsion with IsDepedency
+
+      // TODO: need to revisit logic
+      let gd, target;
+      switch (nType) {
+        // HasSLSA expands materials since we want to find what's dependent on it.
+        case "HasSLSA":
+          return startType =="Builder" || n.slsa.builtFrom.filter((a)=> a.id == startId).length > 0;
+        case "HasSourceAt":
+          return startType != "SourceName" && startType != "SourceType" && startType != "SourceNamespace";
+        case "IsDependency":
+          // only return true if start node is the subject
+          if (!versions.has(n.versionRange)) { return false; } // if isDepedency doesn't include the version don't get its use
+          [gd, target] = parsePackage(n.dependentPackage);
+          return target.data.id == startId;
+        case "CertifyVuln":
+          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa" || startType == "NoVuln")
+        case "CertifyVEXStatement":
+          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa" || startType == "NoVuln")
   
         case "Package":        
           [gd, target] = parsePackage(n);
@@ -238,11 +421,11 @@ export default function Graph(props: GraphProps) {
 
     let promises = ids.map((id,idx) =>  {
       console.log("handling neighbor");
-      
+
       return client.query({
         query: GetNeighborsDocument,
         fetchPolicy: "no-cache" ,
-        variables: { nodeId: id},
+        variables: { nodeId: id, edges: []},
       }).then((result)=>{
           // console.log(id, "neighbors", result.data);
           const neighbors = result.data.neighbors;
@@ -493,11 +676,23 @@ export default function Graph(props: GraphProps) {
       <p>These path strings can then be opened in the graph viewer</p>
       <button onClick={headlessPath}>find paths</button>
       <p>explore paths (limited to 20):</p>
-      {(paths.length <= 20 && paths.length >0) && <><p><a href={getMultiPath(paths)} target="_blank" rel="noreferrer">[Click to visualize]   </a>all paths</p></>}
-      {paths.filter((_,i)=> i< 20).map((p,i)=> 
-      <p key={"path"+i}>
-        {pathToOutput(p)}
-      </p>)}
+      {(paths.length <= 20 && paths.length >0) && <><p><a href={getMultiPath(paths)} target="_blank" rel="noreferrer">[Click to visualize]   </a>all paths in page</p></>}
+      <PaginatedList
+        list={paths}
+        itemsPerPage={20}
+        renderList={(list) => (
+          <>
+            <p><a href={getMultiPath(list)} target="_blank" rel="noreferrer">[Click to visualize]   </a>all paths in page</p>
+            {list.map((p, id) => {
+              return (
+                <div key={id}>
+                  {pathToOutput(p)}
+                </div>
+              );
+            })}
+          </>
+        )}
+      />
     </div>}
     <h2>{loading? "Loading" : ""}</h2>
     
@@ -507,7 +702,8 @@ export default function Graph(props: GraphProps) {
     <div id="expander">
       <h3>node expander</h3>
       <select value={expandOptions}  onChange={e => setExpandOptions(e.target.value)}>
-        <option value="expandDepMetadata">Expand Dep metadata</option>
+        <option value="expandDependencies">Expand Dependencies</option>
+        <option value="expandDependents">Expand Dependents</option>
         <option value="expandAll">Expand all</option>
       </select>
 
@@ -567,8 +763,8 @@ export default function Graph(props: GraphProps) {
       boxSelectionEnabled={true}
       layout={layout}
       stylesheet={styleSheet}
-      hideEdgesOnViewport={true}
-      textureOnViewport={true}
+      //hideEdgesOnViewport={true}
+      //textureOnViewport={true}
       headless={false}
       cy={cy => {
         refCy = cy;

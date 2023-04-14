@@ -1,12 +1,15 @@
 import { Inter } from '@next/font/google'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ForceGraph2D from '../app/ForceGraph2DWrapper'
-import { useQuery, useLazyQuery } from '@apollo/client'
+import { useQuery, useLazyQuery, useRef } from '@apollo/client'
 import { GetPkgTypesDocument } from '../gql/__generated__/graphql';
 import PackageTypeSelect from '../components/guac/packageTypeSelect';
 import PackageNamespaceSelect from '@/components/guac/packageNamespaceSelect';
 import PackageNameSelect from '@/components/guac/packageNameSelect';
 import PackageVersionSelect from '@/components/guac/packageVersionSelect';
+import { processDataForCytoscape } from "app/graph";
+import Graph from "app/graph";
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,11 +27,19 @@ export default function Home() {
   const [packageVersions, setPackageVersions] = useState(initialPackageNamespaces)
 
   // this is for the visual graph
-  const [graphData, setGraphData] = useState({nodes: [], links: []})
+  const [graphData, setGraphData] = useState({})
+  const [cjsGraphData, setCjsGraphData] = useState([])
 
   const packageTypesQuery = useQuery(GetPkgTypesDocument, { variables: {}}); 
   const packageLoading = packageTypesQuery.loading;
   const packageError = packageTypesQuery.error;
+
+ useEffect( () => {
+    // const [startNode, gd] = processDataForCytoscape(graphData);
+    if (graphData.packages != undefined) {
+      setCjsGraphData([{key: crypto.randomUUID(), data: graphData}])
+    }
+  }, [graphData]);
 
   if(!packageError && !packageLoading){
     let packageData = packageTypesQuery.data?.packages;
@@ -38,6 +49,8 @@ export default function Home() {
     // still looking into why that would be - better would be setPackageTypes(sortable...)
     packageTypes = sortablePackageData.sort((a, b) => a.type.localeCompare(b.type)).map(t => ({label: t.type, value: t.type}))
   }
+
+
   
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -72,7 +85,13 @@ export default function Home() {
           </div>
       </div>
       <div>
-        <ForceGraph2D graphData={graphData}/>
+      {
+      cjsGraphData.map((d)=> {
+        const [start, graphData] = processDataForCytoscape(d.data);
+        return <Graph key={d.key} layout="dagre" writeDetails={()=>{}} startNode={start} graphData={graphData} /> 
+      })
+      }
+      
         </div>
     </main>
   )
