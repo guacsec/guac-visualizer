@@ -35,11 +35,11 @@ export default function Home() {
   const packageError = packageTypesQuery.error;
 
  useEffect( () => {
-  // const [startNode, gd] = processDataForCytoscape(graphData);
-  if (graphData.packages != undefined) {
-    setCjsGraphData([{key: crypto.randomUUID(), data: graphData}])
-  }
-}, [graphData]);
+    // const [startNode, gd] = processDataForCytoscape(graphData);
+    if (graphData.packages != undefined) {
+      setCjsGraphData([{key: crypto.randomUUID(), data: graphData}])
+    }
+  }, [graphData]);
 
   if(!packageError && !packageLoading){
     let packageData = packageTypesQuery.data?.packages;
@@ -50,7 +50,7 @@ export default function Home() {
     packageTypes = sortablePackageData.sort((a, b) => a.type.localeCompare(b.type)).map(t => ({label: t.type, value: t.type}))
   }
 
-  
+
   
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
