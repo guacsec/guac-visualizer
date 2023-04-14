@@ -12,11 +12,12 @@ import { useState, useEffect, useMemo, memo} from 'react';
 import cytoscape, { EdgeCollection, EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
-import { Node as gqlNode, GetNeighborsDocument, IsDependency, Edge as GqlEdge } from '../gql/__generated__/graphql';
+import { Node as gqlNode, GetNeighborsDocument, IsDependency, Edge as GqlEdge, Package} from '../gql/__generated__/graphql';
 import { Node, Edge, GraphData, ParseNode, parsePackage} from "./ggraph";
 import { gql, useQuery, useLazyQuery, ApolloQueryResult} from '@apollo/client';
 import client from 'apollo/client'
 import { MultiSelect } from "react-multi-select-component";
+import { PaginatedList } from "react-paginated-list";
 
 // Cytoscape.use(Spread);
 // Cytoscape.use(COSEBilkent);
@@ -35,6 +36,8 @@ const MemoedGraph = memo(CytoscapeComponent, (prev, next)=> {
 });
 */
 
+
+
 type GraphProps = {
   graphData?: GraphData;
   layout?: string;
@@ -46,6 +49,42 @@ export type GraphRep = {
   nodes : Map<string, Node>;
   edges: Map<string, Edge>;
 }
+
+export function processDataForCytoscape (data : any) : [string | undefined, any] {
+  if (data == undefined) {
+    return ["", undefined];
+  }
+  let nodes: Node[] = [];
+  let edges: Edge[] = [];
+
+  console.log("PROCESS_DATA", data);
+  if (data.packages == undefined) {
+    return ["", undefined];
+  }
+  let startNode : string = undefined;
+  data.packages.forEach((p :Package, index) => {
+
+    const gd  = ParseNode(p);
+    //let [gd, target] = parsePackage(p);
+    //startNode = target.data.id;
+    if (gd!= undefined) {
+      nodes = [...nodes, ...gd.nodes];
+      edges = [...edges, ...gd.edges];
+    }
+    // Create nodes for package and dependentPackage
+
+  });
+
+  const pVers = nodes.filter((v)=> v.data.type == "PackageName");
+  console.log(pVers);
+  if (pVers.length >0) {
+    startNode = pVers[0].data.id;
+  }
+
+
+  return [startNode, { nodes, edges }];
+};
+
 
 function gDataToRep (d : GraphData) :GraphRep {
   const nTuple = d.nodes.map((v) => [v.data.id, v]);
@@ -637,11 +676,23 @@ export default function Graph(props: GraphProps) {
       <p>These path strings can then be opened in the graph viewer</p>
       <button onClick={headlessPath}>find paths</button>
       <p>explore paths (limited to 20):</p>
-      {(paths.length <= 20 && paths.length >0) && <><p><a href={getMultiPath(paths)} target="_blank" rel="noreferrer">[Click to visualize]   </a>all paths</p></>}
-      {paths.filter((_,i)=> i< 20).map((p,i)=> 
-      <p key={"path"+i}>
-        {pathToOutput(p)}
-      </p>)}
+      {(paths.length <= 20 && paths.length >0) && <><p><a href={getMultiPath(paths)} target="_blank" rel="noreferrer">[Click to visualize]   </a>all paths in page</p></>}
+      <PaginatedList
+        list={paths}
+        itemsPerPage={20}
+        renderList={(list) => (
+          <>
+            <p><a href={getMultiPath(list)} target="_blank" rel="noreferrer">[Click to visualize]   </a>all paths in page</p>
+            {list.map((p, id) => {
+              return (
+                <div key={id}>
+                  {pathToOutput(p)}
+                </div>
+              );
+            })}
+          </>
+        )}
+      />
     </div>}
     <h2>{loading? "Loading" : ""}</h2>
     
