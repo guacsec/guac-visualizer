@@ -28,13 +28,9 @@ const PackageVersionSelect = ({ label, options, setPackageVersionFunc, setGraphD
     });
     let q = packageNamespacesQuery.then(
       res => {
-        console.log(res.data.packages)
-        setGraphDataFunc(res.data);
-        //processGraphData(res.data.packages)
+        setGraphDataFunc(res.data.packages);
       }
     )
-
-   // processGraphData(event.value);
   }
 
   const processGraphData = (packages: Package[]) => {
