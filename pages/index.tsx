@@ -40,7 +40,6 @@ export default function Home() {
     setCjsGraphData([{key: crypto.randomUUID(), data: graphData}])
   }
 }, [graphData]);
-  
 
   if(!packageError && !packageLoading){
     let packageData = packageTypesQuery.data?.packages;
@@ -50,6 +49,8 @@ export default function Home() {
     // still looking into why that would be - better would be setPackageTypes(sortable...)
     packageTypes = sortablePackageData.sort((a, b) => a.type.localeCompare(b.type)).map(t => ({label: t.type, value: t.type}))
   }
+
+  
   
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">

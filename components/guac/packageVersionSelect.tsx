@@ -9,12 +9,21 @@ const PackageVersionSelect = ({ label, options, setPackageVersionFunc, setGraphD
   const onSelectPackageVersion = (event: {value: any; }) => {
     setPackageVersionFunc(event.value);
 
+    
+    let spec ={
+      version: event.value.version,
+    };
+
+    if (event.value.qualifiers.length > 0) {
+      spec.qualifiers = event.value.qualifiers
+    } else {
+      spec.matchOnlyEmptyQualifiers = true
+    }
+    
     const packageNamespacesQuery = client.query({
       query: GetPkgDocument,
       variables: {
-        spec:{
-          version: event.value
-        }
+        spec: spec,
       }
     });
     let q = packageNamespacesQuery.then(

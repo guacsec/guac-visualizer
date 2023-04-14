@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import Select from "react-select";
 
 const PackageTypeSelect = ({ label, options, setPackageTypeFunc, setPackageNamespacesFunc, ...rest }) => {
-
   const onSelectPackageType = (event: { value: any; }) => {
     setPackageTypeFunc(event.value);
 
@@ -27,7 +26,7 @@ const PackageTypeSelect = ({ label, options, setPackageTypeFunc, setPackageNames
   return (
     <div>
       {label && <label>{label}</label>}
-      <Select options={options} onChange={(e)=>{onSelectPackageType(e)}} {...rest} />
+      <Select options={options} onChange={(e)=>{onSelectPackageType(e)}} {...rest}/>
     </div>
   );
 };
