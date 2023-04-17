@@ -50,19 +50,15 @@ export type GraphRep = {
   edges: Map<string, Edge>;
 }
 
-export function processDataForCytoscape (data : any) : [string | undefined, any] {
+export function processDataForCytoscape (data : gqlNode[]) : [string | undefined, any] {
   if (data == undefined) {
     return ["", undefined];
   }
   let nodes: Node[] = [];
   let edges: Edge[] = [];
 
-  console.log("PROCESS_DATA", data);
-  if (data.packages == undefined) {
-    return ["", undefined];
-  }
   let startNode : string = undefined;
-  data.packages.forEach((p :Package, index) => {
+  data.forEach((p :gqlNode, index) => {
 
     const gd  = ParseNode(p);
     //let [gd, target] = parsePackage(p);
