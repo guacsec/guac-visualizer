@@ -100,9 +100,6 @@ export default function Home() {
       return label + "{ JUSTIFICAITON: " + v.justification + "}";
     }
     
-    // this isn't following the typical react pattern as doing it that way caused an infinite loop 
-    // still looking into why that would be - better would be setPackageTypes(sortable...)
-    // certifyBadEntries = sortableCertifyBadData.sort((a, b) => a.type.localeCompare(b.type)).map(t => ({label: t.type, value: t.type}))
     certifyBadEntries = sortableCertifyBadData.map(t=> ({label: certifyBadToString(t), value: t}));
   }
 
@@ -114,6 +111,7 @@ export default function Home() {
             <PackageTypeSelect 
               label="Package Type" 
               options={packageTypes} 
+              value={packageType}
               setPackageTypeFunc={setPackageType}
               setPackageNamespacesFunc={setPackageNamespaces}
               resetTypeFunc={resetType}/>
@@ -121,7 +119,8 @@ export default function Home() {
           <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
             <PackageNamespaceSelect 
               label="Package Namespace" 
-              options={packageNamespaces} 
+              options={packageNamespaces}
+              value={packageNamespace}
               packageType={packageType}
               setPackageNamespaceFunc={setPackageNamespace} 
               setPackageNamesFunc={setPackageNames} 
@@ -131,6 +130,7 @@ export default function Home() {
             <PackageNameSelect 
               label="Package Name" 
               options={packageNames} 
+              value={packageName}
               packageType={packageType}
               packageNamespace={packageNamespace}
               setPackageNameFunc={setPackageName} 
@@ -141,6 +141,7 @@ export default function Home() {
             <PackageVersionSelect 
               label="Package Version" 
               options={packageVersions}
+              value={packageVersion}
               packageType={packageType}
               packageNamespace={packageNamespace}
               packageName={packageName}
