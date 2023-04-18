@@ -853,4 +853,3 @@ export default function Graph(props: GraphProps) {
     </>
   )
 }
-
