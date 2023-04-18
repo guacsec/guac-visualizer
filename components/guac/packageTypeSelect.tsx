@@ -3,8 +3,9 @@ import { GetPkgNamespacesDocument } from "@/gql/__generated__/graphql";
 import React, { useEffect } from "react";
 import Select from "react-select";
 
-const PackageTypeSelect = ({ label, options, setPackageTypeFunc, setPackageNamespacesFunc, ...rest }) => {
+const PackageTypeSelect = ({ label, options, setPackageTypeFunc, setPackageNamespacesFunc, resetTypeFunc, ...rest }) => {
   const onSelectPackageType = (event: { value: any; }) => {
+    resetTypeFunc();
     setPackageTypeFunc(event.value);
 
     const packageNamespacesQuery = client.query({

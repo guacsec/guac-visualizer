@@ -40,7 +40,24 @@ export default function Home() {
   const certifyBadLoading = certifyBadQuery.loading;
   const certifyBadError = certifyBadQuery.error;
 
- useEffect( () => {
+  const resetType = () => {
+    setPackageNamespaces(initialPackageNamespaces)
+    setPackageNamespace("")
+    resetNamespace()
+  }
+
+  const resetNamespace = () => {
+    setPackageNames(initialPackageNamespaces)
+    setPackageName("")
+    resetName()
+  }
+
+  const resetName = () => {
+    setPackageVersions(initialPackageNamespaces)
+    setPackageVersion("")
+  }
+
+  useEffect( () => {
     // const [startNode, gd] = processDataForCytoscape(graphData);
     if (graphData != undefined && graphData.length > 0) {
       setCjsGraphData([{key: crypto.randomUUID(), data: graphData}])
@@ -98,26 +115,35 @@ export default function Home() {
               label="Package Type" 
               options={packageTypes} 
               setPackageTypeFunc={setPackageType}
-              setPackageNamespacesFunc={setPackageNamespaces}/>
+              setPackageNamespacesFunc={setPackageNamespaces}
+              resetTypeFunc={resetType}/>
           </div>
           <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
             <PackageNamespaceSelect 
               label="Package Namespace" 
               options={packageNamespaces} 
+              packageType={packageType}
               setPackageNamespaceFunc={setPackageNamespace} 
-              setPackageNamesFunc={setPackageNames} />
+              setPackageNamesFunc={setPackageNames} 
+              resetNamespaceFunc={resetName}/>
           </div>
           <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
             <PackageNameSelect 
               label="Package Name" 
               options={packageNames} 
+              packageType={packageType}
+              packageNamespace={packageNamespace}
               setPackageNameFunc={setPackageName} 
-              setPackageVersionsFunc={setPackageVersions}/>
+              setPackageVersionsFunc={setPackageVersions}
+              resetNameFunc={resetName}/>
           </div>
           <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
             <PackageVersionSelect 
               label="Package Version" 
               options={packageVersions}
+              packageType={packageType}
+              packageNamespace={packageNamespace}
+              packageName={packageName}
               setPackageVersionFunc={setPackageVersion}
               setGraphDataFunc={setGraphData}/>
           </div>
@@ -130,13 +156,12 @@ export default function Home() {
               setGraphDataFunc={setGraphData} />
       </div>
       <div>
-      {
-      cjsGraphData.map((d)=> {
-        const [start, graphData] = processDataForCytoscape(d.data);
-        return <Graph key={d.key} layout="dagre" writeDetails={()=>{}} startNode={start} graphData={graphData} /> 
-      })
-      }
-      
+        {
+          cjsGraphData.map((d)=> {
+            const [start, graphData] = processDataForCytoscape(d.data);
+            return <Graph key={d.key} layout="dagre" writeDetails={()=>{}} startNode={start} graphData={graphData} /> 
+          })
+        }
         </div>
     </main>
   )
