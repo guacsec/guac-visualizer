@@ -2,16 +2,18 @@ import client from "@/apollo/client";
 import { GetPkgNamesDocument } from "@/gql/__generated__/graphql";
 import Select from "react-select";
 
-const PackageNamespaceSelect = ({ label, options, setPackageNamespaceFunc, setPackageNamesFunc, ...rest }) => {
+const PackageNamespaceSelect = ({ label, options, setPackageNamespaceFunc, setPackageNamesFunc,packageType, resetNamespaceFunc, ...rest }) => {
 
   const onSelectPackageNamespace = (event: {value: any; }) => {
+    resetNamespaceFunc();
     setPackageNamespaceFunc(event.value);
 
     const packageNameQuery = client.query({
       query: GetPkgNamesDocument,
       variables:{
         spec:{
-          namespace: event.value
+          namespace: event.value,
+          type: packageType
         }
       }
     });

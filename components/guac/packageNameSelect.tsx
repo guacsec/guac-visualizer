@@ -3,20 +3,23 @@ import { GetPkgVersionsDocument, PackageVersion, PackageQualifier} from "@/gql/_
 import React, { useEffect } from "react";
 import Select from "react-select";
 
-const PackageNameSelect = ({ label, options, setPackageNameFunc, setPackageVersionsFunc, ...rest }) => {
+const PackageNameSelect = ({ label, options, setPackageNameFunc, setPackageVersionsFunc, packageType, packageNamespace, resetNameFunc, ...rest }) => {
   
   function toVersionString (v :PackageVersion) : string {
     return v.version + JSON.stringify(v.qualifiers.map((l :PackageQualifier)=>l.key +"=" + l.value));
   }
   
   const onSelectPackageName = (event: {value: any; }) => {
+    resetNameFunc();
     setPackageNameFunc(event.value);
 
     const packageVersionQuery = client.query({
       query: GetPkgVersionsDocument,
       variables:{
         spec:{
-          name: event.value
+          name: event.value,
+          type: packageType,
+          namespace: packageNamespace
         }
       }
     });

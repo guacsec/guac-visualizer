@@ -3,7 +3,7 @@ import { GetPkgDocument, Package } from "@/gql/__generated__/graphql";
 import React, { useEffect } from "react";
 import Select from "react-select";
 
-const PackageVersionSelect = ({ label, options, setPackageVersionFunc, setGraphDataFunc, ...rest }) => {
+const PackageVersionSelect = ({ label, options, setPackageVersionFunc, setGraphDataFunc,packageType, packageNamespace, packageName, ...rest }) => {
 
 
   const onSelectPackageVersion = (event: {value: any; }) => {
@@ -12,6 +12,9 @@ const PackageVersionSelect = ({ label, options, setPackageVersionFunc, setGraphD
     
     let spec ={
       version: event.value.version,
+      type: packageType,
+      name: packageName,
+      namespace: packageNamespace
     };
 
     if (event.value.qualifiers.length > 0) {
@@ -32,27 +35,6 @@ const PackageVersionSelect = ({ label, options, setPackageVersionFunc, setGraphD
       }
     )
   }
-
-  const processGraphData = (packages: Package[]) => {
-    console.log(packages);
-
-    // const graphData = {nodes:[], links:[]}
-    // packages.forEach(p => 
-    //   graphData.nodes.push{
-    //     id: p.
-    //   })
-
-    // const graphData = {
-    //   nodes: [...Array(300).keys()].map(i => ({ id: i})), 
-    //   links: [...Array(300).keys()]
-    //   .filter(id => id)
-    //   .map(id => ({
-    //     source: id,
-    //     target: Math.round(Math.random() * (id-1))
-    //   }))
-    // };
-    // setGraphDataFunc(graphData)
-  };
 
   return (
     <div>
