@@ -3,7 +3,6 @@ import { GetPkgNamesDocument } from "@/gql/__generated__/graphql";
 import Select from "react-select";
 
 const PackageNamespaceSelect = ({ label, options, setPackageNamespaceFunc, setPackageNamesFunc,packageType, resetNamespaceFunc, ...rest }) => {
-
   const onSelectPackageNamespace = (event: {value: any; }) => {
     resetNamespaceFunc();
     setPackageNamespaceFunc(event);

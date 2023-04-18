@@ -4,11 +4,8 @@ import React, { useEffect } from "react";
 import Select from "react-select";
 
 const PackageVersionSelect = ({ label, options, setPackageVersionFunc, setGraphDataFunc,packageType, packageNamespace, packageName, ...rest }) => {
-
-
   const onSelectPackageVersion = (event: {value: any; }) => {
     setPackageVersionFunc(event);
-
     
     let spec ={
       version: event.value.version,
