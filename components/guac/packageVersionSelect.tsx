@@ -7,14 +7,14 @@ const PackageVersionSelect = ({ label, options, setPackageVersionFunc, setGraphD
 
 
   const onSelectPackageVersion = (event: {value: any; }) => {
-    setPackageVersionFunc(event.value);
+    setPackageVersionFunc(event);
 
     
     let spec ={
       version: event.value.version,
-      type: packageType,
-      name: packageName,
-      namespace: packageNamespace
+      type: packageType.value,
+      name: packageName.value,
+      namespace: packageNamespace.value
     };
 
     if (event.value.qualifiers.length > 0) {

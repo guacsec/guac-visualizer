@@ -11,15 +11,15 @@ const PackageNameSelect = ({ label, options, setPackageNameFunc, setPackageVersi
   
   const onSelectPackageName = (event: {value: any; }) => {
     resetNameFunc();
-    setPackageNameFunc(event.value);
+    setPackageNameFunc(event);
 
     const packageVersionQuery = client.query({
       query: GetPkgVersionsDocument,
       variables:{
         spec:{
           name: event.value,
-          type: packageType,
-          namespace: packageNamespace
+          type: packageType.value,
+          namespace: packageNamespace.value
         }
       }
     });

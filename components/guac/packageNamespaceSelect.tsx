@@ -6,14 +6,14 @@ const PackageNamespaceSelect = ({ label, options, setPackageNamespaceFunc, setPa
 
   const onSelectPackageNamespace = (event: {value: any; }) => {
     resetNamespaceFunc();
-    setPackageNamespaceFunc(event.value);
+    setPackageNamespaceFunc(event);
 
     const packageNameQuery = client.query({
       query: GetPkgNamesDocument,
       variables:{
         spec:{
           namespace: event.value,
-          type: packageType
+          type: packageType.value
         }
       }
     });

@@ -6,7 +6,7 @@ import Select from "react-select";
 const PackageTypeSelect = ({ label, options, setPackageTypeFunc, setPackageNamespacesFunc, resetTypeFunc, ...rest }) => {
   const onSelectPackageType = (event: { value: any; }) => {
     resetTypeFunc();
-    setPackageTypeFunc(event.value);
+    setPackageTypeFunc(event);
 
     const packageNamespacesQuery = client.query({
       query: GetPkgNamespacesDocument,
