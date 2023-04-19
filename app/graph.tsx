@@ -12,7 +12,7 @@ import { useState, useEffect, useMemo, memo} from 'react';
 import cytoscape, { EdgeCollection, EventObject } from 'cytoscape';
 import Cytoscape from 'cytoscape';
 import { randomUUID } from 'crypto';
-import { Node as gqlNode, GetNeighborsDocument, IsDependency, Edge as GqlEdge } from '../gql/__generated__/graphql';
+import { Node as gqlNode, GetNeighborsDocument, IsDependency, Edge as GqlEdge, Package} from '../gql/__generated__/graphql';
 import { Node, Edge, GraphData, ParseNode, parsePackage} from "./ggraph";
 import { gql, useQuery, useLazyQuery, ApolloQueryResult} from '@apollo/client';
 import client from 'apollo/client'
@@ -36,6 +36,8 @@ const MemoedGraph = memo(CytoscapeComponent, (prev, next)=> {
 });
 */
 
+
+
 type GraphProps = {
   graphData?: GraphData;
   layout?: string;
@@ -47,6 +49,38 @@ export type GraphRep = {
   nodes : Map<string, Node>;
   edges: Map<string, Edge>;
 }
+
+export function processDataForCytoscape (data : gqlNode[]) : [string | undefined, any] {
+  if (data == undefined) {
+    return ["", undefined];
+  }
+  let nodes: Node[] = [];
+  let edges: Edge[] = [];
+
+  let startNode : string = undefined;
+  data.forEach((p :gqlNode, index) => {
+
+    const gd  = ParseNode(p);
+    //let [gd, target] = parsePackage(p);
+    //startNode = target.data.id;
+    if (gd!= undefined) {
+      nodes = [...nodes, ...gd.nodes];
+      edges = [...edges, ...gd.edges];
+    }
+    // Create nodes for package and dependentPackage
+
+  });
+
+  const pVers = nodes.filter((v)=> v.data.type == "PackageName");
+  console.log(pVers);
+  if (pVers.length >0) {
+    startNode = pVers[0].data.id;
+  }
+
+
+  return [startNode, { nodes, edges }];
+};
+
 
 function gDataToRep (d : GraphData) :GraphRep {
   const nTuple = d.nodes.map((v) => [v.data.id, v]);
@@ -819,4 +853,3 @@ export default function Graph(props: GraphProps) {
     </>
   )
 }
-
