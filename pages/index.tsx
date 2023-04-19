@@ -77,6 +77,7 @@ export default function Home() {
 
     let certifyBadData = certifyBadQuery.data?.CertifyBad;
     let sortableCertifyBadData : CertifyBad[] = [...certifyBadData ?? []] as CertifyBad[]
+    console.log(certifyBadData);
 
     const certifyBadToString = (v:CertifyBad) => {
       let label = "";
@@ -97,7 +98,7 @@ export default function Home() {
           label += "artifact://" + sub.algorithm + ":" + sub.digest;
           break;
       }
-      return label + "{ JUSTIFICAITON: " + v.justification + "}";
+      return label + "{ JUSTIFICATION: " + v.justification + "}";
     }
     
     certifyBadEntries = sortableCertifyBadData.map(t=> ({label: certifyBadToString(t), value: t}));
@@ -163,7 +164,7 @@ export default function Home() {
             return <Graph key={d.key} layout="dagre" writeDetails={()=>{}} startNode={start} graphData={graphData} /> 
           })
         }
-        </div>
+      </div>
     </main>
   )
 }

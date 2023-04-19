@@ -184,6 +184,8 @@ export default function Graph(props: GraphProps) {
       setPathEndNode(evt.target.id());
       setPathEndToggle(false);
     }
+    console.log(node.data());
+
     if (props.writeDetails != undefined) {
       props.writeDetails(node.data());
     }    
@@ -290,6 +292,7 @@ export default function Graph(props: GraphProps) {
     if (startType == "PackageName") {
       const depNodes = [...graphRep.edges].map(([_,value]) => value).filter((d)=> d.data.target == startId && d.data.label == "depends_on");
       versions = new Set(depNodes.map((d) => graphRep.nodes.get(d.data.source).data.versionRange));
+
     }
 
     const nFilter = (n: gqlNode) => {
@@ -319,8 +322,9 @@ export default function Graph(props: GraphProps) {
           [gd, target] = parsePackage(n);
           if (target.data.type == "PackageVersion") {
             if (versions == undefined) {
-              return false;
+              return startType == "IsDependency";
             }
+
             if (versions.has(target.data.version)) {
               return true;
             } else {
@@ -352,7 +356,13 @@ export default function Graph(props: GraphProps) {
       const depNodes = [...graphRep.edges].map(([_,value]) => value).filter((d)=> d.data.source == startId && d.data.label == "pkgVersion");
       console.log(depNodes);
       versions = new Set(depNodes.map((d) => graphRep.nodes.get(d.data.target).data.version));
+
+      if (versions.has("") || versions.size == 0) {
+        versions = undefined;
+      }
     }
+
+    
     console.log("VERSION_SET",versions);
 
     const nFilter = (n: gqlNode) => {
@@ -367,17 +377,14 @@ export default function Graph(props: GraphProps) {
         // HasSLSA expands materials since we want to find what's dependent on it.
         case "HasSLSA":
           return startType =="Builder" || n.slsa.builtFrom.filter((a)=> a.id == startId).length > 0;
-        case "HasSourceAt":
-          return startType != "SourceName" && startType != "SourceType" && startType != "SourceNamespace";
+
         case "IsDependency":
           // only return true if start node is the subject
-          if (!versions.has(n.versionRange)) { return false; } // if isDepedency doesn't include the version don't get its use
+          
+          if (versions != undefined && !versions.has(n.versionRange)) { return false; } // if isDepedency doesn't include the version don't get its use
           [gd, target] = parsePackage(n.dependentPackage);
+
           return target.data.id == startId;
-        case "CertifyVuln":
-          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa" || startType == "NoVuln")
-        case "CertifyVEXStatement":
-          return !(startType == "Cve" || startType == "Osv" || startType == "Ghsa" || startType == "NoVuln")
   
         case "Package":        
           [gd, target] = parsePackage(n);
@@ -385,6 +392,7 @@ export default function Graph(props: GraphProps) {
             if (versions == undefined) {
               return false;
             }
+            
             if (versions.has(target.data.version)) {
               return true;
             } else {
@@ -394,7 +402,7 @@ export default function Graph(props: GraphProps) {
 
       }
       
-      return true;
+      return false;
     };
     return nFilter;
   }
@@ -416,14 +424,15 @@ export default function Graph(props: GraphProps) {
     let eMap : Map<string, Edge> = new Map(graphRep.edges);
 
     let promises = ids.map((id,idx) =>  {
-      console.log("handling neighbor");
 
+      
       return client.query({
         query: GetNeighborsDocument,
         fetchPolicy: "no-cache" ,
         variables: { nodeId: id, edges: []},
       }).then((result)=>{
-          // console.log(id, "neighbors", result.data);
+        
+          console.log(id, "neighbors", result.data);
           const neighbors = result.data.neighbors;
           addedNodes[idx] =[];
           addedEdges[idx] = [];
@@ -600,11 +609,50 @@ export default function Graph(props: GraphProps) {
       "pkgVersion", "pkgName", "pkgNs",
       "srcVersion", "srcName", "srcNs",
     ])
+
+    if (expandOptions == "expandDependents") { 
+      badEdgeSet = new Set([
+        "pkgName", "pkgNs",
+        "srcVersion", "srcName", "srcNs",
+      ])
+
+    }
+
+    
     if (badEdgeSet.has(e[0].data().label)) {
-      return 100;
+      return 100000000;
     } else {
       return 1;
     }
+  }
+
+  function isValidDependentPath(path : cytoscape.CollectionReturnValue) : boolean {
+    const bools = path.map((e,i)=>{
+        console.log(e,i);
+        if (e.isEdge()) {
+          const prevNode = path[i-1].data();
+          const nextNode = path[i+1].data();
+          const edge = e.data();
+
+          // Don't go down from package name
+          if (edge.label == "pkgVersion") {
+            if (prevNode.type == "PackageName") {
+              return false;
+            }
+          }
+
+          // Don't go down from package name
+          if (edge.label == "IsDependency_subject") {
+            if (prevNode.type == "PackageVersion") {
+              return false;
+            }
+          }
+
+        }
+        return true;
+    })
+
+    return bools.filter((n)=> !n).length==0;
   }
 
   function headlessPath() {
@@ -622,23 +670,34 @@ export default function Graph(props: GraphProps) {
     let paths : cytoscape.CollectionReturnValue[] = [];
     targetNodes.forEach((n)=> {
       const t = n.id();
-      const path = bf.pathTo(n);
 
-      n.addClass('pathTarget');
-      path.addClass('path');
-      //path.select();
-      paths = [...paths,path];
+      const path = bf.pathTo(n);
+      console.log("path",path)
+      if (isValidDependentPath(path)) {
+        n.addClass('pathTarget');
+        path.addClass('path');
+        
+        //path.select();
+        paths = [...paths,path];
+      }
     });
+    
     console.log(paths);
-    setPaths(paths);
+    setPaths(paths.sort((a,b)=> a.length - b.length));
 
   }
 
   function collectionToPathString (p : cytoscape.CollectionReturnValue) {
     
+    const lab = (data) => {
+      return data.type == "PackageName" ? "(" + data.label + ")":"";
+    }
     let pathName = "";
+
+    const pfirstLabel = lab(p.first().data())
+    const pLastLabel = lab(p.last().data())
     if (p.first().isNode() && p.last().isNode()) {
-      pathName = p.first().data().type + " to " + p.last().data().type + ":";
+      pathName = p.first().data().type + pfirstLabel + " to " + p.last().data().type + pLastLabel + ":";
     }
     return pathName + p.filter(e => e.isEdge()).map(e => e.id()).join(",");
   }
@@ -663,7 +722,7 @@ export default function Graph(props: GraphProps) {
     <>
     <h1>Node count: {graphData.nodes.size}, Edge count: {graphData.edges.size}</h1>
     <h2>{frontierEmpty && "Frontier is empty"}</h2>
-    {!showGraph && 
+    {
     <div>
       <h4>Graph is too big to show on Web UI, you may still perform operations on it but it will not show</h4>
       <p>For example, the path controls will still work, with the exception that finding the path will require clicking
@@ -798,12 +857,15 @@ export default function Graph(props: GraphProps) {
             console.log("bf");
             targetNodes.forEach((n)=> {
               const t = n.id();
-              const path = bf.pathTo(n);
-              console.log(path);
-              n.addClass('pathTarget');
-              path.addClass('path');
-              path.select();
-              console.log("bfpath", path);
+
+
+              if (bf.distanceTo(n) < 100000000) {
+                const path = bf.pathTo(n);
+                console.log(path);
+                n.addClass('pathTarget');
+                path.addClass('path');
+                path.select();
+              }
             });
 
             

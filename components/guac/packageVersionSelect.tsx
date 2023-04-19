@@ -8,11 +8,14 @@ const PackageVersionSelect = ({ label, options, setPackageVersionFunc, setGraphD
     setPackageVersionFunc(event);
     
     let spec ={
-      version: event.value.version,
+    
       type: packageType.value,
       name: packageName.value,
       namespace: packageNamespace.value
     };
+    if (event.value.version != "") {
+      spec.version =  event.value.version
+    }
 
     if (event.value.qualifiers.length > 0) {
       spec.qualifiers = event.value.qualifiers
@@ -24,7 +27,8 @@ const PackageVersionSelect = ({ label, options, setPackageVersionFunc, setGraphD
       query: GetPkgDocument,
       variables: {
         spec: spec,
-      }
+      },
+      fetchPolicy: "no-cache" ,
     });
     let q = packageNamespacesQuery.then(
       res => {

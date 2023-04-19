@@ -645,7 +645,7 @@ export function parseIsDependency(n: IsDependency) : [GraphData, Node | undefine
   edges = [...edges, ...gd.edges];
 
   if (t != undefined) {
-    edges = [...edges, {data: {source: n.id, target: t.data.id, label:"subject"}}]
+    edges = [...edges, {data: {source: n.id, target: t.data.id, label:"IsDependency_subject"}}]
   }
 
   [gd, t] = parsePackage(n.dependentPackage);
