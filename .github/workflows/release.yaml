@@ -33,7 +33,7 @@ jobs:
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
         with:
           registry: ghcr.io
-          username: ${GITHUB_WORKFLOW}
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: setup pack 
         uses: buildpacks/github-actions/setup-pack@7fc3d673350db0fff960cc94a3b9b80e5b663ae2 # v5.0.0
