@@ -1,13 +1,21 @@
-import { ApolloProvider } from '@apollo/client'
-import client, { useApollo } from '../apollo/client'
+import { GuacVizThemeContextProvider } from '@/store/themeContext'
+import MainLayout from "../components/layout/mainLayout";
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
+import { ApolloProvider } from '@apollo/client'
+import client, { useApollo } from '../apollo/client'
 
-export default function App({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
   const apolloClient = useApollo(pageProps.initialApolloState)
   return (
-    <ApolloProvider client={client}>
-      <Component {...pageProps} />
-    </ApolloProvider>
-  )
+    <GuacVizThemeContextProvider>
+      <MainLayout>
+        <ApolloProvider client={client}>
+          <Component {...pageProps} />
+        </ApolloProvider>
+      </MainLayout>
+    </GuacVizThemeContextProvider>
+  );
 }
+
+export default MyApp;
