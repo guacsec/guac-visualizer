@@ -111,7 +111,7 @@ export default function Graph(props: GraphProps) {
   const [height, setHeight] = useState("800px");
   const [frontierEmpty, setFrontierEmpty] = useState(false);
   const [expandedDepth, setExpandedDepth] = useState(0);
-  const [expandOptions, setExpandOptions] = useState("expandDependencies");
+  const [expandOptions, setExpandOptions] = useState("expandDependents");
   const [dataCount, setDataCount] = useState(0);
   const [expandDepth, setExpandDepth] = useState("3");
   const [loading, setLoading] = useState(false);
@@ -385,7 +385,12 @@ export default function Graph(props: GraphProps) {
           [gd, target] = parsePackage(n.dependentPackage);
 
           return target.data.id == startId;
-  
+        case "IsOccurrence":
+        case "Artifact":
+        case "CertifyGood":
+
+          return true;
+
         case "Package":        
           [gd, target] = parsePackage(n);
           if (target.data.type == "PackageVersion") {
@@ -722,12 +727,13 @@ export default function Graph(props: GraphProps) {
     <>
     <h1>Node count: {graphData.nodes.size}, Edge count: {graphData.edges.size}</h1>
     <h2>{frontierEmpty && "Frontier is empty"}</h2>
-    {
-    <div>
-      <h4>Graph is too big to show on Web UI, you may still perform operations on it but it will not show</h4>
+    {!showGraph && <div><h4>Graph is too big to show on Web UI, you may still perform operations on it but it will not show</h4>
       <p>For example, the path controls will still work, with the exception that finding the path will require clicking
         the below button, which will show paths directly here.
-      </p>
+      </p></div>}
+    {
+    <div>
+      
       <p>These path strings can then be opened in the graph viewer</p>
       <button onClick={headlessPath}>find paths</button>
       <p>explore paths (limited to 20):</p>
@@ -766,14 +772,6 @@ export default function Graph(props: GraphProps) {
       <button onClick={expandFrontier}> Expand </button>
       <br />
     </div>
-    <div id="path">
-      <h3>node pather</h3>
-        <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
-        <p> {pathStartToggle? "click node to set" : (pathStartNode!="" ?  pathStartNode:"NONE")} </p>
-
-        <button onClick={() => { setPathEndToggle (!pathEndToggle); setPathStartToggle(false); }} >Set target node</button>
-        <p> {pathEndToggle? "click node to set" : (pathEndNode!="" ?  pathEndNode:"NONE")} </p>
-    </div>
     <div id="explorer">
       <h3>node explorer</h3>
         <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
@@ -787,6 +785,15 @@ export default function Graph(props: GraphProps) {
           labelledBy="Select"
         />
     </div>
+    <div id="path">
+      <h3>node pather</h3>
+        <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
+        <p> {pathStartToggle? "click node to set" : (pathStartNode!="" ?  pathStartNode:"NONE")} </p>
+
+        <button onClick={() => { setPathEndToggle (!pathEndToggle); setPathStartToggle(false); }} >Set target node</button>
+        <p> {pathEndToggle? "click node to set" : (pathEndNode!="" ?  pathEndNode:"NONE")} </p>
+    </div>
+
     <div> 
       <h3>path shared controls</h3>
       <button onClick={clearPath}>CLEAR ALL</button>
