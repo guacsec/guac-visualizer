@@ -1,5 +1,7 @@
 # GUAC Visualizer
 
+![ui](https://user-images.githubusercontent.com/3060102/233406051-486f4f88-2779-4abf-9d5f-adb98bf51c3a.png)
+
 The GUAC Visualizer is an experimental utility that can be used to interact with
 the GUAC services. It acts as a way to visualize the software supply chain graph
 as well as a means to explore the supply chain, and prototype policies.
