@@ -17,15 +17,22 @@ name: release-guac-visualizer-image
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
 
 permissions:
   packages: write # To publish container images to GHCR
+  id-token: write # needed for signing the images with GitHub OIDC Token **not production ready**
 
 jobs:
   build-image-on-release:
     name: Build and publish image
     runs-on: ubuntu-latest
+    env:
+      IMAGE_URI: ghcr.io/${{ github.repository }}
+      BUILDER: paketobuildpacks/builder:base
+      BUILDPACK: paketo-buildpacks/nodejs 
+      BUILDPACK_SBOM_OUTPUT_DIR: sbom-output-dir
+      BUILDPACK_SPDX_SBOM: "launch/paketo-buildpacks_yarn-install/launch-modules/sbom.spdx.json"
     steps:
       - name: Checkout code
         uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # tag=v3
@@ -33,17 +40,31 @@ jobs:
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
         with:
           registry: ghcr.io
-          username: ${GITHUB_WORKFLOW}
+          username: ${{ github.actor }} 
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: setup pack 
+      - name: Setup pack 
         uses: buildpacks/github-actions/setup-pack@7fc3d673350db0fff960cc94a3b9b80e5b663ae2 # v5.0.0
+      - name: Install cosign
+        uses: sigstore/cosign-installer@main
+      - name: Install crane
+        uses: imjasonh/setup-crane@v0.1
       - name: Build and publish image
+        id: build_n_publish_image 
         run: |
           #!/usr/bin/env bash
           set -euo pipefail
-          pack build ${IMAGE} --builder ${BUILDER} --buildpack ${BUILDPACK} --publish
+          pack build ${IMAGE_URI}:${{ github.ref_name }} --builder ${BUILDER} --buildpack ${BUILDPACK} --publish --sbom-output-dir ${BUILDPACK_SBOM_OUTPUT_DIR}
+          echo "IMAGE_DIGEST=$(crane digest ${IMAGE_URI}:${{ github.ref_name }})" >> $GITHUB_OUTPUT
+      - name: Sign and verify image
+        run: |
+          #!/usr/bin/env bash
+          set -euo pipefail
+          cosign sign -a git_sha=$GITHUB_SHA ${IMAGE_URI_DIGEST} --yes
+          cosign attach sbom --sbom ${BUILDPACK_SBOM_OUTPUT_DIR}/${BUILDPACK_SPDX_SBOM} ${IMAGE_URI_DIGEST}
+          cosign sign -a git_sha=$GITHUB_SHA --attachment sbom ${IMAGE_URI_DIGEST} --yes
+          cosign verify ${IMAGE_URI_DIGEST} --certificate-oidc-issuer ${GITHUB_ACITONS_OIDC_ISSUER} --certificate-identity ${COSIGN_KEYLESS_SIGNING_CERT_SUBJECT}
         shell: bash
         env:
-          IMAGE: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-          BUILDER: paketobuildpacks/builder:base
-          BUILDPACK: paketo-buildpacks/nodejs 
+          IMAGE_URI_DIGEST: ${{ env.IMAGE_URI }}@${{ steps.build_n_publish_image.outputs.IMAGE_DIGEST }}
+          GITHUB_ACITONS_OIDC_ISSUER: https://token.actions.githubusercontent.com
+          COSIGN_KEYLESS_SIGNING_CERT_SUBJECT: https://github.com/${{ github.repository }}/.github/workflows/release.yaml@${{ github.ref }}
