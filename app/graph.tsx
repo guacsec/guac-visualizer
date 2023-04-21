@@ -660,196 +660,198 @@ export default function Graph(props: GraphProps) {
   
   console.log(graphData);
   return (
-    <>
-    <h1>Node count: {graphData.nodes.size}, Edge count: {graphData.edges.size}</h1>
-    <h2>{frontierEmpty && "Frontier is empty"}</h2>
-    {!showGraph && 
-    <div>
-      <h4>Graph is too big to show on Web UI, you may still perform operations on it but it will not show</h4>
-      <p>For example, the path controls will still work, with the exception that finding the path will require clicking
-        the below button, which will show paths directly here.
-      </p>
-      <p>These path strings can then be opened in the graph viewer</p>
-      <button onClick={headlessPath}>find paths</button>
-      <p>explore paths (limited to 20):</p>
-      {(paths.length <= 20 && paths.length >0) && <><p><a href={getMultiPath(paths)} target="_blank" rel="noreferrer">[Click to visualize]   </a>all paths in page</p></>}
-      <PaginatedList
-        list={paths}
-        itemsPerPage={20}
-        renderList={(list) => (
-          <>
-            <p><a href={getMultiPath(list)} target="_blank" rel="noreferrer">[Click to visualize]   </a>all paths in page</p>
-            {list.map((p, id) => {
-              return (
-                <div key={id}>
-                  {pathToOutput(p)}
-                </div>
-              );
-            })}
-          </>
-        )}
-      />
-    </div>}
-    <h2>{loading? "Loading" : ""}</h2>
-    
-    <div key="controls" style={{
-      float: "left",
-    }}>
-    <div id="expander">
-      <h3>node expander</h3>
-      <select value={expandOptions}  onChange={e => setExpandOptions(e.target.value)}>
-        <option value="expandDependencies">Expand Dependencies</option>
-        <option value="expandDependents">Expand Dependents</option>
-        <option value="expandAll">Expand all</option>
-      </select>
-
-      <input type="text" pattern="[0-9]*" maxLength={3} onChange={e => setExpandDepth(e.target.value)} value={expandDepth}/>
-      <button onClick={expandFrontier}> Expand </button>
-      <br />
-    </div>
-    <div id="path">
-      <h3>node pather</h3>
-        <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
-        <p> {pathStartToggle? "click node to set" : (pathStartNode!="" ?  pathStartNode:"NONE")} </p>
-
-        <button onClick={() => { setPathEndToggle (!pathEndToggle); setPathStartToggle(false); }} >Set target node</button>
-        <p> {pathEndToggle? "click node to set" : (pathEndNode!="" ?  pathEndNode:"NONE")} </p>
-    </div>
-    <div id="explorer">
-      <h3>node explorer</h3>
-        <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
-        <p> {pathStartToggle? "click node to set" : (pathStartNode!="" ?  pathStartNode:"NONE")} </p>
-        
-        <pre>{JSON.stringify(explorerList)}</pre>
-        <MultiSelect
-          options={explorerOptions}
-          value={explorerList}
-          onChange={(setExplorerList)}
-          labelledBy="Select"
+    <div id="graphAndControls">
+      <div id="controls" key="controls" style={{
+        float: "left",
+      }}>
+      <h1>Node count: {graphData.nodes.size}, Edge count: {graphData.edges.size}</h1>
+      <h2>{frontierEmpty && "Frontier is empty"}</h2>
+      {!showGraph && 
+      <div>
+        <h4>Graph is too big to show on Web UI, you may still perform operations on it but it will not show</h4>
+        <p>For example, the path controls will still work, with the exception that finding the path will require clicking
+          the below button, which will show paths directly here.
+        </p>
+        <p>These path strings can then be opened in the graph viewer</p>
+        <button onClick={headlessPath}>find paths</button>
+        <p>explore paths (limited to 20):</p>
+        {(paths.length <= 20 && paths.length >0) && <><p><a href={getMultiPath(paths)} target="_blank" rel="noreferrer">[Click to visualize]   </a>all paths in page</p></>}
+        <PaginatedList
+          list={paths}
+          itemsPerPage={20}
+          renderList={(list) => (
+            <>
+              <p><a href={getMultiPath(list)} target="_blank" rel="noreferrer">[Click to visualize]   </a>all paths in page</p>
+              {list.map((p, id) => {
+                return (
+                  <div key={id}>
+                    {pathToOutput(p)}
+                  </div>
+                );
+              })}
+            </>
+          )}
         />
-    </div>
-    <div> 
-      <h3>path shared controls</h3>
-      <button onClick={clearPath}>CLEAR ALL</button>
-      <button onClick={hideNonPath}>Hide non-path nodes</button>
-
+      </div>}
+      <h2>{loading? "Loading" : ""}</h2>
       
-    </div>
-    <button onClick={() =>{
-      const pathElements = refCy.elements(".path");
       
-      if (pathElements == undefined || pathElements.length == 0) {
-        setLoading(true);
-        refCy.layout(layout).run();
-      } else {
-        setLoading(true);
-        pathElements.layout(layout).run();
-      }
-      }}>layout run</button>
-  {/* end controls block */}
-  </div> 
-  { (showGraph) &&
-    <CytoscapeComponent
-      elements={processedGraphData}
-      style={{ width: width, height: height , float: "right"}}
-      zoomingEnabled={true}
-      maxZoom={3}
-      minZoom={0.1}
-      autounselectify={false}
-      boxSelectionEnabled={true}
-      layout={layout}
-      stylesheet={styleSheet}
-      //hideEdgesOnViewport={true}
-      //textureOnViewport={true}
-      headless={false}
-      cy={cy => {
-        refCy = cy;
-        cy.removeListener('tap');
-        cy.removeListener('cxttap');
-        cy.on("tap", "node", evt => nodeTapHandler(evt));
-        cy.on("cxttap", "node", evt => nodeCxttapHandler(evt));
-        cy.removeListener('layoutstart');
-        cy.on("layoutstart", ()=> console.log('layoutstart'));
-        if (pathStartNode != "" ) {
+      <div id="expander">
+        <h3>node expander</h3>
+        <select value={expandOptions}  onChange={e => setExpandOptions(e.target.value)}>
+          <option value="expandDependencies">Expand Dependencies</option>
+          <option value="expandDependents">Expand Dependents</option>
+          <option value="expandAll">Expand all</option>
+        </select>
 
-          // based on what's set, depends what type of paths we're calculating
-          if (pathEndNode != "") {
-            // this is pather
-            console.log('running path');
-            var aStar = cy.elements().aStar({ root: "#" + pathStartNode, goal: "#" + pathEndNode, weight: weightFn});
-            aStar.path.select();
-            cy.elements().not( aStar.path ).removeClass('path');
-            aStar.path.addClass('path');
-            console.log(aStar);
-            cy.getElementById(pathStartNode).addClass('pathSource');
-            cy.getElementById(pathEndNode).addClass('pathTarget');
-            
+        <input type="text" pattern="[0-9]*" maxLength={3} onChange={e => setExpandDepth(e.target.value)} value={expandDepth}/>
+        <button onClick={expandFrontier}> Expand </button>
+        <br />
+      </div>
+      <div id="path">
+        <h3>node pather</h3>
+          <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
+          <p> {pathStartToggle? "click node to set" : (pathStartNode!="" ?  pathStartNode:"NONE")} </p>
 
-          } else if (explorerList.length > 0) {
-            // this is explorer
-            // TODO: Figure out what are best weights for bellmanford (since it allows -ve weights)
-            // Going to avoid negative edges for now since i think it can cause infinite loops? (something something proof from class lol)
+          <button onClick={() => { setPathEndToggle (!pathEndToggle); setPathStartToggle(false); }} >Set target node</button>
+          <p> {pathEndToggle? "click node to set" : (pathEndNode!="" ?  pathEndNode:"NONE")} </p>
+      </div>
+      <div id="explorer">
+        <h3>node explorer</h3>
+          <button onClick={() => { setPathStartToggle (!pathStartToggle); setPathEndToggle(false); }} >Set start node</button>
+          <p> {pathStartToggle? "click node to set" : (pathStartNode!="" ?  pathStartNode:"NONE")} </p>
+          
+          <pre>{JSON.stringify(explorerList)}</pre>
+          <MultiSelect
+            options={explorerOptions}
+            value={explorerList}
+            onChange={(setExplorerList)}
+            labelledBy="Select"
+          />
+      </div>
+      <div> 
+        <h3>path shared controls</h3>
+        <button onClick={clearPath}>CLEAR ALL</button>
+        <button onClick={hideNonPath}>Hide non-path nodes</button>
+
+        
+      </div>
+      <button onClick={() =>{
+        const pathElements = refCy.elements(".path");
+        
+        if (pathElements == undefined || pathElements.length == 0) {
+          setLoading(true);
+          refCy.layout(layout).run();
+        } else {
+          setLoading(true);
+          pathElements.layout(layout).run();
+        }
+        }}>layout run</button>
+    {/* end controls block */}
+    {(showGraph) && <div className="checkList">
+        <div className="title">Highlight nodes</div>
+        <div className="list-container">
+          {checkList.map((item, index) => (
+            <div key={index}>
+              <input value={item} onChange={(e)=> setHighlightNodes(item, e.target.checked)} type="checkbox" />
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>}
+    </div> 
+    { (showGraph) &&
+      <CytoscapeComponent
+        elements={processedGraphData}
+        style={{ width: width, height: height , float: "right"}}
+        zoomingEnabled={true}
+        maxZoom={3}
+        minZoom={0.1}
+        autounselectify={false}
+        boxSelectionEnabled={true}
+        layout={layout}
+        stylesheet={styleSheet}
+        //hideEdgesOnViewport={true}
+        //textureOnViewport={true}
+        headless={false}
+        cy={cy => {
+          refCy = cy;
+          cy.removeListener('tap');
+          cy.removeListener('cxttap');
+          cy.on("tap", "node", evt => nodeTapHandler(evt));
+          cy.on("cxttap", "node", evt => nodeCxttapHandler(evt));
+          cy.removeListener('layoutstart');
+          cy.on("layoutstart", ()=> console.log('layoutstart'));
+          if (pathStartNode != "" ) {
+
+            // based on what's set, depends what type of paths we're calculating
+            if (pathEndNode != "") {
+              // this is pather
+              console.log('running path');
+              var aStar = cy.elements().aStar({ root: "#" + pathStartNode, goal: "#" + pathEndNode, weight: weightFn});
+              aStar.path.select();
+              cy.elements().not( aStar.path ).removeClass('path');
+              aStar.path.addClass('path');
+              console.log(aStar);
+              cy.getElementById(pathStartNode).addClass('pathSource');
+              cy.getElementById(pathEndNode).addClass('pathTarget');
+              
+
+            } else if (explorerList.length > 0) {
+              // this is explorer
+              // TODO: Figure out what are best weights for bellmanford (since it allows -ve weights)
+              // Going to avoid negative edges for now since i think it can cause infinite loops? (something something proof from class lol)
+              cy.elements().removeClass(['path','pathSource', 'pathTarget']);
+
+              let bf = cy.elements().bellmanFord({ root: "#" + pathStartNode, weight: weightFn, directed: false});
+              const filterSet = new Set(explorerList.map((v)=> v.value));
+              const targetNodes = cy.nodes().filter((n)=> { return filterSet.has(n.data().type); });
+              cy.getElementById(pathStartNode).addClass('pathSource');
+              console.log("bf");
+              targetNodes.forEach((n)=> {
+                const t = n.id();
+                const path = bf.pathTo(n);
+                console.log(path);
+                n.addClass('pathTarget');
+                path.addClass('path');
+                path.select();
+                console.log("bfpath", path);
+              });
+
+              
+            } else {
+              // this is nothing
+            }
+          } else {
+            //cy.elements().removeClass('path');
             cy.elements().removeClass(['path','pathSource', 'pathTarget']);
+          }
 
-            let bf = cy.elements().bellmanFord({ root: "#" + pathStartNode, weight: weightFn, directed: false});
-            const filterSet = new Set(explorerList.map((v)=> v.value));
-            const targetNodes = cy.nodes().filter((n)=> { return filterSet.has(n.data().type); });
-            cy.getElementById(pathStartNode).addClass('pathSource');
-            console.log("bf");
-            targetNodes.forEach((n)=> {
-              const t = n.id();
-              const path = bf.pathTo(n);
-              console.log(path);
-              n.addClass('pathTarget');
-              path.addClass('path');
-              path.select();
-              console.log("bfpath", path);
-            });
-
+          if (hideNonPathNodes) {
+            const pathNodes = cy.elements().filter(".path");
+            cy.elements().not(pathNodes).addClass("not-path");
+            pathNodes.layout(layout).run();
             
           } else {
-            // this is nothing
+            cy.elements().filter(".not-path").removeClass("not-path");
           }
-        } else {
-          //cy.elements().removeClass('path');
-          cy.elements().removeClass(['path','pathSource', 'pathTarget']);
-        }
-
-        if (hideNonPathNodes) {
-          const pathNodes = cy.elements().filter(".path");
-          cy.elements().not(pathNodes).addClass("not-path");
-          pathNodes.layout(layout).run();
           
-        } else {
-          cy.elements().filter(".not-path").removeClass("not-path");
-        }
-        
-        //cy.batch(() => {cy.layout(layout).run()});
-      }}
-      
-    />
-  }
-  { (!showGraph) &&
-    <CytoscapeComponent
-      elements={processedGraphData}
-      headless={true}
-      cy={cy => {
-        refCy = cy;
+          //cy.batch(() => {cy.layout(layout).run()});
         }}
-    />
-  }
-  
-    {(showGraph) && <div className="checkList">
-    <div className="title">Highlight nodes</div>
-    <div className="list-container">
-      {checkList.map((item, index) => (
-         <div key={index}>
-          <input value={item} onChange={(e)=> setHighlightNodes(item, e.target.checked)} type="checkbox" />
-           <span>{item}</span>
-        </div>
-      ))}
+        
+      />
+    }
+    { (!showGraph) &&
+      <CytoscapeComponent
+        elements={processedGraphData}
+        headless={true}
+        cy={cy => {
+          refCy = cy;
+          }}
+      />
+    }
+    
+        
     </div>
-    </div>}
-    </>
   )
 }

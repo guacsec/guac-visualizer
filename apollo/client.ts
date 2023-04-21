@@ -3,22 +3,10 @@
 // Unclear currently if this is a good way to do this.
 
 import { useMemo } from 'react'
-import { ApolloClient, InMemoryCache, createHttpLink, NormalizedCacheObject } from '@apollo/client'
-import { SchemaLink } from '@apollo/client/link/schema'
+import { ApolloClient, InMemoryCache, createHttpLink, NormalizedCacheObject, DefaultOptions } from '@apollo/client'
 import merge from 'deepmerge'
 
 let apolloClient: ApolloClient<NormalizedCacheObject>
-
-// function createIsomorphLink() {
-//   if (typeof window === 'undefined') {
-//     const schema = require('./schema')
-//     return new SchemaLink({ schema })
-//   } else {
-//     return createHttpLink({
-//       uri: "http://localhost",
-//     })
-//   }
-// }
 
 function createApolloClient() {
   return new ApolloClient({
@@ -26,6 +14,14 @@ function createApolloClient() {
     // link: createIsomorphLink(),
     uri: "http://localhost:3000/api/graphql",
     cache: new InMemoryCache(),
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'no-cache',
+      },
+      query: {
+        fetchPolicy: 'no-cache',
+      }
+    }
   })
 }
 
@@ -35,6 +31,14 @@ const client = new ApolloClient({
     uri: "http://localhost:3000/api/graphql",
     credentials: "same-origin",
     cache: new InMemoryCache(),
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'no-cache',
+      },
+      query: {
+        fetchPolicy: 'no-cache',
+      }
+    }
   })
 
 export function initializeApollo(initialState = null) {

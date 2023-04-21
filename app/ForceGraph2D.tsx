@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
-import { ForceGraphMethods, GraphData, NodeObject } from 'react-force-graph-2d';
+import { ForceGraphMethods, GraphData, NodeObject, NodeCanvasObject, NodeCanvassObjectMode } from 'react-force-graph-2d';
 import * as FG2D from 'react-force-graph-2d';
 
 type ForceGraph2DWrapperProps = {
@@ -11,11 +11,15 @@ type ForceGraph2DWrapperProps = {
     linkDirectionalArrowRelPos: number;
     onNodeClick?: (node: any) => void;
     nodeLabel: string | ((node: NodeObject) => string);
+    linkLabel: string | ((link: FG2D.LinkObject) => string);
     linkDirectionalParticles: number;
     linkSource?: string;
     linkTarget?: string;
     selectedNode?: any;
     dataFetcher?: (node) => Promise<void>;
+    nodeCanvasObject: NodeCanvasObject;
+    nodeCanvasObjectMode: NodeCanvassObjectMode;
+    onNodeDragEnd?: (node: NodeObject, translate: { x: number, y: number }) => void;
 };
 
 const ForceGraph2D: React.FC<ForceGraph2DWrapperProps> = ({
@@ -25,10 +29,14 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps> = ({
     linkDirectionalArrowRelPos,
     onNodeClick,
     nodeLabel,
+    linkLabel,
     linkDirectionalParticles,
     linkSource,
     linkTarget,
     selectedNode,
+    nodeCanvasObject,
+    nodeCanvasObjectMode,
+    onNodeDragEnd,
     dataFetcher
 }) => {
     const fgRef = useRef<ForceGraphMethods>();
@@ -79,16 +87,19 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps> = ({
             linkDirectionalArrowRelPos={linkDirectionalArrowRelPos}
             onNodeClick={onNodeClick ?? handleClick}
             nodeLabel={nodeLabel}
+            linkLabel={linkLabel}
             nodeId="id"
             linkDirectionalParticles={linkDirectionalParticles}
             linkDirectionalParticleWidth={0.5}
             linkSource={linkSource}
             linkTarget={linkTarget}
             linkWidth={1}
-            linkLabel="label"
             //numDimensions={3}
             cooldownTicks={100}
             cooldownTime={15000}
+            nodeCanvasObjectMode={nodeCanvasObjectMode}
+            nodeCanvasObject={nodeCanvasObject}
+            onNodeDragEnd={onNodeDragEnd}
         //nodeThreeObject={nodeThreeObject}
         />
     );

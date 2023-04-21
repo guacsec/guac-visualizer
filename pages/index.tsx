@@ -1,15 +1,17 @@
 import { Inter } from '@next/font/google'
 import { useState, useEffect } from 'react';
 import ForceGraph2D from '../app/ForceGraph2DWrapper'
-import { useQuery, useLazyQuery, useRef } from '@apollo/client'
-import { GetPkgTypesDocument, GetCertifyBadDocument , CertifyBad} from '../gql/__generated__/graphql';
+import { useQuery } from '@apollo/client'
+import { GetPkgTypesDocument, GetCertifyVulnDocument , CertifyBad} from '../gql/__generated__/graphql';
 import PackageTypeSelect from '../components/guac/packageTypeSelect';
 import PackageNamespaceSelect from '@/components/guac/packageNamespaceSelect';
 import PackageNameSelect from '@/components/guac/packageNameSelect';
 import PackageVersionSelect from '@/components/guac/packageVersionSelect';
-import { processDataForCytoscape } from "app/graph";
-import Graph from "app/graph";
-import CertifyBadSelect from '@/components/guac/certifyBadSelect';
+import { DataFetcher, ParseAndFilterGraph, GetNodeById } from "@/app/graph_queries";
+import { ParseNode } from '../app/ggraph';
+import { Toggle } from '@/components/guac/toggleSwitch';
+import { useRouter } from 'next/router'
+import NoSSR from 'react-no-ssr'
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -17,7 +19,6 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Home() {  
   let initialPackageNamespaces = [{label: 'loading...', value: 'loading'}]
   let packageTypes = initialPackageNamespaces
-  let certifyBadEntries = initialPackageNamespaces
   
   // state management
   const [packageType, setPackageType] = useState("");
@@ -27,18 +28,28 @@ export default function Home() {
   const [packageNamespaces, setPackageNamespaces] = useState(initialPackageNamespaces)
   const [packageNames, setPackageNames] = useState(initialPackageNamespaces)
   const [packageVersions, setPackageVersions] = useState(initialPackageNamespaces)
+  const [renderedInitialGraph, setRenderedInitialGraph] = useState(false)
+
+  // query params - this is used to pass in node id's to go get
+  // test with nodeId: 3597773
+  //const [passedInNodeIds, setPassedInNodeIds] = useSearchParams();
+
+  // explorer options
+  const toEOpt = (s: string) => {return { label: s, value: s}}
+  const [highlightArtifact, setHighlightArtifact] = useState(false);
+  const [highlightVuln, setHighlightVuln] = useState(false);
+  const [highlightSbom, setHighlightSbom] = useState(false);
+  const [highlightBuilder, setHighlightBuilder] = useState(false);
 
   // this is for the visual graph
-  const [graphData, setGraphData] = useState([])
-  const [cjsGraphData, setCjsGraphData] = useState([])
+  const [graphData, setGraphData] = useState({nodes: [], links: []})
+  const [highlightedNodes, setHighlightedNodesState] = useState(new Set());
 
   const packageTypesQuery = useQuery(GetPkgTypesDocument, { variables: {}}); 
   const packageLoading = packageTypesQuery.loading;
   const packageError = packageTypesQuery.error;
 
-  const certifyBadQuery = useQuery(GetCertifyBadDocument, { variables: {spec: {}}}); 
-  const certifyBadLoading = certifyBadQuery.loading;
-  const certifyBadError = certifyBadQuery.error;
+  const router = useRouter();
 
   const resetType = () => {
     setPackageNamespaces(initialPackageNamespaces)
@@ -57,54 +68,36 @@ export default function Home() {
     setPackageVersion("")
   }
 
-  useEffect( () => {
-    // const [startNode, gd] = processDataForCytoscape(graphData);
-    if (graphData != undefined && graphData.length > 0) {
-      setCjsGraphData([{key: crypto.randomUUID(), data: graphData}])
-    }
-  }, [graphData]);
+  const localDataFetcher = (id: string) => {
+     DataFetcher(id).then(res =>{
+      const graphData = {nodes:[], links:[]}
+      res.forEach(n => {ParseAndFilterGraph(graphData, ParseNode(n))})
+      setGraphData(graphData);
+     });
+  };
 
   if(!packageError && !packageLoading){
-    let packageData = packageTypesQuery.data?.packages;
-    let sortablePackageData = [...packageData ?? []] 
-    
-    // this isn't following the typical react pattern as doing it that way caused an infinite loop 
-    // still looking into why that would be - better would be setPackageTypes(sortable...)
-    packageTypes = sortablePackageData.sort((a, b) => a.type.localeCompare(b.type)).map(t => ({label: t.type, value: t.type}))
-  }
-
-  if(!certifyBadError && !certifyBadLoading){
-
-    let certifyBadData = certifyBadQuery.data?.CertifyBad;
-    let sortableCertifyBadData : CertifyBad[] = [...certifyBadData ?? []] as CertifyBad[]
-
-    const certifyBadToString = (v:CertifyBad) => {
-      let label = "";
-      const sub = v.subject;
-      switch (sub.__typename) {
-        case "Package":
-          // not complete but not quite important to be complete
-          label += "package://" + [sub.type, sub.namespaces[0].namespace, sub.namespaces[0].names[0].name].join('/');
-          break;
-        case "Source":
-          label += "source://" + [sub.type, sub.namespaces[0].namespace, sub.namespaces[0].names[0].name].join('/');
-          const name = sub.namespaces[0].names[0];
-          // should never be both
-          label += name.commit? "@" + name.commit : "";
-          label += name.tag? "@" + name.tag : "";
-          break;
-        case "Artifact":
-          label += "artifact://" + sub.algorithm + ":" + sub.digest;
-          break;
+    // check if any params passed in to visualize, otherwise just go get the package types
+      let packageData = packageTypesQuery.data?.packages;
+      let sortablePackageData = [...packageData ?? []] 
+      packageTypes = sortablePackageData.sort((a, b) => a.type.localeCompare(b.type)).map(t => ({label: t.type, value: t.type}))
+              
+      if(router.query.path != null && !renderedInitialGraph){
+        const nodeIds = router.query.path.split(",")
+        
+        const graphData = {nodes:[], links:[]}
+        nodeIds.forEach(nodeId => {
+          GetNodeById(nodeId).then(res =>{            
+            ParseAndFilterGraph(graphData, ParseNode(res.node))
+            setGraphData(graphData);
+          })
+        });
+        setRenderedInitialGraph(true)
       }
-      return label + "{ JUSTIFICAITON: " + v.justification + "}";
-    }
-    
-    certifyBadEntries = sortableCertifyBadData.map(t=> ({label: certifyBadToString(t), value: t}));
   }
 
-  
   return (
+    <NoSSR>
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div id="ptDiv" className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
           <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
@@ -149,21 +142,109 @@ export default function Home() {
               setGraphDataFunc={setGraphData}/>
           </div>
       </div>
-      <br/>
-      <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-            <CertifyBadSelect 
-              label="CertifyBad Entities" 
-              options={certifyBadEntries} 
-              setGraphDataFunc={setGraphData} />
-      </div>
-      <div>
-        {
-          cjsGraphData.map((d)=> {
-            const [start, graphData] = processDataForCytoscape(d.data);
-            return <Graph key={d.key} layout="dagre" writeDetails={()=>{}} startNode={start} graphData={graphData} /> 
-          })
-        }
+      <div className="grid grid-cols-3">
+        <div className="w-full items-left justify-left font-mono text-sm p-24 lg:col-span-1">
+          {/* <h2>Highlight Nodes</h2>
+          <div>
+            <Toggle
+              label="Artifacts"
+              toggled={highlightArtifact}
+              onClick={setHighlightArtifact}
+            />
+          </div>
+          <div>
+            <Toggle
+              label="Vulnerabilities"
+              toggled={highlightVuln}
+              onClick={setHighlightVuln}
+            />
+          </div>
+          <div>
+            <Toggle
+              label="SBOM"
+              toggled={highlightSbom}
+              onClick={setHighlightSbom}
+            />
+          </div>
+          <div>
+            <Toggle
+              label="Builder"
+              toggled={highlightBuilder}
+              onClick={setHighlightBuilder}
+            />
+          </div> */}
+        </div>
+        <div  className="lg:col-span-2">
+          <ForceGraph2D 
+              graphData={graphData}
+              nodeLabel={'label'}
+              linkDirectionalArrowLength={3}
+              linkDirectionalArrowRelPos={3}
+              linkDirectionalParticles={0}
+              dataFetcher={localDataFetcher}
+              onNodeDragEnd={node => {
+                node.fx = node.x;
+                node.fy = node.y;
+              }}              
+              nodeCanvasObject={(node, ctx) =>{
+                const shapeSize = 10; // set a constant size for each shape
+                switch(node.type){
+                  case 'PackageType':
+                    // rectangle
+                    ctx.fillStyle = 'light blue'
+                    ctx.fillRect(node.x - 6, node.y - 4, 12, 8);
+                    break;
+                  case 'IsDependency':
+                    // triangle
+                    ctx.fillStyle = 'pink'
+                    ctx.beginPath(); 
+                    ctx.moveTo(node.x, node.y - shapeSize/2); 
+                    ctx.lineTo(node.x - shapeSize/2, node.y + shapeSize/2); 
+                    ctx.lineTo(node.x + shapeSize/2, node.y + shapeSize/2); 
+                    ctx.fill(); 
+                    break;
+                  case 'CertifyVuln':                    
+                    // hexagon
+                    ctx.fillStyle = 'red'
+                    const sideLength = shapeSize / Math.sqrt(3.5 - 1.5*Math.cos(Math.PI/4));
+                    ctx.beginPath(); 
+                    ctx.moveTo(node.x + sideLength, node.y);
+                    ctx.lineTo(node.x + sideLength/2, node.y - sideLength/2);
+                    ctx.lineTo(node.x - sideLength/2, node.y - sideLength/2);
+                    ctx.lineTo(node.x - sideLength, node.y);
+                    ctx.lineTo(node.x - sideLength/2, node.y + sideLength/2);
+                    ctx.lineTo(node.x + sideLength/2, node.y + sideLength/2);
+                    ctx.closePath();
+                    ctx.fill(); 
+                    break;
+                  case 'PackageVersion':
+                    // square
+                    var side = 10;
+                    ctx.fillStyle = 'orange'
+                    ctx.fillRect(node.x - side / 2, node.y - side / 2, side, side);
+                    break;
+                  case 'NoVuln':
+                    // green circle
+                    ctx.fillStyle = 'green'
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false);
+                    ctx.fill();
+                    break;
+                  default:
+                    // circle
+                    ctx.fillStyle = 'blue'
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false);
+                    ctx.fill();
+                    break;
+                }
+                // label the node with text, a little bit under the shape
+                ctx.fillText(node.label, node.x, node.y + 12)
+              }}
+              />
+          </div>
         </div>
     </main>
+    </NoSSR>
   )
 }
