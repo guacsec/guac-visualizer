@@ -1,9 +1,5 @@
-// TODO (mlieberman85): Most of this is based on examples from: 
-// https://github.com/vercel/next.js/blob/canary/examples/with-apollo-neo4j-graphql/apollo/client.ts
-// Unclear currently if this is a good way to do this.
-
 import { useMemo } from 'react'
-import { ApolloClient, InMemoryCache, createHttpLink, NormalizedCacheObject, DefaultOptions } from '@apollo/client'
+import { ApolloClient, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
 import merge from 'deepmerge'
 
 let apolloClient: ApolloClient<NormalizedCacheObject>
