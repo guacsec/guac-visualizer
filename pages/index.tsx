@@ -12,6 +12,7 @@ import { ParseNode } from '../app/ggraph';
 import { Toggle } from '@/components/guac/toggleSwitch';
 import { useRouter } from 'next/router'
 import NoSSR from 'react-no-ssr'
+import React from 'react';
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -29,10 +30,6 @@ export default function Home() {
   const [packageNames, setPackageNames] = useState(initialPackageNamespaces)
   const [packageVersions, setPackageVersions] = useState(initialPackageNamespaces)
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false)
-
-  // query params - this is used to pass in node id's to go get
-  // test with nodeId: 3597773
-  //const [passedInNodeIds, setPassedInNodeIds] = useSearchParams();
 
   // explorer options
   const toEOpt = (s: string) => {return { label: s, value: s}}
@@ -144,7 +141,10 @@ export default function Home() {
       </div>
       <div className="grid grid-cols-3">
         <div className="w-full items-left justify-left font-mono text-sm p-24 lg:col-span-1">
-          {/* <h2>Highlight Nodes</h2>
+          {/*
+          TODO: Uncommet once the highlighting is fixed. 
+           
+          <h2>Highlight Nodes</h2>
           <div>
             <Toggle
               label="Artifacts"
@@ -174,7 +174,7 @@ export default function Home() {
             />
           </div> */}
         </div>
-        <div  className="lg:col-span-2">
+        <div className="lg:col-span-2">
           <ForceGraph2D 
               graphData={graphData}
               nodeLabel={'label'}
