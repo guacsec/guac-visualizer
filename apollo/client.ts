@@ -1,41 +1,23 @@
-// TODO (mlieberman85): Most of this is based on examples from: 
-// https://github.com/vercel/next.js/blob/canary/examples/with-apollo-neo4j-graphql/apollo/client.ts
-// Unclear currently if this is a good way to do this.
-
 import { useMemo } from 'react'
-import { ApolloClient, InMemoryCache, createHttpLink, NormalizedCacheObject } from '@apollo/client'
-import { SchemaLink } from '@apollo/client/link/schema'
+import { ApolloClient, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
 import merge from 'deepmerge'
 
 let apolloClient: ApolloClient<NormalizedCacheObject>
 
-// function createIsomorphLink() {
-//   if (typeof window === 'undefined') {
-//     const schema = require('./schema')
-//     return new SchemaLink({ schema })
-//   } else {
-//     return createHttpLink({
-//       uri: "http://localhost",
-//     })
-//   }
-// }
-const defaultOptions: DefaultOptions = {
-  watchQuery: {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'ignore',
-  },
-  query: {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  },
-}
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     // link: createIsomorphLink(),
     uri: "http://localhost:3000/api/graphql",
-    defaultOptions: defaultOptions,
     cache: new InMemoryCache(),
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'no-cache',
+      },
+      query: {
+        fetchPolicy: 'no-cache',
+      }
+    }
   })
 }
 
@@ -44,8 +26,15 @@ const client = new ApolloClient({
     // link: createIsomorphLink(),
     uri: "http://localhost:3000/api/graphql",
     credentials: "same-origin",
-    defaultOptions: defaultOptions,
     cache: new InMemoryCache(),
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'no-cache',
+      },
+      query: {
+        fetchPolicy: 'no-cache',
+      }
+    }
   })
 
 export function initializeApollo(initialState = null) {

@@ -1,12 +1,13 @@
 import client from "@/apollo/client";
 import { GetPkgNamespacesDocument } from "@/gql/__generated__/graphql";
-import React, { useEffect } from "react";
+import React from "react";
 import Select from "react-select";
 
 const PackageTypeSelect = ({ label, options, setPackageTypeFunc, setPackageNamespacesFunc, resetTypeFunc, ...rest }) => {
   const onSelectPackageType = (event: { value: any; }) => {
     resetTypeFunc();
     setPackageTypeFunc(event);
+    
 
     const packageNamespacesQuery = client.query({
       query: GetPkgNamespacesDocument,
@@ -25,7 +26,7 @@ const PackageTypeSelect = ({ label, options, setPackageTypeFunc, setPackageNames
   };
 
   return (
-    <div>
+    <div>      
       {label && <label>{label}</label>}
       <Select options={options} onChange={(e)=>{onSelectPackageType(e)}} {...rest}/>
     </div>
