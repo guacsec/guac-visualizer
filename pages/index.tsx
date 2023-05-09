@@ -48,6 +48,30 @@ export default function Home() {
 
   const router = useRouter();
 
+  useEffect(() => {
+    console.log(graphData.nodes)
+  }, [graphData])
+
+  // const handleArtifactClick = () => {
+  //   setHighlightArtifact(!highlightArtifact);
+  //   const updatedNodes = graphData.nodes.map(node => {
+  //     if (node.type === 'Artifact') {
+  //       return {
+  //         ...node,
+  //         highlighted: highlightArtifact,
+  //       };
+  //     }
+  //     return node;
+  //   });
+  //   console.log("Node Types: ", new Set(graphData.nodes.map(n => n.type)));
+  //   console.log(updatedNodes.filter(node => node.type === 'Artifact' && node.highlighted));
+  //   setGraphData(prevState => ({
+  //     ...prevState,
+  //     nodes: updatedNodes,
+  //   }));
+  // };
+  
+
   const resetType = () => {
     setPackageNamespaces(initialPackageNamespaces)
     setPackageNamespace("")
@@ -141,9 +165,8 @@ export default function Home() {
       </div>
       <div className="grid grid-cols-3">
         <div className="w-full items-left justify-left font-mono text-sm p-24 lg:col-span-1">
-          {/*
-          TODO: Uncommet once the highlighting is fixed. 
-           
+          
+          TODO: Work on handler functions for each toggle click 
           <h2>Highlight Nodes</h2>
           <div>
             <Toggle
@@ -172,7 +195,7 @@ export default function Home() {
               toggled={highlightBuilder}
               onClick={setHighlightBuilder}
             />
-          </div> */}
+          </div>
         </div>
         <div className="lg:col-span-2">
           <ForceGraph2D 
@@ -229,6 +252,16 @@ export default function Home() {
                     ctx.beginPath();
                     ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false);
                     ctx.fill();
+                    break;
+                  // TODO: Only if toggle is set should we render this
+                  case 'Artifact':
+                    ctx.strokeStyle = 'red';
+                    ctx.fillStyle = 'yellow';
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, shapeSize/2, 0, 2*Math.PI);
+                    ctx.stroke();
+                    ctx.fill();
+                    console.log('Testing if artifact is getting populated')
                     break;
                   default:
                     // circle
