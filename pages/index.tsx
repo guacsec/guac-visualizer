@@ -23,9 +23,6 @@ import { useRouter } from "next/router";
 import NoSSR from "react-no-ssr";
 import React from "react";
 
-// NOTE: Unused
-// const inter = Inter({ subsets: ["latin"] });
-
 export default function Home() {
   let initialPackageNamespaces = [{ label: "loading...", value: "loading" }];
   let packageTypes = initialPackageNamespaces;
@@ -67,7 +64,6 @@ export default function Home() {
     console.log(graphData.nodes);
   }, [graphData]);
 
-  // ... inside Home function
   const handleArtifactClick = () => {
     setHighlightArtifact(!highlightArtifact);
   };
@@ -189,7 +185,6 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-3">
           <div className="w-full items-left justify-left font-mono text-sm p-24 lg:col-span-1">
-            {/* TODO: Work on handler functions for each toggle click */}
             <h2 className="my-5">Highlight Nodes</h2>
             <div className="flex flex-col">
               <Toggle
@@ -308,14 +303,6 @@ export default function Home() {
                     ctx.fill();
                     break;
                 }
-
-                // If red fill is applied, add a black outline
-                if (applyRedFillAndOutline) {
-                  ctx.strokeStyle = "black";
-                  ctx.lineWidth = 1;
-                  ctx.stroke();
-                }
-
                 // label the node with text, a little bit under the shape
                 ctx.fillText(node.label, node.x, node.y + 12);
               }}
