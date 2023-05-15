@@ -1,13 +1,7 @@
-import { Inter } from "@next/font/google";
 import { useState, useEffect } from "react";
 import ForceGraph2D from "../app/ForceGraph2DWrapper";
 import { useQuery } from "@apollo/client";
-import {
-  GetPkgTypesDocument,
-  // NOTE: Unused
-  // GetCertifyVulnDocument,
-  // CertifyBad,
-} from "../gql/__generated__/graphql";
+import { GetPkgTypesDocument } from "../gql/__generated__/graphql";
 import PackageTypeSelect from "../components/guac/packageTypeSelect";
 import PackageNamespaceSelect from "@/components/guac/packageNamespaceSelect";
 import PackageNameSelect from "@/components/guac/packageNameSelect";
@@ -41,11 +35,6 @@ export default function Home() {
   );
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
 
-  // explorer options
-  // NOTE: Unused
-  // const toEOpt = (s: string) => {
-  //   return { label: s, value: s };
-  // };
   const [highlightArtifact, setHighlightArtifact] = useState(false);
   const [highlightVuln, setHighlightVuln] = useState(false);
   const [highlightSbom, setHighlightSbom] = useState(false);
