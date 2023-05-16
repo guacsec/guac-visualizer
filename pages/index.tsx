@@ -40,6 +40,11 @@ export default function Home() {
   const [highlightSbom, setHighlightSbom] = useState(false);
   const [highlightBuilder, setHighlightBuilder] = useState(false);
 
+  // NODE HISTORY
+  const [backStack, setBackStack] = useState([]);
+  const [forwardStack, setForwardStack] = useState([]);
+  const [currentNode, setCurrentNode] = useState(null);
+
   // this is for the visual graph
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
 
@@ -87,8 +92,57 @@ export default function Home() {
     setPackageVersion("");
   };
 
-  const localDataFetcher = (id: string) => {
-    DataFetcher(id).then((res) => {
+  // NODE HISTORY
+  const handleNodeClick = (node) => {
+    if (currentNode) {
+      setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
+      // Clear the forward stack when a new node is clicked
+      setForwardStack([]);
+    }
+    setCurrentNode(node);
+
+    // Fetch new data and expand the node
+    DataFetcher(node.id).then((res) => {
+      const graphData = { nodes: [], links: [] };
+      res.forEach((n) => {
+        ParseAndFilterGraph(graphData, ParseNode(n));
+      });
+      setGraphData(graphData);
+    });
+  };
+
+  const handleBackClick = () => {
+    if (backStack.length === 0) return;
+
+    const newNode = backStack[backStack.length - 1];
+    const newBackStack = backStack.slice(0, backStack.length - 1);
+
+    setForwardStack((prevForwardStack) => [currentNode, ...prevForwardStack]);
+    setCurrentNode(newNode);
+    setBackStack(newBackStack);
+
+    // Fetch new data and display it
+    DataFetcher(newNode.id).then((res) => {
+      const graphData = { nodes: [], links: [] };
+      res.forEach((n) => {
+        ParseAndFilterGraph(graphData, ParseNode(n));
+      });
+      setGraphData(graphData);
+    });
+  };
+
+  const handleForwardClick = () => {
+    if (forwardStack.length === 0) return;
+
+    const newNode = forwardStack[0];
+    const newForwardStack = forwardStack.slice(1);
+
+    setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
+    setCurrentNode(newNode);
+    setForwardStack(newForwardStack);
+
+    // Fetch new data and display it
+    DataFetcher(newNode.id).then((res) => {
       const graphData = { nodes: [], links: [] };
       res.forEach((n) => {
         ParseAndFilterGraph(graphData, ParseNode(n));
@@ -197,15 +251,34 @@ export default function Home() {
                 onClick={() => handleBuilderClick()}
               />
             </div>
+            <div className="py-10 my-5 flex space-x-3">
+              <button
+                type="button"
+                className="text-xl rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                title="Go back to the previous node"
+                onClick={handleBackClick}
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                className="text-xl rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                title="Go forward to the next node"
+                onClick={handleForwardClick}
+              >
+                Forward
+              </button>
+            </div>
           </div>
           <div className="lg:col-span-2">
             <ForceGraph2D
+              onNodeClick={(node) => handleNodeClick(node)}
               graphData={graphData}
               nodeLabel={"label"}
               linkDirectionalArrowLength={3}
               linkDirectionalArrowRelPos={3}
               linkDirectionalParticles={0}
-              dataFetcher={localDataFetcher}
+              // dataFetcher={localDataFetcher}
               onNodeDragEnd={(node) => {
                 node.fx = node.x;
                 node.fy = node.y;
