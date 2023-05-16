@@ -40,7 +40,6 @@ export default function Home() {
   const [highlightSbom, setHighlightSbom] = useState(false);
   const [highlightBuilder, setHighlightBuilder] = useState(false);
 
-  // NODE HISTORY
   const [backStack, setBackStack] = useState([]);
   const [forwardStack, setForwardStack] = useState([]);
   const [currentNode, setCurrentNode] = useState(null);
@@ -92,17 +91,9 @@ export default function Home() {
     setPackageVersion("");
   };
 
-  // NODE HISTORY
-  const handleNodeClick = (node) => {
-    if (currentNode) {
-      setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
-      // Clear the forward stack when a new node is clicked
-      setForwardStack([]);
-    }
-    setCurrentNode(node);
-
-    // Fetch new data and expand the node
-    DataFetcher(node.id).then((res) => {
+  // helper function to fetch data related to the node and update the graph
+  const fetchAndSetGraphData = (nodeId) => {
+    DataFetcher(nodeId).then((res) => {
       const graphData = { nodes: [], links: [] };
       res.forEach((n) => {
         ParseAndFilterGraph(graphData, ParseNode(n));
@@ -111,6 +102,21 @@ export default function Home() {
     });
   };
 
+  // handler for node click events
+  // if a current node exists, add it to the back stack
+  // clear the forward stack when a new node is clicked
+  const handleNodeClick = (node) => {
+    if (currentNode) {
+      setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
+      setForwardStack([]);
+    }
+    setCurrentNode(node);
+    fetchAndSetGraphData(node.id);
+  };
+
+  // handler for the 'Back' button click event
+  // updates the back and forward stacks, sets the previous node as the current node,
+  // and fetches and sets data for the new current node
   const handleBackClick = () => {
     if (backStack.length === 0) return;
 
@@ -121,15 +127,12 @@ export default function Home() {
     setCurrentNode(newNode);
     setBackStack(newBackStack);
 
-    DataFetcher(newNode.id).then((res) => {
-      const graphData = { nodes: [], links: [] };
-      res.forEach((n) => {
-        ParseAndFilterGraph(graphData, ParseNode(n));
-      });
-      setGraphData(graphData);
-    });
+    fetchAndSetGraphData(newNode.id);
   };
 
+  // handler for the 'Forward' button click event
+  // updates the back and forward stacks, sets the next node as the current node,
+  // and fetches and sets data for the new current node
   const handleForwardClick = () => {
     if (forwardStack.length === 0) return;
 
@@ -140,13 +143,7 @@ export default function Home() {
     setCurrentNode(newNode);
     setForwardStack(newForwardStack);
 
-    DataFetcher(newNode.id).then((res) => {
-      const graphData = { nodes: [], links: [] };
-      res.forEach((n) => {
-        ParseAndFilterGraph(graphData, ParseNode(n));
-      });
-      setGraphData(graphData);
-    });
+    fetchAndSetGraphData(newNode.id);
   };
 
   if (!packageError && !packageLoading) {
