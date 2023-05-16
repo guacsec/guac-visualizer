@@ -121,7 +121,6 @@ export default function Home() {
     setCurrentNode(newNode);
     setBackStack(newBackStack);
 
-    // Fetch new data and display it
     DataFetcher(newNode.id).then((res) => {
       const graphData = { nodes: [], links: [] };
       res.forEach((n) => {
@@ -141,7 +140,6 @@ export default function Home() {
     setCurrentNode(newNode);
     setForwardStack(newForwardStack);
 
-    // Fetch new data and display it
     DataFetcher(newNode.id).then((res) => {
       const graphData = { nodes: [], links: [] };
       res.forEach((n) => {
@@ -278,7 +276,6 @@ export default function Home() {
               linkDirectionalArrowLength={3}
               linkDirectionalArrowRelPos={3}
               linkDirectionalParticles={0}
-              // dataFetcher={localDataFetcher}
               onNodeDragEnd={(node) => {
                 node.fx = node.x;
                 node.fy = node.y;
