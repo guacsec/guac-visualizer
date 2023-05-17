@@ -250,7 +250,7 @@ export default function Home() {
               <button
                 type="button"
                 className="text-xl rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
-                title="Go back to the previous node"
+                title="Go back to previous visualization"
                 onClick={handleBackClick}
               >
                 Back
@@ -258,7 +258,7 @@ export default function Home() {
               <button
                 type="button"
                 className="text-xl rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
-                title="Go forward to the next node"
+                title="Go forward to next visualization"
                 onClick={handleForwardClick}
               >
                 Forward
