@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import ForceGraph2D from "../app/ForceGraph2DWrapper";
 import { useQuery } from "@apollo/client";
 import { GetPkgTypesDocument } from "../gql/__generated__/graphql";
 import PackageTypeSelect from "../components/guac/packageTypeSelect";
@@ -11,11 +10,13 @@ import {
   ParseAndFilterGraph,
   GetNodeById,
 } from "@/app/graph_queries";
-import { ParseNode } from "../app/ggraph";
+import { ParseNode } from "@/app/ggraph";
 import { Toggle } from "@/components/guac/toggleSwitch";
 import { useRouter } from "next/router";
 import NoSSR from "react-no-ssr";
 import React from "react";
+import Graph from "@/components/graph/Graph";
+import { GraphData } from "react-force-graph-2d";
 
 export default function Home() {
   let initialPackageNamespaces = [{ label: "loading...", value: "loading" }];
@@ -89,7 +90,7 @@ export default function Home() {
 
   const localDataFetcher = (id: string) => {
     DataFetcher(id).then((res) => {
-      const graphData = { nodes: [], links: [] };
+      const graphData: GraphData = { nodes: [], links: [] };
       res.forEach((n) => {
         ParseAndFilterGraph(graphData, ParseNode(n));
       });
@@ -108,7 +109,7 @@ export default function Home() {
     if (router.query.path != null && !renderedInitialGraph) {
       const nodeIds = router.query.path.split(",");
 
-      const graphData = { nodes: [], links: [] };
+      const graphData: GraphData = { nodes: [], links: [] };
       nodeIds.forEach((nodeId) => {
         GetNodeById(nodeId).then((res) => {
           ParseAndFilterGraph(graphData, ParseNode(res.node));
@@ -199,101 +200,14 @@ export default function Home() {
             </div>
           </div>
           <div className="lg:col-span-2">
-            <ForceGraph2D
+            <Graph
               graphData={graphData}
-              nodeLabel={"label"}
-              linkDirectionalArrowLength={3}
-              linkDirectionalArrowRelPos={3}
-              linkDirectionalParticles={0}
-              dataFetcher={localDataFetcher}
-              onNodeDragEnd={(node) => {
-                node.fx = node.x;
-                node.fy = node.y;
-              }}
-              nodeCanvasObject={(node, ctx) => {
-                const shapeSize = 10; // set a constant size for each shape
-
-                const applyRedFillAndOutline =
-                  (highlightArtifact && node.type === "Artifact") ||
-                  (highlightVuln && node.type === "CertifyVuln") ||
-                  (highlightSbom && node.type === "IsDependency") ||
-                  (highlightBuilder && node.type === "PackageType");
-
-                switch (node.type) {
-                  case "PackageType":
-                    ctx.fillStyle = applyRedFillAndOutline
-                      ? "red"
-                      : "light blue";
-                    ctx.fillRect(node.x - 6, node.y - 4, 12, 8);
-                    break;
-                  case "IsDependency":
-                    ctx.fillStyle = applyRedFillAndOutline ? "red" : "pink";
-                    ctx.beginPath();
-                    ctx.moveTo(node.x, node.y - shapeSize / 2);
-                    ctx.lineTo(node.x - shapeSize / 2, node.y + shapeSize / 2);
-                    ctx.lineTo(node.x + shapeSize / 2, node.y + shapeSize / 2);
-                    ctx.fill();
-                    break;
-                  case "CertifyVuln":
-                    ctx.fillStyle = applyRedFillAndOutline ? "red" : "orange";
-                    const sideLength =
-                      shapeSize / Math.sqrt(3.5 - 1.5 * Math.cos(Math.PI / 4));
-                    ctx.beginPath();
-                    ctx.moveTo(node.x + sideLength, node.y);
-                    ctx.lineTo(
-                      node.x + sideLength / 2,
-                      node.y - sideLength / 2
-                    );
-                    ctx.lineTo(
-                      node.x - sideLength / 2,
-                      node.y - sideLength / 2
-                    );
-                    ctx.lineTo(node.x - sideLength, node.y);
-                    ctx.lineTo(
-                      node.x - sideLength / 2,
-                      node.y + sideLength / 2
-                    );
-                    ctx.lineTo(
-                      node.x + sideLength / 2,
-                      node.y + sideLength / 2
-                    );
-                    ctx.closePath();
-                    ctx.fill();
-                    break;
-                  case "PackageVersion":
-                    ctx.fillStyle = applyRedFillAndOutline ? "red" : "orange";
-                    var side = 10;
-                    ctx.fillRect(
-                      node.x - side / 2,
-                      node.y - side / 2,
-                      side,
-                      side
-                    );
-                    break;
-                  case "NoVuln":
-                    ctx.fillStyle = applyRedFillAndOutline ? "red" : "green";
-                    ctx.beginPath();
-                    ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false);
-                    ctx.fill();
-                    break;
-                  case "Artifact":
-                    ctx.strokeStyle = "red";
-                    ctx.fillStyle = applyRedFillAndOutline ? "red" : "yellow";
-                    ctx.beginPath();
-                    ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
-                    ctx.stroke();
-                    ctx.fill();
-                    console.log("Testing if artifact is getting populated");
-                    break;
-                  default:
-                    ctx.fillStyle = applyRedFillAndOutline ? "red" : "blue";
-                    ctx.beginPath();
-                    ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false);
-                    ctx.fill();
-                    break;
-                }
-                // label the node with text, a little bit under the shape
-                ctx.fillText(node.label, node.x, node.y + 12);
+              localDataFetcher={localDataFetcher}
+              options={{
+                highlightArtifact,
+                highlightVuln,
+                highlightSbom,
+                highlightBuilder,
               }}
             />
           </div>
