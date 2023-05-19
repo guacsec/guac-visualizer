@@ -40,9 +40,29 @@ export default function Home() {
   const [highlightSbom, setHighlightSbom] = useState(false);
   const [highlightBuilder, setHighlightBuilder] = useState(false);
 
+  const [firstNode, setFirstNode] = useState(null);
   const [backStack, setBackStack] = useState([]);
   const [forwardStack, setForwardStack] = useState([]);
   const [currentNode, setCurrentNode] = useState(null);
+
+  const [initialGraphData, setInitialGraphData] = useState(null);
+
+  const setGraphDataWithInitial = (data) => {
+    setGraphData(data);
+    if (!initialGraphData) {
+      setInitialGraphData(data);
+    }
+  };
+
+  // create the reset function
+  const reset = () => {
+    if (initialGraphData) {
+      setGraphData(initialGraphData);
+      setBackStack([]);
+      setForwardStack([]);
+      setCurrentNode(null);
+    }
+  };
 
   // this is for the visual graph
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
@@ -52,10 +72,6 @@ export default function Home() {
   const packageError = packageTypesQuery.error;
 
   const router = useRouter();
-
-  useEffect(() => {
-    console.log(graphData.nodes);
-  }, [graphData]);
 
   const handleArtifactClick = () => {
     setHighlightArtifact(!highlightArtifact);
@@ -72,7 +88,6 @@ export default function Home() {
   const handleBuilderClick = () => {
     setHighlightBuilder(!highlightBuilder);
   };
-  // ...
 
   const resetType = () => {
     setPackageNamespaces(initialPackageNamespaces);
@@ -98,7 +113,7 @@ export default function Home() {
       res.forEach((n) => {
         ParseAndFilterGraph(graphData, ParseNode(n));
       });
-      setGraphData(graphData);
+      setGraphDataWithInitial(graphData);
     });
   };
 
@@ -109,6 +124,9 @@ export default function Home() {
     if (currentNode) {
       setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
       setForwardStack([]);
+    }
+    if (!firstNode) {
+      setFirstNode(node);
     }
     setCurrentNode(node);
     fetchAndSetGraphData(node.id);
@@ -161,7 +179,7 @@ export default function Home() {
       nodeIds.forEach((nodeId) => {
         GetNodeById(nodeId).then((res) => {
           ParseAndFilterGraph(graphData, ParseNode(res.node));
-          setGraphData(graphData);
+          setGraphDataWithInitial(graphData);
         });
       });
       setRenderedInitialGraph(true);
@@ -217,7 +235,7 @@ export default function Home() {
               packageNamespace={packageNamespace}
               packageName={packageName}
               setPackageVersionFunc={setPackageVersion}
-              setGraphDataFunc={setGraphData}
+              setGraphDataFunc={setGraphDataWithInitial}
             />
           </div>
         </div>
@@ -262,6 +280,14 @@ export default function Home() {
                 onClick={handleForwardClick}
               >
                 Forward
+              </button>
+              <button
+                type="button"
+                className="text-xl rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                title="Reset visualization"
+                onClick={reset}
+              >
+                Reset
               </button>
             </div>
           </div>
@@ -350,7 +376,6 @@ export default function Home() {
                     ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
                     ctx.stroke();
                     ctx.fill();
-                    console.log("Testing if artifact is getting populated");
                     break;
                   default:
                     ctx.fillStyle = applyRedFillAndOutline ? "red" : "blue";
