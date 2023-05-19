@@ -241,8 +241,9 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-3">
           <div className="w-full items-left justify-left font-mono text-sm p-24 lg:col-span-1">
-            <h2 className="my-5">Highlight Nodes</h2>
-            <div className="flex flex-col">
+            <h2 className="my-5 text-2xl">Highlight Nodes</h2>
+            <p className="py-2">Tip: Use click and scroll to adjust graph</p>
+            <div className="flex flex-col p-3">
               <Toggle
                 label="Artifacts"
                 toggled={highlightArtifact}
@@ -291,7 +292,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <div className="lg:col-span-2">
+          <div className="w-1/2 flex flex-wrap justify-between lg:justify-center">
             <ForceGraph2D
               onNodeClick={(node) => handleNodeClick(node)}
               graphData={graphData}
