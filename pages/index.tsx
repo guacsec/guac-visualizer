@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@apollo/client";
 import { GetPkgTypesDocument } from "../gql/__generated__/graphql";
 import {
@@ -9,7 +9,6 @@ import {
 import { ParseNode } from "@/app/ggraph";
 import { Toggle } from "@/components/guac/toggleSwitch";
 import { useRouter } from "next/router";
-import NoSSR from "react-no-ssr";
 import React from "react";
 import Graph from "@/components/graph/Graph";
 import { GraphData } from "react-force-graph-2d";
@@ -32,15 +31,40 @@ export default function Home() {
     links: [],
   });
 
+  // Track the width and height of the canvas container to determine size of
+  // canvas
+
+  const containerRef = useRef<HTMLDivElement>();
+  const containerCurrentElem = containerRef?.current;
+  const [graphWidth, setGraphWidth] = useState(0);
+  const [graphHeight, setGraphHeight] = useState(0);
+
+  function updateSize() {
+    if (containerRef?.current) {
+      setGraphWidth(containerRef.current.offsetWidth);
+      setGraphHeight(containerRef.current.offsetHeight);
+    }
+  }
+  useEffect(() => {
+    if (containerCurrentElem) {
+      updateSize();
+    }
+  }, [containerCurrentElem]);
+
+  useEffect(() => {
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
+  useEffect(() => {
+    console.log(graphData.nodes);
+  }, [graphData]);
+
   const packageTypesQuery = useQuery(GetPkgTypesDocument, { variables: {} });
   const packageLoading = packageTypesQuery.loading;
   const packageError = packageTypesQuery.error;
 
   const router = useRouter();
-
-  useEffect(() => {
-    console.log(graphData.nodes);
-  }, [graphData]);
 
   const handleArtifactClick = () => {
     setHighlightArtifact(!highlightArtifact);
@@ -94,16 +118,16 @@ export default function Home() {
   }
 
   return (
-    <NoSSR>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <>
+      <main className="h-full flex flex-col items-center p-12">
         <PackageSelector
           packageTypes={packageTypes}
           setGraphData={setGraphData}
         />
-        <div className="grid grid-cols-3">
-          <div className="w-full items-left justify-left font-mono text-sm p-24 lg:col-span-1">
-            <h2 className="my-5">Highlight Nodes</h2>
-            <div className="flex flex-col">
+        <div className="mt-8 grid grid-cols-4 h-full w-full gap-4">
+          <div className="flex flex-col font-mono text-sm p-4 lg:col-span-1">
+            <div className="my-5 text-lg">Highlight Nodes</div>
+            <div className="flex flex-col gap-y-2">
               <Toggle
                 label="Artifacts"
                 toggled={highlightArtifact}
@@ -126,7 +150,7 @@ export default function Home() {
               />
             </div>
           </div>
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3 h-full w-full" ref={containerRef}>
             <Graph
               graphData={graphData}
               localDataFetcher={localDataFetcher}
@@ -136,10 +160,14 @@ export default function Home() {
                 highlightSbom,
                 highlightBuilder,
               }}
+              containerOptions={{
+                width: graphWidth - 1,
+                height: graphHeight,
+              }}
             />
           </div>
         </div>
       </main>
-    </NoSSR>
+    </>
   );
 }

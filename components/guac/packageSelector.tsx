@@ -50,7 +50,7 @@ export default function PackageSelector({
       id="ptDiv"
       className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex"
     >
-      <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+      <div className="left-0 flex w-full items-end justify-center lg:static lg:h-auto lg:w-auto lg:bg-none">
         <PackageTypeSelect
           label="Package Type"
           options={packageTypes}
@@ -60,7 +60,7 @@ export default function PackageSelector({
           resetTypeFunc={resetType}
         />
       </div>
-      <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+      <div className="left-0 flex w-full items-end justify-center lg:static lg:h-auto lg:w-auto lg:bg-none">
         <PackageNamespaceSelect
           label="Package Namespace"
           options={packageNamespaces}
@@ -71,7 +71,7 @@ export default function PackageSelector({
           resetNamespaceFunc={resetName}
         />
       </div>
-      <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+      <div className="left-0 flex w-full items-end justify-center bg-gradient-to-t lg:static lg:h-auto lg:w-auto lg:bg-none">
         <PackageNameSelect
           label="Package Name"
           options={packageNames}
@@ -83,7 +83,7 @@ export default function PackageSelector({
           resetNameFunc={resetName}
         />
       </div>
-      <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+      <div className="left-0 flex w-full items-end justify-center bg-gradient-to-t lg:static lg:h-auto lg:w-auto lg:bg-none">
         <PackageVersionSelect
           label="Package Version"
           options={packageVersions}

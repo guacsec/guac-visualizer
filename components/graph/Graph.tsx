@@ -1,10 +1,13 @@
 import ForceGraph2D from "@/app/ForceGraph2DWrapper";
+import GuacVizThemeContext from "@/store/themeContext";
+import { useContext } from "react";
 import { GraphData } from "react-force-graph-2d";
 
 export default function Graph({
   graphData,
   localDataFetcher,
   options,
+  containerOptions,
 }: {
   graphData: GraphData;
   localDataFetcher: (id: string) => void;
@@ -14,15 +17,25 @@ export default function Graph({
     highlightSbom: boolean;
     highlightBuilder: boolean;
   };
+  containerOptions: {
+    width: number;
+    height: number;
+  };
 }) {
+  const { isDarkTheme } = useContext(GuacVizThemeContext);
+  const bgColor = isDarkTheme ? "#262626" : "#e7e5e4";
+
   return (
     <ForceGraph2D
+      bgdColor={bgColor}
       graphData={graphData}
       nodeLabel={"label"}
       linkDirectionalArrowLength={3}
       linkDirectionalArrowRelPos={3}
       linkDirectionalParticles={0}
       dataFetcher={localDataFetcher}
+      width={containerOptions.width}
+      height={containerOptions.height}
       onNodeDragEnd={(node) => {
         node.fx = node.x;
         node.fy = node.y;

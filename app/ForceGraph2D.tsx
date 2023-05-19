@@ -36,9 +36,15 @@ type ForceGraph2DWrapperProps = {
     node: NodeObject,
     translate: { x: number; y: number }
   ) => void;
+  bgdColor?: string;
 };
 
-const ForceGraph2D: React.FC<ForceGraph2DWrapperProps> = ({
+type ResponsiveProps = {
+  width?: number;
+  height?: number;
+};
+
+const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
   graphData,
   nodeAutoColorBy,
   linkDirectionalArrowLength,
@@ -54,6 +60,9 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps> = ({
   nodeCanvasObjectMode,
   onNodeDragEnd,
   dataFetcher,
+  width,
+  height,
+  bgdColor,
 }) => {
   const fgRef = useRef<ForceGraphMethods>();
   const handleClick = useCallback(
@@ -96,6 +105,9 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps> = ({
 
   return (
     <FG2D.default
+      backgroundColor={bgdColor}
+      width={width}
+      height={height}
       ref={fgRef}
       graphData={graphData}
       nodeAutoColorBy={nodeAutoColorBy}
