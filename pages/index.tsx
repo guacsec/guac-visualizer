@@ -292,7 +292,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <div className="w-1/2 flex flex-wrap justify-between lg:justify-center">
+          <div className="lg:col-span-2">
             <ForceGraph2D
               onNodeClick={(node) => handleNodeClick(node)}
               graphData={graphData}
