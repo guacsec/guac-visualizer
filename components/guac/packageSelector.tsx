@@ -48,7 +48,7 @@ export default function PackageSelector({
   return (
     <div
       id="ptDiv"
-      className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex"
+      className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm space-y-2 lg:flex"
     >
       <div className="left-0 flex w-full items-end justify-center lg:static lg:h-auto lg:w-auto lg:bg-none">
         <PackageTypeSelect

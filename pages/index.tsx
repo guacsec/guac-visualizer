@@ -124,10 +124,10 @@ export default function Home() {
           packageTypes={packageTypes}
           setGraphData={setGraphData}
         />
-        <div className="mt-8 grid grid-cols-4 h-full w-full gap-4">
-          <div className="flex flex-col font-mono text-sm p-4 lg:col-span-1">
+        <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
+          <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
             <div className="my-5 text-lg">Highlight Nodes</div>
-            <div className="flex flex-col gap-y-2">
+            <div className="flex flex-col justify-center gap-y-2 w-full">
               <Toggle
                 label="Artifacts"
                 toggled={highlightArtifact}
@@ -150,7 +150,10 @@ export default function Home() {
               />
             </div>
           </div>
-          <div className="lg:col-span-3 h-full w-full" ref={containerRef}>
+          <div
+            className="lg:col-span-3 row-span-3 h-full w-full"
+            ref={containerRef}
+          >
             <Graph
               graphData={graphData}
               localDataFetcher={localDataFetcher}

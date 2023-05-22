@@ -88,7 +88,7 @@ const PackageVersionSelect = ({
   };
 
   return (
-    <div className="flex flex-col w-52 space-y-2">
+    <div className="flex flex-col w-full lg:w-52 space-y-2">
       {label && <div className="w-fit">{label}</div>}
       <Select
         options={options}
