@@ -37,7 +37,6 @@
     "react-cytoscapejs": "^2.0.0",
     "react-dom": "^18.2.0",
     "react-force-graph-2d": "^1.23.15",
-    "react-no-ssr": "^1.1.0",
     "react-router-dom": "^6.11.0",
     "react-select": "^5.7.2",
     "react-toggle-button": "^2.2.0",
