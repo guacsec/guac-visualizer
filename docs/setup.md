@@ -82,10 +82,10 @@ The application retrieves the GraphQL endpoint from the environment variable NEX
 To change the GraphQL endpoint you can set the NEXT_PUBLIC_GRAPHQL_DESTINATION environment variable like this:
 
 ```bash
-export NEXT_PUBLIC_GRAPHQL_DESTINATION=localhost:8080/query
+export NEXT_PUBLIC_GRAPHQL_DESTINATION=http://localhost:8080/query
 ```
 
-Or, create a `.env.local` file in the project's root directory and set a value like this:
+Or, create a `.env.local` file in the project's root directory and set a value by adding a line in there like this:
 
 ```
 NEXT_PUBLIC_GRAPHQL_DESTINATION=http://localhost:8080/query
