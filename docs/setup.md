@@ -74,9 +74,6 @@ warning " > styled-components@5.3.9" has unmet peer dependency "react-is@>= 16.8
 
 ## Configuring the GraphQL endpoint
 
-This should run the frontend service by default on http://localhost:3000. However, this does assume that the graphql server is run on http://localhost:8080/query. If
-this is not the case, you may edit the `next.config.js`.
-
 The application retrieves the GraphQL endpoint from the environment variable NEXT_PUBLIC_GRAPHQL_DESTINATION. You should set this variable before running the application. By default, if this variable is not set, it assumes that the GraphQL server is run on http://localhost:8080/query.
 
 To change the GraphQL endpoint you can set the NEXT_PUBLIC_GRAPHQL_DESTINATION environment variable like this:
@@ -95,13 +92,13 @@ You can then run the server (which will run by default on
 `http://localhost:3000`)
 
 ```bash
-npm run dev
+yarn run dev
 ```
 
 The ouput should look like:
 
 ```bash
-$ npm run dev
+$ yarn run dev
 
 > guac-visualizer@0.1.0 dev
 > next dev
