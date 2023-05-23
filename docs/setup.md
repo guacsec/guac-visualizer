@@ -72,6 +72,25 @@ warning " > styled-components@5.3.9" has unmet peer dependency "react-is@>= 16.8
 ✨  Done in 12.78s.
 ```
 
+## Configuring the GraphQL endpoint
+
+This should run the frontend service by default on http://localhost:3000. However, this does assume that the graphql server is run on http://localhost:8080/query. If
+this is not the case, you may edit the `next.config.js`.
+
+The application retrieves the GraphQL endpoint from the environment variable NEXT_PUBLIC_GRAPHQL_DESTINATION. You should set this variable before running the application. By default, if this variable is not set, it assumes that the GraphQL server is run on http://localhost:8080/query.
+
+To change the GraphQL endpoint you can set the NEXT_PUBLIC_GRAPHQL_DESTINATION environment variable like this:
+
+```bash
+export NEXT_PUBLIC_GRAPHQL_DESTINATION=localhost:8080/query
+```
+
+Or, create a `.env.local` file in the project's root directory and set a value like this:
+
+```
+NEXT_PUBLIC_GRAPHQL_DESTINATION=http://localhost:8080/query
+```
+
 You can then run the server (which will run by default on
 `http://localhost:3000`)
 
@@ -106,63 +125,3 @@ http://localhost:3000. The page will look like the following:
 
 For more information on how to use the GUAC visualizer, take a look at some of
 our [GUAC demos](https://github.com/guacsec/guac/blob/main/demos/).
-
-### Changing the GraphQL endpoint
-
-This should run the service by default on http://localhost:3000. However, this
-does assume that the graphql server is run on http://localhost:8080/query. If
-this is not the case, you may edit the `next.config.js`.
-
-The default configuration is set to http://localhost:8080/query as seen here:
-
-```
-$ cat next.config.js
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  transpilePackages: ['react-cytoscapejs'],
-  typescript: {
-    ignoreBuildErrors: true
-  },
-  experimental: {
-    appDir: true,
-  },
-  rewrites: async () => {
-    return [
-      {
-        source: '/api/graphql',
-        destination: 'http://localhost:8080/query'
-      },
-    ]
-  }
-}
-
-module.exports = nextConfig
-```
-
-To change the GraphQL endpoint you can edit the rewrites destination:
-
-```
-$ cat next.config.js
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  transpilePackages: ['react-cytoscapejs'],
-  typescript: {
-    ignoreBuildErrors: true
-  },
-  experimental: {
-    appDir: true,
-  },
-  rewrites: async () => {
-    return [
-      {
-        source: '/api/graphql',
-        destination: 'http://example.org:8080/query'
-      },
-    ]
-  }
-}
-
-module.exports = nextConfig
-```

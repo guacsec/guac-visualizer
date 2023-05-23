@@ -13,7 +13,7 @@ const nextConfig = {
     return [
       {
         source: '/api/graphql',
-        destination: 'http://localhost:8080/query'
+        destination: process.env.NEXT_PUBLIC_GRAPHQL_DESTINATION || 'http://localhost:8080/query'
       },
     ]
   }
