@@ -40,6 +40,30 @@ export default function Home() {
   const [highlightSbom, setHighlightSbom] = useState(false);
   const [highlightBuilder, setHighlightBuilder] = useState(false);
 
+  const [firstNode, setFirstNode] = useState(null);
+  const [backStack, setBackStack] = useState([]);
+  const [forwardStack, setForwardStack] = useState([]);
+  const [currentNode, setCurrentNode] = useState(null);
+
+  const [initialGraphData, setInitialGraphData] = useState(null);
+
+  const setGraphDataWithInitial = (data) => {
+    setGraphData(data);
+    if (!initialGraphData) {
+      setInitialGraphData(data);
+    }
+  };
+
+  // create the reset function
+  const reset = () => {
+    if (initialGraphData) {
+      setGraphData(initialGraphData);
+      setBackStack([]);
+      setForwardStack([]);
+      setCurrentNode(null);
+    }
+  };
+
   // this is for the visual graph
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
 
@@ -48,10 +72,6 @@ export default function Home() {
   const packageError = packageTypesQuery.error;
 
   const router = useRouter();
-
-  useEffect(() => {
-    console.log(graphData.nodes);
-  }, [graphData]);
 
   const handleArtifactClick = () => {
     setHighlightArtifact(!highlightArtifact);
@@ -68,7 +88,6 @@ export default function Home() {
   const handleBuilderClick = () => {
     setHighlightBuilder(!highlightBuilder);
   };
-  // ...
 
   const resetType = () => {
     setPackageNamespaces(initialPackageNamespaces);
@@ -87,14 +106,62 @@ export default function Home() {
     setPackageVersion("");
   };
 
-  const localDataFetcher = (id: string) => {
-    DataFetcher(id).then((res) => {
+  // helper function to fetch data related to the node and update the graph
+  const fetchAndSetGraphData = (nodeId) => {
+    DataFetcher(nodeId).then((res) => {
       const graphData = { nodes: [], links: [] };
       res.forEach((n) => {
         ParseAndFilterGraph(graphData, ParseNode(n));
       });
-      setGraphData(graphData);
+      setGraphDataWithInitial(graphData);
     });
+  };
+
+  // handler for node click events
+  // if a current node exists, add it to the back stack
+  // clear the forward stack when a new node is clicked
+  const handleNodeClick = (node) => {
+    if (currentNode) {
+      setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
+      setForwardStack([]);
+    }
+    if (!firstNode) {
+      setFirstNode(node);
+    }
+    setCurrentNode(node);
+    fetchAndSetGraphData(node.id);
+  };
+
+  // handler for the 'Back' button click event
+  // updates the back and forward stacks, sets the previous node as the current node,
+  // and fetches and sets data for the new current node
+  const handleBackClick = () => {
+    if (backStack.length === 0) return;
+
+    const newNode = backStack[backStack.length - 1];
+    const newBackStack = backStack.slice(0, backStack.length - 1);
+
+    setForwardStack((prevForwardStack) => [currentNode, ...prevForwardStack]);
+    setCurrentNode(newNode);
+    setBackStack(newBackStack);
+
+    fetchAndSetGraphData(newNode.id);
+  };
+
+  // handler for the 'Forward' button click event
+  // updates the back and forward stacks, sets the next node as the current node,
+  // and fetches and sets data for the new current node
+  const handleForwardClick = () => {
+    if (forwardStack.length === 0) return;
+
+    const newNode = forwardStack[0];
+    const newForwardStack = forwardStack.slice(1);
+
+    setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
+    setCurrentNode(newNode);
+    setForwardStack(newForwardStack);
+
+    fetchAndSetGraphData(newNode.id);
   };
 
   if (!packageError && !packageLoading) {
@@ -112,7 +179,7 @@ export default function Home() {
       nodeIds.forEach((nodeId) => {
         GetNodeById(nodeId).then((res) => {
           ParseAndFilterGraph(graphData, ParseNode(res.node));
-          setGraphData(graphData);
+          setGraphDataWithInitial(graphData);
         });
       });
       setRenderedInitialGraph(true);
@@ -168,14 +235,15 @@ export default function Home() {
               packageNamespace={packageNamespace}
               packageName={packageName}
               setPackageVersionFunc={setPackageVersion}
-              setGraphDataFunc={setGraphData}
+              setGraphDataFunc={setGraphDataWithInitial}
             />
           </div>
         </div>
         <div className="grid grid-cols-3">
           <div className="w-full items-left justify-left font-mono text-sm p-24 lg:col-span-1">
-            <h2 className="my-5">Highlight Nodes</h2>
-            <div className="flex flex-col">
+            <h2 className="my-5 text-2xl">Highlight Nodes</h2>
+            <p className="py-2">Tip: Use click and scroll to adjust graph</p>
+            <div className="flex flex-col p-3">
               <Toggle
                 label="Artifacts"
                 toggled={highlightArtifact}
@@ -197,15 +265,41 @@ export default function Home() {
                 onClick={() => handleBuilderClick()}
               />
             </div>
+            <div className="py-10 my-5 flex space-x-3">
+              <button
+                type="button"
+                className="text-xl rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                title="Go back to previous visualization"
+                onClick={handleBackClick}
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                className="text-xl rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                title="Go forward to next visualization"
+                onClick={handleForwardClick}
+              >
+                Forward
+              </button>
+              <button
+                type="button"
+                className="text-xl rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                title="Reset visualization"
+                onClick={reset}
+              >
+                Reset
+              </button>
+            </div>
           </div>
           <div className="lg:col-span-2">
             <ForceGraph2D
+              onNodeClick={(node) => handleNodeClick(node)}
               graphData={graphData}
               nodeLabel={"label"}
               linkDirectionalArrowLength={3}
               linkDirectionalArrowRelPos={3}
               linkDirectionalParticles={0}
-              dataFetcher={localDataFetcher}
               onNodeDragEnd={(node) => {
                 node.fx = node.x;
                 node.fy = node.y;
@@ -283,7 +377,6 @@ export default function Home() {
                     ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
                     ctx.stroke();
                     ctx.fill();
-                    console.log("Testing if artifact is getting populated");
                     break;
                   default:
                     ctx.fillStyle = applyRedFillAndOutline ? "red" : "blue";
