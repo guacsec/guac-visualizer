@@ -43,9 +43,9 @@ cd guac-visualizer
 
 All commands run throughout this guide should be in this working directory.
 
-## Running the guac-visualizer from source
+## Running the visualizer from source
 
-Install the guac-visualizer dependencies:
+Install the dependencies:
 
 ```bash
 yarn install
@@ -90,7 +90,7 @@ The `next.config.js` file contains the default configuration for the visualizer,
 
 Note that any changes to the `guac.yaml` file or the `GUAC_CONFIG_PATH` environment variable will only take effect after you stop and restart the visualizer. Make sure to restart the visualizer any time you make changes to these settings.
 
-## Run the guac-visualizer locally:
+## Run the visualizer locally:
 
 ```bash
 yarn dev
@@ -108,3 +108,7 @@ info  - Using webpack 5. Reason: Enabled by default https://nextjs.org/docs/mess
 
 You can then go to [localhost:3000](http://localhost:3000) in your browser to
 see the graph visualization.
+
+Using the GUAC visualizer will look something like this:
+
+ <img src="https://user-images.githubusercontent.com/35208156/240057032-6109baaf-cbb8-4551-a502-ec2451121f21.png" alt="an image of the guac visualizer">
