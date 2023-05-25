@@ -1,3 +1,19 @@
+const fs = require('fs');
+const yaml = require('js-yaml');
+
+// defaults to local
+let gqlAddr = 'http://localhost:8080/query';
+const GUAC_CONFIG_PATH = process.env.GUAC_CONFIG_PATH;
+
+try {
+  let fileContents = fs.readFileSync(GUAC_CONFIG_PATH, 'utf8');
+  let guacConfig = yaml.safeLoad(fileContents);
+
+  gqlAddr = guacConfig['gql-addr'];
+} catch (e) {
+  console.log(e);
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -5,7 +21,6 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true
   },
-  
   experimental: {
     appDir: true,
   },
@@ -13,10 +28,10 @@ const nextConfig = {
     return [
       {
         source: '/api/graphql',
-        destination: process.env.NEXT_PUBLIC_GRAPHQL_DESTINATION || 'http://localhost:8080/query'
+        destination: gqlAddr,
       },
     ]
   }
 }
 
-module.exports = nextConfig
+module.exports = nextConfig;
