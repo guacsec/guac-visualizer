@@ -3,10 +3,10 @@ const yaml = require('js-yaml');
 
 // defaults to local
 let gqlAddr = 'http://localhost:8080/query';
-const GUAC_CONFIG_PATH = process.env.GUAC_CONFIG_PATH;
+const GUAC_GQL_ADDR = process.env.GUAC_GQL_ADDR;
 
 try {
-  let fileContents = fs.readFileSync(GUAC_CONFIG_PATH, 'utf8');
+  let fileContents = fs.readFileSync(GUAC_GQL_ADDR, 'utf8');
   let guacConfig = yaml.safeLoad(fileContents);
 
   gqlAddr = guacConfig['gql-addr'];

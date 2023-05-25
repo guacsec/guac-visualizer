@@ -76,19 +76,19 @@ success Saved lockfile.
 
 ## Configuration
 
-`GUAC_CONFIG_PATH` is an environment variable that specifies the path to the `guac.yaml` configuration file. This file contains settings for various GUAC services, including the GraphQL endpoint that the visualizer will connect to. By default, the visualizer assumes that the GraphQL server is run on `http://localhost:8080/query`. If your `guac.yaml` file specifies a different endpoint, setting `GUAC_CONFIG_PATH` will allow the visualizer to connect to the correct server.
+`GUAC_GQL_ADDR` is an environment variable that specifies the path to the `guac.yaml` configuration file. This file contains settings for various GUAC services, including the GraphQL endpoint that the visualizer will connect to. By default, the visualizer assumes that the GraphQL server is run on `http://localhost:8080/query`. If your `guac.yaml` file specifies a different endpoint, setting `GUAC_GQL_ADDR` will allow the visualizer to connect to the correct server.
 
-To set `GUAC_CONFIG_PATH`, create a new file in the root of the project called `.env.local`. Inside this file, add the following line:
+To set `GUAC_GQL_ADDR`, create a new file in the root of the project called `.env.local`. Inside this file, add the following line:
 
 ```bash
-GUAC_CONFIG_PATH='/path/to/guac.yaml'
+GUAC_GQL_ADDR='/path/to/guac.yaml'
 ```
 
 Replace `/path/to/guac.yaml` with the actual path to your `guac.yaml` file. Once this is done, the visualizer will use the settings from this file the next time it's run.
 
-The `next.config.js` file contains the default configuration for the visualizer, including the default GraphQL endpoint. However, with the introduction of the `GUAC_CONFIG_PATH` environment variable, you no longer need to manually edit this file to change the GraphQL endpoint. Instead, just update your `guac.yaml` file and set `GUAC_CONFIG_PATH` as described above.
+The `next.config.js` file contains the default configuration for the visualizer, including the default GraphQL endpoint. However, with the introduction of the `GUAC_GQL_ADDR` environment variable, you no longer need to manually edit this file to change the GraphQL endpoint. Instead, just update your `guac.yaml` file and set `GUAC_GQL_ADDR` as described above.
 
-Note that any changes to the `guac.yaml` file or the `GUAC_CONFIG_PATH` environment variable will only take effect after you stop and restart the visualizer. Make sure to restart the visualizer any time you make changes to these settings.
+Note that any changes to the `guac.yaml` file or the `GUAC_GQL_ADDR` environment variable will only take effect after you stop and restart the visualizer. Make sure to restart the visualizer any time you make changes to these settings.
 
 ## Run the visualizer locally:
 
