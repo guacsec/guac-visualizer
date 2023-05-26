@@ -1,25 +1,18 @@
 const fs = require('fs');
-const path = require('path');
 const yaml = require('js-yaml');
 
-// if not defined, default to localhost
-let gqlAddr = process.env.GUAC_GQL_ADDR || 'http://localhost:8080/query';
+const GUAC_GQL_ADDR = process.env.GUAC_GQL_ADDR || 'http://localhost:8080/query';
+const GUAC_CONFIG_PATH = process.env.GUAC_CONFIG_PATH;
 
-const homeDir = require('os').homedir();
-const currentDir = process.cwd();
-const configFileName = 'guac.yaml';
-const possiblePaths = [path.join(homeDir, configFileName), path.join(currentDir, configFileName)];
+let gqlEndpoint = GUAC_GQL_ADDR;
 
-// if yaml file is found at current woring dir or home dir, use it
-for (const configPath of possiblePaths) {
-  if (fs.existsSync(configPath)) {
-    console.log(`Using config file: ${configPath}`);
-    const fileContents = fs.readFileSync(configPath, 'utf8');
-    const data = yaml.safeLoad(fileContents);
-    if (data['gql-addr']) {
-      gqlAddr = data['gql-addr'];
-      break;
-    }
+if (GUAC_CONFIG_PATH) {
+  try {
+    let fileContents = fs.readFileSync(GUAC_CONFIG_PATH, 'utf8');
+    let guacConfig = yaml.load(fileContents);
+    gqlEndpoint = guacConfig['gql-addr'] || GUAC_GQL_ADDR;
+  } catch (err) {
+    console.error('error reading guac.yaml file : ', err);
   }
 }
 
@@ -36,10 +29,10 @@ const nextConfig = {
     return [
       {
         source: '/api/graphql',
-        destination: gqlAddr
+        destination: gqlEndpoint,
       },
-    ]
-  }
+    ];
+  },
 };
 
 module.exports = nextConfig;
