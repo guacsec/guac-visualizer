@@ -1,20 +1,28 @@
 const fs = require('fs');
+const path = require('path');
 const yaml = require('js-yaml');
 
-// defaults to local
-let gqlAddr = 'http://localhost:8080/query';
-const GUAC_GQL_ADDR = process.env.GUAC_GQL_ADDR;
+// if not defined, default to localhost
+let gqlAddr = process.env.GUAC_GQL_ADDR || 'http://localhost:8080/query';
 
-try {
-  let fileContents = fs.readFileSync(GUAC_GQL_ADDR, 'utf8');
-  let guacConfig = yaml.safeLoad(fileContents);
+const homeDir = require('os').homedir();
+const currentDir = process.cwd();
+const configFileName = 'guac.yaml';
+const possiblePaths = [path.join(homeDir, configFileName), path.join(currentDir, configFileName)];
 
-  gqlAddr = guacConfig['gql-addr'];
-} catch (e) {
-  console.log(e);
+// if yaml file is found at current woring dir or home dir, use it
+for (const configPath of possiblePaths) {
+  if (fs.existsSync(configPath)) {
+    console.log(`Using config file: ${configPath}`);
+    const fileContents = fs.readFileSync(configPath, 'utf8');
+    const data = yaml.safeLoad(fileContents);
+    if (data['gql-addr']) {
+      gqlAddr = data['gql-addr'];
+      break;
+    }
+  }
 }
 
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['react-cytoscapejs'],
@@ -28,10 +36,10 @@ const nextConfig = {
     return [
       {
         source: '/api/graphql',
-        destination: gqlAddr,
+        destination: gqlAddr
       },
     ]
   }
-}
+};
 
 module.exports = nextConfig;
