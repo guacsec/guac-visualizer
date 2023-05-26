@@ -1,14 +1,11 @@
 import { useContext } from "react";
 import Image from "next/image";
-import MyThemeContext from "../../store/themeContext";
+import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
+import GuacVizThemeContext from "@/store/themeContext";
 
 export default function Header() {
-  const themeCtx: { isDarkMode?: boolean; toggleThemeHandler: () => void } =
-    useContext(MyThemeContext);
+  const { isDarkTheme, toggleThemeHandler } = useContext(GuacVizThemeContext);
 
-  function toggleThemeHandler(): void {
-    themeCtx.toggleThemeHandler();
-  }
   return (
     <>
       <div className="flex justify-between bg-stone-200 dark:bg-stone-800 px-2 md:px-20 items-center backdrop-blur-sm w-full py-4">
@@ -25,17 +22,17 @@ export default function Header() {
               width={27}
               height={27}
             />
-            <h1 className="text-black sm:text-2xl ml-2 dark:text-white">
+            <h1 className="text-zinc-600 font-mono sm:text-2xl ml-2 dark:text-stone-300">
               GUAC Visualizer
             </h1>
           </a>
         </div>
-        <button
-          type="button"
-          className="py-1 sm:py-2.5 px-2 sm:px-5 mr-2 bg-zinc-800 text-white dark:bg-zinc-200 dark:text-black rounded"
-          onClick={toggleThemeHandler}
-        >
-          Toggle Theme
+        <button type="button" onClick={toggleThemeHandler}>
+          {isDarkTheme ? (
+            <SunIcon className="h-8 w-8 text-stone-300" />
+          ) : (
+            <MoonIcon className="h-8 w-8 text-zinc-600" />
+          )}
         </button>
       </div>
     </>
