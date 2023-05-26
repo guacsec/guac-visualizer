@@ -8,12 +8,11 @@ as well as a means to explore the supply chain, and prototype policies.
 
 Since the GUAC Visaulizer is still in an early experimental stage, it is likely
 that there may be some unexpected behavior or usage problems. For a more robust
-use of GUAC, we recommend using the
-[GraphQL interface directly](https://github.com/guacsec/guac/blob/main/demo/GraphQL.md).
+use of GUAC, we recommend using the [GraphQL interface directly](https://github.com/guacsec/guac/blob/main/demo/GraphQL.md).
 
 ## Requirements
 
-### Tools
+### Tools:
 
 - npm
 - yarn
@@ -76,21 +75,28 @@ success Saved lockfile.
 
 ## Configuration
 
-`GUAC_GQL_ADDR` is an environment variable that specifies the path to the `guac.yaml` configuration file. This file contains settings for various GUAC services, including the GraphQL endpoint that the visualizer will connect to. By default, the visualizer assumes that the GraphQL server is run on `http://localhost:8080/query`. If your `guac.yaml` file specifies a different endpoint, setting `GUAC_GQL_ADDR` will allow the visualizer to connect to the correct server.
+By default, the GUAC Visualizer assumes that the GraphQL server is running on http://localhost:8080/query. However, you can optionally configure the visualizer to connect to a different GraphQL endpoint or to read from a guac.yaml configuration file.
 
-To set `GUAC_GQL_ADDR`, create a new file in the root of the project called `.env.local`. Inside this file, add the following line:
+There are two environment variables used to configure the GraphQL endpoint for the visualizer: `GUAC_GQL_ADDR` and `GUAC_CONFIG_PATH`.
+
+`GUAC_GQL_ADDR` is an environment variable that specifies the GraphQL endpoint that the visualizer will connect to. By default, the visualizer assumes that the GraphQL server is running on `http://localhost:8080/query`.
+
+`GUAC_CONFIG_PATH` is an environment variable that specifies the path to the guac.yaml configuration file. This file contains settings for various GUAC services, including the GraphQL endpoint that the visualizer will connect to (`gql-addr`). If a `guac.yaml` file is provided, and a `gql-addr` is specified in it, this will override the `GUAC_GQL_ADDR` setting.
+
+To set these environment variables, create a new file in the root of the project called .env.local. Inside this file, add the following lines:
 
 ```bash
-GUAC_GQL_ADDR='/path/to/guac.yaml'
+GUAC_GQL_ADDR='http://graphql-server-endpoint'
+GUAC_CONFIG_PATH='/path/to/guac.yaml'
 ```
 
-Replace `/path/to/guac.yaml` with the actual path to your `guac.yaml` file. Once this is done, the visualizer will use the settings from this file the next time it's run.
+Replace `http://your-graphql-server-endpoint` with your actual GraphQL server endpoint if it is different from the one specified in your `guac.yaml` file, and `/path/to/guac.yaml` with the actual path to your guac.yaml file.
 
-The `next.config.js` file contains the default configuration for the visualizer, including the default GraphQL endpoint. However, with the introduction of the `GUAC_GQL_ADDR` environment variable, you no longer need to manually edit this file to change the GraphQL endpoint. Instead, just update your `guac.yaml` file and set `GUAC_GQL_ADDR` as described above.
+The `next.config.js` file uses these environment variables to configure the visualizer. If `GUAC_CONFIG_PATH` is set and the `guac.yaml` file specifies a `gql-addr`, it will be used. If `GUAC_GQL_ADDR` is set, it will override the `gql-addr` from the `guac.yaml` file.
 
-Note that any changes to the `guac.yaml` file or the `GUAC_GQL_ADDR` environment variable will only take effect after you stop and restart the visualizer. Make sure to restart the visualizer any time you make changes to these settings.
+**Note:** any changes to the `guac.yaml` file or the `GUAC_GQL_ADDR` and `GUAC_CONFIG_PATH` environment variables will only take effect after you stop and restart the visualizer. Make sure to restart the visualizer any time you make changes to them.
 
-## Run the visualizer locally:
+## Running the visualizer locally:
 
 ```bash
 yarn dev
