@@ -1,7 +1,9 @@
 import client from "@/apollo/client";
 import { GetPkgNamespacesDocument } from "@/gql/__generated__/graphql";
-import React from "react";
-import Select from "react-select";
+import React, { Dispatch, SetStateAction } from "react";
+import PackageGenericSelector, {
+  PackageSelectorOption,
+} from "@/components/guac/packageGenericSelector";
 
 const PackageTypeSelect = ({
   label,
@@ -10,20 +12,27 @@ const PackageTypeSelect = ({
   setPackageNamespacesFunc,
   resetTypeFunc,
   ...rest
+}: {
+  label: string;
+  options: PackageSelectorOption<string>[];
+  setPackageTypeFunc: Dispatch<SetStateAction<string>>;
+  setPackageNamespacesFunc: Dispatch<
+    SetStateAction<PackageSelectorOption<string>[]>
+  >;
+  resetTypeFunc: () => void;
 }) => {
-  const onSelectPackageType = (event: { value: any }) => {
+  const onSelectPackageType = (value: string) => {
     resetTypeFunc();
-    setPackageTypeFunc(event);
-
+    setPackageTypeFunc(value);
     const packageNamespacesQuery = client.query({
       query: GetPkgNamespacesDocument,
       variables: {
         spec: {
-          type: event.value,
+          type: value,
         },
       },
     });
-    let q = packageNamespacesQuery.then((res) => {
+    packageNamespacesQuery.then((res) => {
       const sortablePackageNamespaces = [
         ...(res.data.packages[0].namespaces ?? []),
       ];
@@ -36,16 +45,12 @@ const PackageTypeSelect = ({
   };
 
   return (
-    <div className="flex flex-col w-full lg:w-52 space-y-2">
-      {label && <div className="w-fit">{label}</div>}
-      <Select
-        options={options}
-        onChange={(e) => {
-          onSelectPackageType(e);
-        }}
-        {...rest}
-      />
-    </div>
+    <PackageGenericSelector
+      label={label}
+      options={options}
+      onSelect={onSelectPackageType}
+      {...rest}
+    />
   );
 };
 

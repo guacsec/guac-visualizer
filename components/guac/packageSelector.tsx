@@ -1,11 +1,14 @@
 import PackageTypeSelect from "@/components/guac/packageTypeSelect";
 import PackageNamespaceSelect from "@/components/guac/packageNamespaceSelect";
-import PackageNameSelect from "@/components/guac/packageNameSelect";
+import PackageNameSelect, {
+  VersionQueryVersion,
+} from "@/components/guac/packageNameSelect";
 import PackageVersionSelect from "@/components/guac/packageVersionSelect";
 import { useState } from "react";
 import { GraphData } from "react-force-graph-2d";
+import { PackageSelectorOption } from "@/components/guac/packageGenericSelector";
 
-export const INITIAL_PACKAGE_NAMESPACES = [
+export const INITIAL_PACKAGE_NAMESPACES: PackageSelectorOption<string>[] = [
   { label: "loading...", value: "loading" },
 ];
 
@@ -13,20 +16,18 @@ export default function PackageSelector({
   packageTypes,
   setGraphData,
 }: {
-  packageTypes: { label: string; value: string }[];
+  packageTypes: PackageSelectorOption<string>[];
   setGraphData: (data: GraphData) => void;
 }) {
   const [packageType, setPackageType] = useState("");
   const [packageNamespace, setPackageNamespace] = useState("");
   const [packageName, setPackageName] = useState("");
-  const [packageVersion, setPackageVersion] = useState("");
   const [packageNamespaces, setPackageNamespaces] = useState(
     INITIAL_PACKAGE_NAMESPACES
   );
   const [packageNames, setPackageNames] = useState(INITIAL_PACKAGE_NAMESPACES);
-  const [packageVersions, setPackageVersions] = useState(
-    INITIAL_PACKAGE_NAMESPACES
-  );
+  const [packageVersions, setPackageVersions] =
+    useState<PackageSelectorOption<VersionQueryVersion>[]>(null);
 
   const resetNamespace = () => {
     setPackageNames(INITIAL_PACKAGE_NAMESPACES);
@@ -35,8 +36,7 @@ export default function PackageSelector({
   };
 
   const resetName = () => {
-    setPackageVersions(INITIAL_PACKAGE_NAMESPACES);
-    setPackageVersion("");
+    setPackageVersions(null);
   };
 
   const resetType = () => {
@@ -54,7 +54,6 @@ export default function PackageSelector({
         <PackageTypeSelect
           label="Package Type"
           options={packageTypes}
-          value={packageType}
           setPackageTypeFunc={setPackageType}
           setPackageNamespacesFunc={setPackageNamespaces}
           resetTypeFunc={resetType}
@@ -64,7 +63,6 @@ export default function PackageSelector({
         <PackageNamespaceSelect
           label="Package Namespace"
           options={packageNamespaces}
-          value={packageNamespace}
           packageType={packageType}
           setPackageNamespaceFunc={setPackageNamespace}
           setPackageNamesFunc={setPackageNames}
@@ -75,7 +73,6 @@ export default function PackageSelector({
         <PackageNameSelect
           label="Package Name"
           options={packageNames}
-          value={packageName}
           packageType={packageType}
           packageNamespace={packageNamespace}
           setPackageNameFunc={setPackageName}
@@ -87,11 +84,9 @@ export default function PackageSelector({
         <PackageVersionSelect
           label="Package Version"
           options={packageVersions}
-          value={packageVersion}
           packageType={packageType}
           packageNamespace={packageNamespace}
           packageName={packageName}
-          setPackageVersionFunc={setPackageVersion}
           setGraphDataFunc={setGraphData}
         />
       </div>
