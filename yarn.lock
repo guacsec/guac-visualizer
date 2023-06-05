@@ -5425,7 +5425,7 @@ react-multi-select-component@^4.3.4:
 
 react-no-ssr@^1.1.0:
   version "1.1.0"
-  resolved "https://registry.npmjs.org/react-no-ssr/-/react-no-ssr-1.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/react-no-ssr/-/react-no-ssr-1.1.0.tgz#313b48d2e26020f969ed98e472f10481604e3cc8"
   integrity sha512-3td8iPIEFKWXOJ3Ar5xURvZAsv/aIlngJLBH6fP5QC3WhsfuO2pn7WQR0ZlkTE0puWCL0RDEvXtOfAg4qMp+xA==
   dependencies:
     babel-runtime "6.x.x"

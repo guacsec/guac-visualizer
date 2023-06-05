@@ -5,7 +5,7 @@ const path = require('path');
 // if a gql endpoint isn't defined, default to localhost
 const GUAC_GQL_ADDR = process.env.GUAC_GQL_ADDR || 'http://localhost:8080/query';
 // default to 'guac.yaml' in the same directory as this file
-const GUAC_CONFIG_PATH = process.env.GUAC_CONFIG_PATH || path.resolve(__dirname, 'guac.yaml');
+const GUAC_CONFIG_PATH = process.env.GUAC_CONFIG_PATH || path.resolve(process.cwd(), 'guac.yaml');
 
 let gqlEndpoint = GUAC_GQL_ADDR;
 
