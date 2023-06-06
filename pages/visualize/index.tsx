@@ -1,6 +1,5 @@
 import { Inter } from "@next/font/google";
 import React, { useState, useEffect, useMemo, memo } from "react";
-import Graph from "app/graph";
 // import { gql, useQuery, useLazyQuery } from '@apollo/client'
 // import styles from "../styles/Home.module.css";
 // import useSWR from 'swr'
@@ -20,16 +19,8 @@ import {
   Node as gqlNode,
   PackageQualifier,
   PackageVersion,
-  GetPkgTypesDocument,
-  GetPkgNamesDocument,
-  GetPkgNamespacesDocument,
-  GetPkgVersionsDocument,
   GetPkgQuery,
-  GetPkgQueryVariables,
-  PkgSpec,
   GetPkgDocument,
-  AllPkgTreeFragment,
-  Package,
 } from "../../gql/__generated__/graphql";
 
 const inter = Inter({ subsets: ["latin"] });
