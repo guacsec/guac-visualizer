@@ -53,7 +53,9 @@ export function GuacVizThemeContextProvider(
   }
 
   return (
-    <GuacVizThemeContext.Provider value={{ isDarkTheme: true, toggleThemeHandler }}>
+    <GuacVizThemeContext.Provider
+      value={{ isDarkTheme: isDarkTheme, toggleThemeHandler }}
+    >
       {props.children}
     </GuacVizThemeContext.Provider>
   );
