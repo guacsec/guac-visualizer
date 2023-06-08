@@ -3,10 +3,8 @@ import {
   GetNeighborsDocument,
   GetNodeDocument,
 } from "@/gql/__generated__/graphql";
-import { GraphData } from "react-force-graph-2d";
 import { GuacGraphData } from "@/app/ggraph";
-
-//const certifyBadQuery = useQuery(GetCertifyBadDocument, { variables: {spec: {}}});
+import { GraphDataWithMetadata } from "@/components/graph/types";
 
 export async function fetchNeighbors(id: string) {
   const res = await client.query({
@@ -32,7 +30,7 @@ export async function GetNodeById(id: string) {
 }
 
 export function ParseAndFilterGraph(
-  graphData: GraphData,
+  graphData: GraphDataWithMetadata,
   parsedNode: GuacGraphData
 ) {
   const uniqueNodeIds = new Set(graphData.nodes.map((node) => node.id));
