@@ -14,7 +14,6 @@ use of GUAC, we recommend using the [GraphQL interface directly](https://github.
 
 ### Tools:
 
-- npm
 - yarn
 - docker
 
@@ -75,15 +74,11 @@ success Saved lockfile.
 
 ## Configuration
 
-By default, the GUAC Visualizer assumes that the GraphQL server is running on http://localhost:8080/query. However, you can optionally configure the visualizer to connect to a different GraphQL endpoint or to read from a guac.yaml configuration file.
+By default, the GUAC Visualizer assumes that the GraphQL server is running on http://localhost:8080/query. However, you can optionally configure the visualizer to connect to a different GraphQL endpoint or to read from a `guac.yaml` config file from your curent working directory.
 
-There are two environment variables used to configure the GraphQL endpoint for the visualizer: `GUAC_GQL_ADDR` and `GUAC_CONFIG_PATH`.
+### Optional:
 
-`GUAC_GQL_ADDR` is an environment variable that specifies the GraphQL endpoint that the visualizer will connect to. By default, the visualizer assumes that the GraphQL server is running on `http://localhost:8080/query`.
-
-`GUAC_CONFIG_PATH` is an environment variable that specifies the path to the guac.yaml configuration file. This file contains settings for various GUAC services, including the GraphQL endpoint that the visualizer will connect to (`gql-addr`). If a `guac.yaml` file is provided, and a `gql-addr` is specified in it, this will override the `GUAC_GQL_ADDR` setting.
-
-To set these environment variables, create a new file in the root of the project called .env.local. Inside this file, add the following lines:
+If you need to, you can use environmental variables to configure the GraphQL endpoint for the visualizer, specifying the endpoint: `GUAC_GQL_ADDR` and config file: `GUAC_CONFIG_PATH`. To set these environment variables, create a new file in the root of the project called `.env.local`. Inside this file, add the following lines:
 
 ```bash
 GUAC_GQL_ADDR='http://graphql-server-endpoint'
