@@ -11,7 +11,7 @@ import PackageGenericSelector, {
   PackageSelectorOption,
 } from "@/components/guac/packageGenericSelector";
 import { VersionQueryVersion } from "@/components/guac/packageNameSelect";
-import { GraphData } from "react-force-graph-2d";
+import { GraphDataWithMetadata } from "@/components/graph/types";
 
 type PackageNamespaceQuerySpec = {
   type: string;
@@ -39,7 +39,7 @@ const PackageVersionSelect = ({
 }: {
   label: string;
   options: PackageSelectorOption<VersionQueryVersion>[];
-  setGraphDataFunc: (data: GraphData) => void;
+  setGraphDataFunc: (data: GraphDataWithMetadata) => void;
   packageType: string;
   packageNamespace: string;
   packageName: string;
@@ -83,7 +83,7 @@ const PackageVersionSelect = ({
     packageNamespacesQuery.then((res) => {
       const pkg = res.data.packages[0] as AllPkgTreeFragment;
 
-      const graphData: GraphData = { nodes: [], links: [] };
+      const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
       const parsedNode = ParseNode(pkg); // is this a problem?
       ParseAndFilterGraph(graphData, parsedNode);
 
@@ -99,7 +99,10 @@ const PackageVersionSelect = ({
     });
   };
 
-  const processGraphData = (packages: any[], graphData: GraphData) => {
+  const processGraphData = (
+    packages: any[],
+    graphData: GraphDataWithMetadata
+  ) => {
     packages.forEach((e) => {
       const parsedGraphData = ParseNode(e);
       ParseAndFilterGraph(graphData, parsedGraphData);
