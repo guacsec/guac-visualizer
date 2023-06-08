@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@apollo/client";
-import { GetPkgTypesDocument } from "../gql/__generated__/graphql";
 import {
-  DataFetcher,
+  GetNeighborsQuery,
+  GetPkgTypesDocument,
+} from "@/gql/__generated__/graphql";
+import {
+  fetchNeighbors,
   ParseAndFilterGraph,
   GetNodeById,
 } from "@/app/graph_queries";
@@ -11,10 +14,11 @@ import { Toggle } from "@/components/guac/toggleSwitch";
 import { useRouter } from "next/router";
 import React from "react";
 import Graph from "@/components/graph/Graph";
-import { GraphData } from "react-force-graph-2d";
+import { GraphDataWithMetadata } from "@/components/graph/types";
 import PackageSelector, {
   INITIAL_PACKAGE_NAMESPACES,
 } from "@/components/guac/packageSelector";
+import { NodeFragment } from "@/gql/types/nodeFragment";
 
 export default function Home() {
   // state management
@@ -26,7 +30,7 @@ export default function Home() {
   const [highlightBuilder, setHighlightBuilder] = useState(false);
 
   // this is for the visual graph
-  const [graphData, setGraphData] = useState<GraphData>({
+  const [graphData, setGraphData] = useState<GraphDataWithMetadata>({
     nodes: [],
     links: [],
   });
@@ -83,14 +87,17 @@ export default function Home() {
   };
   // ...
 
-  const localDataFetcher = (id: string) => {
-    DataFetcher(id).then((res) => {
-      const graphData: GraphData = { nodes: [], links: [] };
-      res.forEach((n) => {
-        ParseAndFilterGraph(graphData, ParseNode(n));
-      });
-      setGraphData(graphData);
-    });
+  const localDataFetcher = (id: string | number) => {
+    fetchNeighbors(id.toString()).then(
+      (res: GetNeighborsQuery["neighbors"]) => {
+        const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
+        res.forEach((n) => {
+          let node = n as NodeFragment;
+          ParseAndFilterGraph(graphData, ParseNode(node));
+        });
+        setGraphData(graphData);
+      }
+    );
   };
 
   let packageTypes = INITIAL_PACKAGE_NAMESPACES;
@@ -106,10 +113,10 @@ export default function Home() {
     if (router.query.path != null && !renderedInitialGraph) {
       const nodeIds = router.query.path.split(",");
 
-      const graphData: GraphData = { nodes: [], links: [] };
-      nodeIds.forEach((nodeId) => {
+      const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
+      nodeIds.forEach((nodeId: string) => {
         GetNodeById(nodeId).then((res) => {
-          ParseAndFilterGraph(graphData, ParseNode(res.node));
+          ParseAndFilterGraph(graphData, ParseNode(res.node as NodeFragment));
           setGraphData(graphData);
         });
       });

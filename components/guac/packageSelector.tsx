@@ -5,8 +5,8 @@ import PackageNameSelect, {
 } from "@/components/guac/packageNameSelect";
 import PackageVersionSelect from "@/components/guac/packageVersionSelect";
 import { useState } from "react";
-import { GraphData } from "react-force-graph-2d";
 import { PackageSelectorOption } from "@/components/guac/packageGenericSelector";
+import { GraphDataWithMetadata } from "@/components/graph/types";
 
 export const INITIAL_PACKAGE_NAMESPACES: PackageSelectorOption<string>[] = [
   { label: "loading...", value: "loading" },
@@ -17,7 +17,7 @@ export default function PackageSelector({
   setGraphData,
 }: {
   packageTypes: PackageSelectorOption<string>[];
-  setGraphData: (data: GraphData) => void;
+  setGraphData: (data: GraphDataWithMetadata) => void;
 }) {
   const [packageType, setPackageType] = useState("");
   const [packageNamespace, setPackageNamespace] = useState("");
