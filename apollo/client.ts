@@ -8,7 +8,7 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     // link: createIsomorphLink(),
-    uri: "http://localhost:3000/api/graphql",
+    uri: "/api/graphql",
     cache: new InMemoryCache(),
     defaultOptions: {
       watchQuery: {
@@ -24,7 +24,7 @@ function createApolloClient() {
 const client = new ApolloClient({
     ssrMode: typeof window === 'undefined',
     // link: createIsomorphLink(),
-    uri: "http://localhost:3000/api/graphql",
+    uri: "/api/graphql",
     credentials: "same-origin",
     cache: new InMemoryCache(),
     defaultOptions: {
