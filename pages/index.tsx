@@ -6,7 +6,7 @@ import {
 } from "@/gql/__generated__/graphql";
 import {
   fetchNeighbors,
-  ParseAndFilterGraph,
+  parseAndFilterGraph,
   GetNodeById,
 } from "@/app/graph_queries";
 import { ParseNode } from "@/app/ggraph";
@@ -61,12 +61,29 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log(graphData.nodes);
+    console.log("Graph data has updated:", graphData);
   }, [graphData]);
 
   const packageTypesQuery = useQuery(GetPkgTypesDocument, { variables: {} });
   const packageLoading = packageTypesQuery.loading;
   const packageError = packageTypesQuery.error;
+
+  useEffect(() => {
+    if (packageError || packageLoading) {
+      return;
+    }
+    if (router.query.path != null && !renderedInitialGraph) {
+      const nodeIds = router.query.path.split(",");
+      let graphData: GraphDataWithMetadata = { nodes: [], links: [] };
+      nodeIds.forEach(async (nodeId: string) => {
+        const res = await GetNodeById(nodeId);
+        const parsedNode = ParseNode(res.node as NodeFragment);
+        parseAndFilterGraph(graphData, parsedNode);
+      });
+      setGraphData(graphData);
+      setRenderedInitialGraph(true);
+    }
+  }, [packageError, packageLoading]);
 
   const router = useRouter();
 
@@ -93,8 +110,9 @@ export default function Home() {
         const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
         res.forEach((n) => {
           let node = n as NodeFragment;
-          ParseAndFilterGraph(graphData, ParseNode(node));
+          parseAndFilterGraph(graphData, ParseNode(node));
         });
+        console.log("local data fetcher set graph data", graphData);
         setGraphData(graphData);
       }
     );
@@ -109,19 +127,6 @@ export default function Home() {
     packageTypes = sortablePackageData
       .sort((a, b) => a.type.localeCompare(b.type))
       .map((t) => ({ label: t.type, value: t.type }));
-
-    if (router.query.path != null && !renderedInitialGraph) {
-      const nodeIds = router.query.path.split(",");
-
-      const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
-      nodeIds.forEach((nodeId: string) => {
-        GetNodeById(nodeId).then((res) => {
-          ParseAndFilterGraph(graphData, ParseNode(res.node as NodeFragment));
-          setGraphData(graphData);
-        });
-      });
-      setRenderedInitialGraph(true);
-    }
   }
 
   return (

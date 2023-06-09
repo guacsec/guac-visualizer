@@ -29,7 +29,7 @@ export async function GetNodeById(id: string) {
   return res.data;
 }
 
-export function ParseAndFilterGraph(
+export function parseAndFilterGraph(
   graphData: GraphDataWithMetadata,
   parsedNode: GuacGraphData
 ) {
@@ -42,6 +42,7 @@ export function ParseAndFilterGraph(
   const uniqueNodes = parsedNode.nodes.filter(
     (node) => !uniqueNodeIds.has(node.data.id)
   );
+
   const uniqueEdges = parsedNode.edges.filter(
     (edge) => !uniqueLinkKeys.has(linkKey(edge.data.id))
   );

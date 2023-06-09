@@ -178,10 +178,13 @@ export function parsePackage(n: Package): [GuacGraphData, Node | undefined] {
       ...nodes,
       { data: { id: ns.id, label: ns.namespace, type: "PackageNamespace" } },
     ];
-    edges = [
+
+    const edgesAfter = [
       ...edges,
       { data: { source: typ.id, target: ns.id, label: "pkgNs" } },
     ];
+
+    edges = edgesAfter;
     if (ns.names.length == 0) {
       target = nodes.at(-1);
     }
@@ -191,6 +194,7 @@ export function parsePackage(n: Package): [GuacGraphData, Node | undefined] {
         ...nodes,
         { data: { id: name.id, label: name.name, type: "PackageName" } },
       ];
+
       edges = [
         ...edges,
         { data: { source: ns.id, target: name.id, label: "pkgName" } },
@@ -221,7 +225,6 @@ export function parsePackage(n: Package): [GuacGraphData, Node | undefined] {
       });
     });
   });
-
   return [{ nodes: nodes, edges: edges }, target];
 }
 
@@ -273,7 +276,6 @@ export function parseSource(n: Source): [GuacGraphData, Node | undefined] {
 
 export function parseArtifact(n: Artifact): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [
@@ -289,12 +291,11 @@ export function parseArtifact(n: Artifact): [GuacGraphData, Node | undefined] {
   ];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
 export function parseBuilder(n: Builder): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [
@@ -303,51 +304,47 @@ export function parseBuilder(n: Builder): [GuacGraphData, Node | undefined] {
   ];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
 export function parseOsv(n: Osv): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [...nodes, { data: { id: n.id, label: n.osvId, type: "Osv" } }];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
 export function parseNoVuln(n: NoVuln): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [...nodes, { data: { id: n.id, label: "NoVuln", type: "NoVuln" } }];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
 export function parseGhsa(n: Ghsa): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [...nodes, { data: { id: n.id, label: n.ghsaId, type: "Ghsa" } }];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
 export function parseCve(n: Cve): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [...nodes, { data: { id: n.id, label: n.cveId, type: "Cve" } }];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
 export function parseIsVulnerability(

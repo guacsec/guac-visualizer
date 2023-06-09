@@ -58,7 +58,6 @@ export default function Graph({
   const nodeTypeFromNodeObject = (node: NodeObject) => {
     return metadata[node.id]?.type;
   };
-
   return (
     <ForceGraph2D
       bgdColor={bgColor}
@@ -128,7 +127,6 @@ export default function Graph({
             ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.fill();
-            console.log("Testing if artifact is getting populated");
             break;
           default:
             ctx.fillStyle = applyRedFillAndOutline ? "red" : "blue";

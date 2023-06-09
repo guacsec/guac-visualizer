@@ -1,5 +1,5 @@
 import client from "@/apollo/client";
-import { ParseAndFilterGraph } from "@/app/graph_queries";
+import { parseAndFilterGraph } from "@/app/graph_queries";
 import {
   AllPkgTreeFragment,
   GetNeighborsDocument,
@@ -85,7 +85,7 @@ const PackageVersionSelect = ({
 
       const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
       const parsedNode = ParseNode(pkg); // is this a problem?
-      ParseAndFilterGraph(graphData, parsedNode);
+      parseAndFilterGraph(graphData, parsedNode);
 
       client
         .query({
@@ -103,12 +103,13 @@ const PackageVersionSelect = ({
     packages: any[],
     graphData: GraphDataWithMetadata
   ) => {
+    let currentGraphData = graphData;
     packages.forEach((e) => {
       const parsedGraphData = ParseNode(e);
-      ParseAndFilterGraph(graphData, parsedGraphData);
+      parseAndFilterGraph(currentGraphData, parsedGraphData);
     });
-
-    setGraphDataFunc(graphData);
+    console.log("set graph data from selector", graphData);
+    setGraphDataFunc(currentGraphData);
   };
 
   return (
