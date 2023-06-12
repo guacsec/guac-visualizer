@@ -17,7 +17,6 @@ import PackageSelector, {
 } from "@/components/guac/packageSelector";
 
 export default function Home() {
-  // state management
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
 
   const [highlightArtifact, setHighlightArtifact] = useState(false);
@@ -54,8 +53,7 @@ export default function Home() {
     links: [],
   });
 
-  // Track the width and height of the canvas container to determine size of
-  // canvas
+  // Track the width and height of the canvas container to determine size of canvas
 
   const containerRef = useRef<HTMLDivElement>();
   const containerCurrentElem = containerRef?.current;
