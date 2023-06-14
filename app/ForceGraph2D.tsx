@@ -1,37 +1,29 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
-import {
+import { useCallback, useRef } from "react";
+import ForceGraph, {
+  LinkObject,
   ForceGraphMethods,
   GraphData,
   NodeObject,
-  NodeCanvasObject,
-  NodeCanvassObjectMode,
 } from "react-force-graph-2d";
-import * as FG2D from "react-force-graph-2d";
-
-type ForceGraph2DDataFetcherNode = {
-  id: string;
-  x: number;
-  y: number;
-  z: number;
-};
+import { CanvasCustomRenderFn, NodeAccessor } from "@/components/graph/types";
 
 type ForceGraph2DWrapperProps = {
   graphData: GraphData;
   nodeAutoColorBy?: string;
   linkDirectionalArrowLength: number;
   linkDirectionalArrowRelPos: number;
-  onNodeClick?: (node: any) => void;
-  nodeLabel: string | ((node: NodeObject) => string);
-  linkLabel?: string | ((link: FG2D.LinkObject) => string);
+  onNodeClick?: (node: NodeObject, event: MouseEvent) => void;
+  nodeLabel: NodeAccessor<string>;
+  linkLabel?: string | ((link: LinkObject) => string);
   linkDirectionalParticles: number;
   linkSource?: string;
   linkTarget?: string;
   selectedNode?: any;
-  dataFetcher?: (id: string) => void;
-  nodeCanvasObject: NodeCanvasObject;
-  nodeCanvasObjectMode?: NodeCanvassObjectMode;
+  dataFetcher?: (id: string | number) => void;
+  nodeCanvasObject: CanvasCustomRenderFn<NodeObject>;
+  nodeCanvasObjectMode?: string | ((obj: NodeObject) => any);
   onNodeDragEnd?: (
     node: NodeObject,
     translate: { x: number; y: number }
@@ -65,11 +57,12 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
   bgdColor,
 }) => {
   const fgRef = useRef<ForceGraphMethods>();
+
   const handleClick = useCallback(
-    (node: ForceGraph2DDataFetcherNode) => {
+    (node: NodeObject) => {
       dataFetcher(node.id);
       const distance = 200;
-      const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+      // const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
       /*if (fgRef.current) {
                 fgRef.current.cameraPosition(
                     {
@@ -89,7 +82,7 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
     const sn = graphData.nodes.find((node) => node.id === selectedNode.value);
     if (sn && fgRef.current) {
       const distance = 200;
-      const distRatio = 1 + distance / Math.hypot(sn.x, sn.y, sn.z);
+      // const distRatio = 1 + distance / Math.hypot(sn.x, sn.y, sn.z);
 
       // fgRef.current.cameraPosition(
       //     {
@@ -104,7 +97,7 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
   }
 
   return (
-    <FG2D.default
+    <ForceGraph
       backgroundColor={bgdColor}
       width={width}
       height={height}

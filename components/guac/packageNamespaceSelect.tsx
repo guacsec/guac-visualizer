@@ -1,6 +1,8 @@
 import client from "@/apollo/client";
 import { GetPkgNamesDocument } from "@/gql/__generated__/graphql";
-import Select from "react-select";
+import PackageGenericSelector, {
+  PackageSelectorOption,
+} from "@/components/guac/packageGenericSelector";
 
 const PackageNamespaceSelect = ({
   label,
@@ -10,24 +12,33 @@ const PackageNamespaceSelect = ({
   packageType,
   resetNamespaceFunc,
   ...rest
+}: {
+  label: string;
+  options: PackageSelectorOption<string>[];
+  setPackageNamespaceFunc: (value: string) => void;
+  setPackageNamesFunc: (value: PackageSelectorOption<string>[]) => void;
+  packageType: string;
+  resetNamespaceFunc: () => void;
 }) => {
-  const onSelectPackageNamespace = (event: { value: any }) => {
+  const onSelectPackageNamespace = (value: string) => {
     resetNamespaceFunc();
-    setPackageNamespaceFunc(event);
+    setPackageNamespaceFunc(value);
 
     const packageNameQuery = client.query({
       query: GetPkgNamesDocument,
       variables: {
         spec: {
-          namespace: event.value,
-          type: packageType.value,
+          namespace: value,
+          type: packageType,
         },
       },
     });
-    let q = packageNameQuery.then((res) => {
+
+    packageNameQuery.then((res) => {
       const sortablePackageNames = [
         ...(res.data.packages[0].namespaces[0].names ?? []),
       ];
+
       setPackageNamesFunc(
         sortablePackageNames
           .sort((a, b) => a.name.localeCompare(b.name))
@@ -37,14 +48,12 @@ const PackageNamespaceSelect = ({
   };
 
   return (
-    <div className="flex flex-col w-full lg:w-52 space-y-2">
-      {label && <div className="w-fit">{label}</div>}
-      <Select
-        options={options}
-        onChange={(e) => onSelectPackageNamespace(e)}
-        {...rest}
-      />
-    </div>
+    <PackageGenericSelector
+      label={label}
+      options={options}
+      onSelect={onSelectPackageNamespace}
+      {...rest}
+    />
   );
 };
 

@@ -1,7 +1,31 @@
 import ForceGraph2D from "@/app/ForceGraph2DWrapper";
 import GuacVizThemeContext from "@/store/themeContext";
 import { useContext } from "react";
-import { GraphData } from "react-force-graph-2d";
+import {
+  GraphDataWithMetadata,
+  NodeMetadata,
+  NodeWithMetadataObject,
+} from "@/components/graph/types";
+import { GraphData, LinkObject, NodeObject } from "react-force-graph-2d";
+
+const getMetadataFromGraphData = (graphData: {
+  nodes: NodeWithMetadataObject[];
+  links: LinkObject[];
+}): {
+  metadata: { [id: string | number]: NodeMetadata };
+  graphData: GraphData;
+} => {
+  const metadataObj: { [id: string | number]: NodeMetadata } = {};
+
+  graphData.nodes.forEach((node: NodeWithMetadataObject) => {
+    metadataObj[node.id] = {
+      type: node.type,
+      label: node.label,
+    };
+  });
+
+  return { metadata: metadataObj, graphData: graphData };
+};
 
 export default function Graph({
   graphData,
@@ -9,7 +33,7 @@ export default function Graph({
   containerOptions,
   onNodeClick,
 }: {
-  graphData: GraphData;
+  graphData: GraphDataWithMetadata;
   options: {
     highlightArtifact: boolean;
     highlightVuln: boolean;
@@ -25,12 +49,22 @@ export default function Graph({
   const { isDarkTheme } = useContext(GuacVizThemeContext);
   const bgColor = isDarkTheme ? "#262626" : "#e7e5e4";
 
+  const { metadata } = getMetadataFromGraphData(graphData);
+
+  const nodeLabelFromNodeObject = (node: NodeObject) => {
+    return metadata[node.id]?.label;
+  };
+
+  const nodeTypeFromNodeObject = (node: NodeObject) => {
+    return metadata[node.id]?.type;
+  };
+
   return (
     <ForceGraph2D
       onNodeClick={(node) => onNodeClick(node)}
       bgdColor={bgColor}
       graphData={graphData}
-      nodeLabel={"label"}
+      nodeLabel={nodeLabelFromNodeObject}
       linkDirectionalArrowLength={3}
       linkDirectionalArrowRelPos={3}
       linkDirectionalParticles={0}
@@ -42,14 +76,14 @@ export default function Graph({
       }}
       nodeCanvasObject={(node, ctx) => {
         const shapeSize = 10; // set a constant size for each shape
-
+        const nodeType = nodeTypeFromNodeObject(node);
         const applyRedFillAndOutline =
-          (options.highlightArtifact && node.type === "Artifact") ||
-          (options.highlightVuln && node.type === "CertifyVuln") ||
-          (options.highlightSbom && node.type === "IsDependency") ||
-          (options.highlightBuilder && node.type === "PackageType");
+          (options.highlightArtifact && nodeType === "Artifact") ||
+          (options.highlightVuln && nodeType === "CertifyVuln") ||
+          (options.highlightSbom && nodeType === "IsDependency") ||
+          (options.highlightBuilder && nodeType === "PackageType");
 
-        switch (node.type) {
+        switch (nodeType) {
           case "PackageType":
             ctx.fillStyle = applyRedFillAndOutline ? "red" : "light blue";
             ctx.fillRect(node.x - 6, node.y - 4, 12, 8);
@@ -104,7 +138,7 @@ export default function Graph({
             break;
         }
         // label the node with text, a little bit under the shape
-        ctx.fillText(node.label, node.x, node.y + 12);
+        ctx.fillText(nodeLabelFromNodeObject(node), node.x, node.y + 12);
       }}
     />
   );

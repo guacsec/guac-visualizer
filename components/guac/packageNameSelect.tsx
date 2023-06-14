@@ -1,11 +1,22 @@
 import client from "@/apollo/client";
 import {
   GetPkgVersionsDocument,
-  PackageVersion,
   PackageQualifier,
 } from "@/gql/__generated__/graphql";
-import React, { useEffect } from "react";
-import Select from "react-select";
+import React, { Dispatch, SetStateAction } from "react";
+import PackageGenericSelector, {
+  PackageSelectorOption,
+} from "@/components/guac/packageGenericSelector";
+
+export type VersionQueryVersion = {
+  __typename?: "PackageVersion";
+  version: string;
+  qualifiers: {
+    __typename?: "PackageQualifier";
+    key: string;
+    value: string;
+  }[];
+};
 
 const PackageNameSelect = ({
   label,
@@ -16,8 +27,18 @@ const PackageNameSelect = ({
   packageNamespace,
   resetNameFunc,
   ...rest
+}: {
+  label: string;
+  options: PackageSelectorOption<string>[];
+  setPackageNameFunc: Dispatch<SetStateAction<string>>;
+  setPackageVersionsFunc: Dispatch<
+    SetStateAction<PackageSelectorOption<VersionQueryVersion>[]>
+  >;
+  packageType: string;
+  packageNamespace: string;
+  resetNameFunc: () => void;
 }) => {
-  function toVersionString(v: PackageVersion): string {
+  function toVersionString(v: VersionQueryVersion): string {
     return (
       v.version +
       JSON.stringify(
@@ -26,21 +47,22 @@ const PackageNameSelect = ({
     );
   }
 
-  const onSelectPackageName = (event: { value: any }) => {
+  const onSelectPackageName = (value: string) => {
     resetNameFunc();
-    setPackageNameFunc(event);
+    setPackageNameFunc(value);
 
     const packageVersionQuery = client.query({
       query: GetPkgVersionsDocument,
       variables: {
         spec: {
-          name: event.value,
-          type: packageType.value,
-          namespace: packageNamespace.value,
+          name: value,
+          type: packageType,
+          namespace: packageNamespace,
         },
       },
     });
-    let q = packageVersionQuery.then((res) => {
+
+    packageVersionQuery.then((res) => {
       const sortablePackageVersions = [
         ...(res.data.packages[0].namespaces[0].names[0].versions ?? []),
       ].map((v) => {
@@ -55,14 +77,12 @@ const PackageNameSelect = ({
   };
 
   return (
-    <div className="flex flex-col w-full lg:w-52 space-y-2">
-      {label && <div className="w-fit">{label}</div>}
-      <Select
-        options={options}
-        onChange={(e) => onSelectPackageName(e)}
-        {...rest}
-      />
-    </div>
+    <PackageGenericSelector
+      label={label}
+      options={options}
+      onSelect={onSelectPackageName}
+      {...rest}
+    />
   );
 };
 

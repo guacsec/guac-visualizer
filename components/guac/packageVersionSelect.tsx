@@ -1,45 +1,76 @@
 import client from "@/apollo/client";
 import { ParseAndFilterGraph } from "@/app/graph_queries";
 import {
-  Artifact,
+  AllPkgTreeFragment,
   GetNeighborsDocument,
   GetPkgDocument,
-  Package,
-  PackageQualifier,
-  PackageVersion,
 } from "@/gql/__generated__/graphql";
-import React, { useEffect } from "react";
-import Select from "react-select";
-import { Node, Edge, ParseNode } from "../../app/ggraph";
+import React from "react";
+import { ParseNode } from "@/app/ggraph";
+import PackageGenericSelector, {
+  PackageSelectorOption,
+} from "@/components/guac/packageGenericSelector";
+import { VersionQueryVersion } from "@/components/guac/packageNameSelect";
+import { GraphData } from "react-force-graph-2d";
 
-// TODO [lillichoung]: Componentize generic dropdown selector for all package___Select.tsx files
+type PackageNamespaceQuerySpec = {
+  type: string;
+  name: string;
+  namespace: string;
+  version: string;
+  qualifiers: PackageNamespaceQueryQualifier[];
+  matchOnlyEmptyQualifiers: boolean;
+};
+
+type PackageNamespaceQueryQualifier = {
+  __typename?: "PackageQualifier";
+  key: string;
+  value: string;
+};
+
 const PackageVersionSelect = ({
   label,
   options,
-  setPackageVersionFunc,
   setGraphDataFunc,
   packageType,
   packageNamespace,
   packageName,
   ...rest
+}: {
+  label: string;
+  options: PackageSelectorOption<VersionQueryVersion>[];
+  setGraphDataFunc: (data: GraphData) => void;
+  packageType: string;
+  packageNamespace: string;
+  packageName: string;
 }) => {
-  const onSelectPackageVersion = (event: { value: any }) => {
-    setPackageVersionFunc(event);
+  const onSelectPackageVersion = (option: VersionQueryVersion) => {
+    let specVersion;
+    let specQualifiers: {
+      __typename?: "PackageQualifier";
+      key: string;
+      value: string;
+    }[];
+    let specMatchOnlyEmptyQualifiers = false;
 
-    let spec = {
-      type: packageType.value,
-      name: packageName.value,
-      namespace: packageNamespace.value,
-    };
-    if (event.value.version != "") {
-      spec.version = event.value.version;
+    if (option.version != "") {
+      specVersion = option.version;
     }
 
-    if (event.value.qualifiers.length > 0) {
-      spec.qualifiers = event.value.qualifiers;
+    if (option.qualifiers.length > 0) {
+      specQualifiers = option.qualifiers;
     } else {
-      spec.matchOnlyEmptyQualifiers = true;
+      specMatchOnlyEmptyQualifiers = true;
     }
+
+    let spec: PackageNamespaceQuerySpec = {
+      type: packageType,
+      name: packageName,
+      namespace: packageNamespace,
+      version: specVersion,
+      qualifiers: specQualifiers,
+      matchOnlyEmptyQualifiers: specMatchOnlyEmptyQualifiers,
+    };
 
     const packageNamespacesQuery = client.query({
       query: GetPkgDocument,
@@ -48,17 +79,19 @@ const PackageVersionSelect = ({
       },
       fetchPolicy: "no-cache",
     });
-    let q = packageNamespacesQuery.then((res) => {
-      const graphData = { nodes: [], links: [] };
-      const parsedNode = ParseNode(res.data.packages[0]); // is this a problem?
 
+    packageNamespacesQuery.then((res) => {
+      const pkg = res.data.packages[0] as AllPkgTreeFragment;
+
+      const graphData: GraphData = { nodes: [], links: [] };
+      const parsedNode = ParseNode(pkg); // is this a problem?
       ParseAndFilterGraph(graphData, parsedNode);
 
-      const q = client
+      client
         .query({
           query: GetNeighborsDocument,
           variables: {
-            nodeId: res.data.packages[0].id,
+            nodeId: pkg.id,
             edges: [],
           },
         })
@@ -66,19 +99,7 @@ const PackageVersionSelect = ({
     });
   };
 
-  function toVersionString(v: PackageVersion) {
-    return (
-      v.version +
-      JSON.stringify(
-        v.qualifiers.map((l: PackageQualifier) => l.key + "=" + l.value)
-      )
-    );
-  }
-
-  const processGraphData = (packages: any[], graphData) => {
-    const linkKey = (link: any) =>
-      `${link.source}-${link.target}-${link.label}`;
-
+  const processGraphData = (packages: any[], graphData: GraphData) => {
     packages.forEach((e) => {
       const parsedGraphData = ParseNode(e);
       ParseAndFilterGraph(graphData, parsedGraphData);
@@ -88,14 +109,12 @@ const PackageVersionSelect = ({
   };
 
   return (
-    <div className="flex flex-col w-full lg:w-52 space-y-2">
-      {label && <div className="w-fit">{label}</div>}
-      <Select
-        options={options}
-        onChange={(e) => onSelectPackageVersion(e)}
-        {...rest}
-      />
-    </div>
+    <PackageGenericSelector
+      label={label}
+      options={options}
+      onSelect={onSelectPackageVersion}
+      {...rest}
+    />
   );
 };
 
