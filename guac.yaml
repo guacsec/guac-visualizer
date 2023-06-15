@@ -1,5 +1,4 @@
-# This is a placeholder configuration file for the GUAC visualizer build process.
-# to satisfy the build process requirement for a guac.yaml file.
+# This is a placeholder configuration file for the GUAC visualizer build process
 # Please note that the specific values in this file do not impact the functionality of the visualizer, 
 # as the actual configuration values are provided at runtime.
 
