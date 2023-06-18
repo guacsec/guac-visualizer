@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useQuery } from "@apollo/client";
 import { GetPkgTypesDocument } from "@/gql/__generated__/graphql";
 import {
@@ -9,7 +9,6 @@ import {
 import { ParseNode } from "@/app/ggraph";
 import { Toggle } from "@/components/guac/toggleSwitch";
 import { useRouter } from "next/router";
-import React from "react";
 import Graph from "@/components/graph/Graph";
 import { GraphData } from "react-force-graph-2d";
 import PackageSelector, {
