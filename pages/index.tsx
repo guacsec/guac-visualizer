@@ -20,6 +20,7 @@ export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
 
   const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
+  const packageSelectorRef = useRef();
 
   const [highlightArtifact, setHighlightArtifact] = useState(false);
   const [highlightVuln, setHighlightVuln] = useState(false);
@@ -30,6 +31,9 @@ export default function Home() {
   const [backStack, setBackStack] = useState([]);
   const [forwardStack, setForwardStack] = useState([]);
   const [currentNode, setCurrentNode] = useState(null);
+  const [reset, setReset] = useState(false);
+
+  const [packageGraphData, setPackageGraphData] = useState<GraphData>(null);
 
   const [initialGraphData, setInitialGraphData] = useState(null);
 
@@ -40,13 +44,15 @@ export default function Home() {
     }
   };
 
-  const reset = () => {
+  const resetGraph = () => {
+    console.log("clicked");
     if (initialGraphData) {
       setGraphData(initialGraphData);
       setBackStack([]);
       setForwardStack([]);
       setCurrentNode(null);
       setBreadcrumb([]);
+      setReset((reset) => !reset);
     }
   };
 
@@ -102,8 +108,10 @@ export default function Home() {
 
   // helper function to fetch data related to the node and update the graph
   const fetchAndSetGraphData = (nodeId: string) => {
+    // Fetch data for the given nodeId
     DataFetcher(nodeId).then((res) => {
       const graphData: GraphData = { nodes: [], links: [] };
+      // Parse and filter the graph data
       res.forEach((n) => {
         ParseAndFilterGraph(graphData, ParseNode(n));
       });
@@ -112,6 +120,29 @@ export default function Home() {
   };
 
   let packageTypes = INITIAL_PACKAGE_NAMESPACES;
+
+  let packageData = packageTypesQuery.data?.packages;
+  let sortablePackageData = [...(packageData ?? [])];
+  packageTypes = sortablePackageData
+    .sort((a, b) => a.type.localeCompare(b.type))
+    .map((t) => ({ label: t.type, value: t.type }));
+
+  if (router.query.path != null && !renderedInitialGraph) {
+    const nodeIds = router.query.path.split(",");
+
+    const graphData: GraphData = { nodes: [], links: [] };
+    nodeIds.forEach((nodeId: string) => {
+      GetNodeById(nodeId).then((res) => {
+        ParseAndFilterGraph(graphData, ParseNode(res.node));
+
+        // Here is where you set the initial state
+        setPackageGraphData(graphData);
+
+        setGraphDataWithInitial(graphData);
+      });
+    });
+    setRenderedInitialGraph(true);
+  }
 
   // handler for node click events
   // if a current node exists, add it to the back stack
@@ -137,6 +168,7 @@ export default function Home() {
 
     setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, nodeName]);
 
+    // Fetch and set the graph data for the clicked node
     fetchAndSetGraphData(node.id);
   };
 
@@ -157,6 +189,7 @@ export default function Home() {
       prevBreadcrumb.slice(0, prevBreadcrumb.length - 1)
     );
 
+    // Fetch and set the graph data for the new current node
     fetchAndSetGraphData(newNode.id);
   };
 
@@ -184,6 +217,7 @@ export default function Home() {
 
     setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, nodeName]);
 
+    // Fetch and set the graph data for the new current node
     fetchAndSetGraphData(newNode.id);
   };
 
@@ -214,8 +248,10 @@ export default function Home() {
       <main className="h-full flex flex-col items-center p-12">
         <PackageSelector
           packageTypes={packageTypes}
-          setGraphData={setGraphData}
+          setGraphData={setGraphDataWithInitial}
+          resetTypeFunc={resetGraph}
         />
+
         <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
           <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
             <div className="my-5 text-lg">Highlight Nodes</div>
@@ -243,8 +279,6 @@ export default function Home() {
               />
             </div>
             <div className="py-10 my-5 flex space-x-3">
-              <div className="py-2">Path: {breadcrumb.join(" > ")}</div>
-
               <button
                 type="button"
                 className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
@@ -265,11 +299,12 @@ export default function Home() {
                 type="button"
                 className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
                 title="Reset visualization"
-                onClick={reset}
+                onClick={resetGraph}
               >
                 Reset
               </button>
             </div>
+            <div className="py-2">Path: {breadcrumb.join(" > ")}</div>
           </div>
           <div
             className="lg:col-span-3 row-span-3 h-full w-full"

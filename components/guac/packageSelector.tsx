@@ -4,7 +4,7 @@ import PackageNameSelect, {
   VersionQueryVersion,
 } from "@/components/guac/packageNameSelect";
 import PackageVersionSelect from "@/components/guac/packageVersionSelect";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GraphData } from "react-force-graph-2d";
 import { PackageSelectorOption } from "@/components/guac/packageGenericSelector";
 
@@ -15,9 +15,11 @@ export const INITIAL_PACKAGE_NAMESPACES: PackageSelectorOption<string>[] = [
 export default function PackageSelector({
   packageTypes,
   setGraphData,
+  resetTypeFunc,
 }: {
   packageTypes: PackageSelectorOption<string>[];
   setGraphData: (data: GraphData) => void;
+  resetTypeFunc: () => void;
 }) {
   const [packageType, setPackageType] = useState("");
   const [packageNamespace, setPackageNamespace] = useState("");
@@ -43,6 +45,7 @@ export default function PackageSelector({
     setPackageNamespaces(INITIAL_PACKAGE_NAMESPACES);
     setPackageNamespace("");
     resetNamespace();
+    resetTypeFunc();
   };
 
   return (
