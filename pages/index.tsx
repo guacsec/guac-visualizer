@@ -19,7 +19,6 @@ export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
 
   const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
-  const packageSelectorRef = useRef();
 
   const [highlightArtifact, setHighlightArtifact] = useState(false);
   const [highlightVuln, setHighlightVuln] = useState(false);
@@ -30,9 +29,8 @@ export default function Home() {
   const [backStack, setBackStack] = useState([]);
   const [forwardStack, setForwardStack] = useState([]);
   const [currentNode, setCurrentNode] = useState(null);
-  const [reset, setReset] = useState(false);
-
-  const [packageGraphData, setPackageGraphData] = useState<GraphData>(null);
+  const [, setReset] = useState(false);
+  const [, setPackageGraphData] = useState<GraphData>(null);
 
   const [initialGraphData, setInitialGraphData] = useState(null);
 
