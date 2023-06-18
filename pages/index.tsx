@@ -19,6 +19,8 @@ import PackageSelector, {
 export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
 
+  const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
+
   const [highlightArtifact, setHighlightArtifact] = useState(false);
   const [highlightVuln, setHighlightVuln] = useState(false);
   const [highlightSbom, setHighlightSbom] = useState(false);
@@ -44,17 +46,16 @@ export default function Home() {
       setBackStack([]);
       setForwardStack([]);
       setCurrentNode(null);
+      setBreadcrumb([]);
     }
   };
 
-  // this is for the visual graph
   const [graphData, setGraphData] = useState<GraphData>({
     nodes: [],
     links: [],
   });
 
   // Track the width and height of the canvas container to determine size of canvas
-
   const containerRef = useRef<HTMLDivElement>();
   const containerCurrentElem = containerRef?.current;
   const [graphWidth, setGraphWidth] = useState(0);
@@ -111,6 +112,7 @@ export default function Home() {
   };
 
   let packageTypes = INITIAL_PACKAGE_NAMESPACES;
+
   // handler for node click events
   // if a current node exists, add it to the back stack
   // clear the forward stack when a new node is clicked
@@ -123,6 +125,18 @@ export default function Home() {
       setFirstNode(node);
     }
     setCurrentNode(node);
+
+    let nodeName = node.label || "Unnamed Node";
+    const count = breadcrumb.filter(
+      (name) => name.split("[")[0] === nodeName
+    ).length;
+
+    if (count > 0) {
+      nodeName = `${nodeName}[${count + 1}]`;
+    }
+
+    setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, nodeName]);
+
     fetchAndSetGraphData(node.id);
   };
 
@@ -139,6 +153,10 @@ export default function Home() {
     setCurrentNode(newNode);
     setBackStack(newBackStack);
 
+    setBreadcrumb((prevBreadcrumb) =>
+      prevBreadcrumb.slice(0, prevBreadcrumb.length - 1)
+    );
+
     fetchAndSetGraphData(newNode.id);
   };
 
@@ -154,6 +172,17 @@ export default function Home() {
     setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
     setCurrentNode(newNode);
     setForwardStack(newForwardStack);
+
+    let nodeName = newNode.name || "Unnamed Node";
+    const count = breadcrumb.filter(
+      (name) => name.split("[")[0] === nodeName
+    ).length;
+
+    if (count > 0) {
+      nodeName = `${nodeName}[${count + 1}]`;
+    }
+
+    setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, nodeName]);
 
     fetchAndSetGraphData(newNode.id);
   };
@@ -214,6 +243,8 @@ export default function Home() {
               />
             </div>
             <div className="py-10 my-5 flex space-x-3">
+              <div className="py-2">Path: {breadcrumb.join(" > ")}</div>
+
               <button
                 type="button"
                 className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
