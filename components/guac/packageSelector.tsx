@@ -4,7 +4,7 @@ import PackageNameSelect, {
   VersionQueryVersion,
 } from "@/components/guac/packageNameSelect";
 import PackageVersionSelect from "@/components/guac/packageVersionSelect";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { GraphData } from "react-force-graph-2d";
 import { PackageSelectorOption } from "@/components/guac/packageGenericSelector";
 

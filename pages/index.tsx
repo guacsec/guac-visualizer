@@ -59,7 +59,6 @@ export default function Home() {
   };
 
   const resetGraph = () => {
-    console.log("clicked");
     if (initialGraphData) {
       setGraphData(initialGraphData);
       setBackStack([]);
