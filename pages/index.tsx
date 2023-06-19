@@ -14,16 +14,19 @@ import { GraphData } from "react-force-graph-2d";
 import PackageSelector, {
   INITIAL_PACKAGE_NAMESPACES,
 } from "@/components/guac/packageSelector";
+import { GraphDataWithMetadata } from "@/components/graph/types";
 
 export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
 
   const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
 
-  const [highlightArtifact, setHighlightArtifact] = useState(false);
-  const [highlightVuln, setHighlightVuln] = useState(false);
-  const [highlightSbom, setHighlightSbom] = useState(false);
-  const [highlightBuilder, setHighlightBuilder] = useState(false);
+  const [highlightState, setHighlightState] = useState({
+    highlightArtifact: false,
+    highlightVuln: false,
+    highlightSbom: false,
+    highlightBuilder: false,
+  });
 
   const [firstNode, setFirstNode] = useState(null);
   const [backStack, setBackStack] = useState([]);
@@ -33,6 +36,20 @@ export default function Home() {
   const [, setPackageGraphData] = useState<GraphData>(null);
 
   const [initialGraphData, setInitialGraphData] = useState(null);
+
+  const handleHighlightToggle = (highlightKey: keyof typeof highlightState) => {
+    setHighlightState((prevState) => ({
+      ...prevState,
+      [highlightKey]: !prevState[highlightKey],
+    }));
+  };
+
+  const {
+    highlightArtifact: artifact,
+    highlightVuln: vuln,
+    highlightSbom: sbom,
+    highlightBuilder: builder,
+  } = highlightState;
 
   const setGraphDataWithInitial = (data: GraphData) => {
     setGraphData(data);
@@ -53,7 +70,7 @@ export default function Home() {
     }
   };
 
-  const [graphData, setGraphData] = useState<GraphData>({
+  const [graphData, setGraphData] = useState<GraphDataWithMetadata>({
     nodes: [],
     links: [],
   });
@@ -84,24 +101,25 @@ export default function Home() {
   const packageTypesQuery = useQuery(GetPkgTypesDocument, { variables: {} });
   const packageLoading = packageTypesQuery.loading;
   const packageError = packageTypesQuery.error;
-
   const router = useRouter();
 
-  const handleArtifactClick = () => {
-    setHighlightArtifact(!highlightArtifact);
+  // Define fetchNodeData function
+  const fetchNodeData = (nodeIds: string[]) => {
+    const graphData: GraphData = { nodes: [], links: [] };
+    nodeIds.forEach((nodeId: string) => {
+      GetNodeById(nodeId).then((res) => {
+        ParseAndFilterGraph(graphData, ParseNode(res.node));
+        setGraphDataWithInitial(graphData);
+      });
+    });
+    setRenderedInitialGraph(true);
   };
 
-  const handleVulnClick = () => {
-    setHighlightVuln(!highlightVuln);
-  };
-
-  const handleSbomClick = () => {
-    setHighlightSbom(!highlightSbom);
-  };
-
-  const handleBuilderClick = () => {
-    setHighlightBuilder(!highlightBuilder);
-  };
+  // Use fetchNodeData function where necessary
+  if (router.query.path != null && !renderedInitialGraph) {
+    const nodeIds = router.query.path.split(",");
+    fetchNodeData(nodeIds);
+  }
 
   // helper function to fetch data related to the node and update the graph
   const fetchAndSetGraphData = (nodeId: string) => {
@@ -256,23 +274,23 @@ export default function Home() {
             <div className="flex flex-col justify-center gap-y-2 w-full">
               <Toggle
                 label="Artifacts"
-                toggled={highlightArtifact}
-                onClick={() => handleArtifactClick()}
+                toggled={artifact}
+                onClick={() => handleHighlightToggle("highlightArtifact")}
               />
               <Toggle
                 label="Vulnerabilities"
-                toggled={highlightVuln}
-                onClick={() => handleVulnClick()}
+                toggled={vuln}
+                onClick={() => handleHighlightToggle("highlightVuln")}
               />
               <Toggle
                 label="SBOM"
-                toggled={highlightSbom}
-                onClick={() => handleSbomClick()}
+                toggled={sbom}
+                onClick={() => handleHighlightToggle("highlightSbom")}
               />
               <Toggle
                 label="Builder"
-                toggled={highlightBuilder}
-                onClick={() => handleBuilderClick()}
+                toggled={builder}
+                onClick={() => handleHighlightToggle("highlightBuilder")}
               />
             </div>
             <div className="py-10 my-5 flex space-x-3">
@@ -310,12 +328,7 @@ export default function Home() {
             <Graph
               graphData={graphData}
               onNodeClick={handleNodeClick}
-              options={{
-                highlightArtifact,
-                highlightVuln,
-                highlightSbom,
-                highlightBuilder,
-              }}
+              options={highlightState}
               containerOptions={{
                 width: graphWidth - 1,
                 height: graphHeight,
