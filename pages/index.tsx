@@ -159,9 +159,6 @@ export default function Home() {
     setRenderedInitialGraph(true);
   }
 
-  // handler for node click events
-  // if a current node exists, add it to the back stack
-  // clear the forward stack when a new node is clicked
   const handleNodeClick = (node) => {
     if (currentNode) {
       setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
@@ -187,9 +184,6 @@ export default function Home() {
     fetchAndSetGraphData(node.id);
   };
 
-  // handler for the 'Back' button click event
-  // updates the back and forward stacks, sets the previous node as the current node,
-  // and fetches and sets data for the new current node
   const handleBackClick = () => {
     if (backStack.length === 0) return;
 
@@ -208,9 +202,6 @@ export default function Home() {
     fetchAndSetGraphData(newNode.id);
   };
 
-  // handler for the 'Forward' button click event
-  // updates the back and forward stacks, sets the next node as the current node,
-  // and fetches and sets data for the new current node
   const handleForwardClick = () => {
     if (forwardStack.length === 0) return;
 
@@ -267,11 +258,26 @@ export default function Home() {
           resetTypeFunc={resetGraph}
         />
         <div className="pt-5 mt-3">
-          {" "}
           <ul className="pt-5 mt-3">
             <li>
               <a href="#" className="text-gray-500 hover:text-gray-700">
-                Path: {breadcrumb.join(" > ")}
+                Path:{" "}
+                {breadcrumb.map((label, index) => {
+                  // truncate long labels
+                  const maxLabelLength = 15;
+                  let truncatedLabel = label;
+
+                  if (label.length > maxLabelLength) {
+                    truncatedLabel = label.substr(0, maxLabelLength) + "...";
+                  }
+
+                  return (
+                    <React.Fragment key={index}>
+                      {index > 0 && " > "}
+                      {truncatedLabel}
+                    </React.Fragment>
+                  );
+                })}
               </a>
             </li>
           </ul>
