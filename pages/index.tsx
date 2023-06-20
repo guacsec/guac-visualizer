@@ -15,6 +15,7 @@ import PackageSelector, {
   INITIAL_PACKAGE_NAMESPACES,
 } from "@/components/guac/packageSelector";
 import { GraphDataWithMetadata } from "@/components/graph/types";
+import Image from "next/image";
 
 export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
@@ -220,7 +221,7 @@ export default function Home() {
     setCurrentNode(newNode);
     setForwardStack(newForwardStack);
 
-    let nodeName = newNode.name || "Unnamed Node";
+    let nodeName = newNode.label || "Unnamed Node";
     const count = breadcrumb.filter(
       (name) => name.split("[")[0] === nodeName
     ).length;
@@ -265,7 +266,16 @@ export default function Home() {
           setGraphData={setGraphDataWithInitial}
           resetTypeFunc={resetGraph}
         />
-
+        <div className="pt-5 mt-3">
+          {" "}
+          <ul className="pt-5 mt-3">
+            <li>
+              <a href="#" className="text-gray-500 hover:text-gray-700">
+                Path: {breadcrumb.join(" > ")}
+              </a>
+            </li>
+          </ul>
+        </div>
         <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
           <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
             <div className="my-5 text-lg">Highlight Nodes</div>
@@ -295,30 +305,44 @@ export default function Home() {
             <div className="py-10 my-5 flex space-x-3">
               <button
                 type="button"
-                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
+                  backStack.length === 0
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-slate-700 text-white"
+                }`}
                 title="Go back to previous visualization"
                 onClick={handleBackClick}
+                disabled={backStack.length === 0}
               >
                 Back
               </button>
               <button
                 type="button"
-                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
+                  forwardStack.length === 0
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-slate-700 text-white"
+                }`}
                 title="Go forward to next visualization"
                 onClick={handleForwardClick}
+                disabled={forwardStack.length === 0}
               >
                 Forward
               </button>
               <button
                 type="button"
-                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
+                  breadcrumb.length === 0
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-slate-700 text-white"
+                }`}
                 title="Reset visualization"
                 onClick={resetGraph}
+                disabled={breadcrumb.length === 0}
               >
                 Reset
               </button>
             </div>
-            <div className="py-2">Path: {breadcrumb.join(" > ")}</div>
           </div>
           <div
             className="lg:col-span-3 row-span-3 h-full w-full"
