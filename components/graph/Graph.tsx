@@ -29,12 +29,11 @@ const getMetadataFromGraphData = (graphData: {
 
 export default function Graph({
   graphData,
-  localDataFetcher,
   options,
   containerOptions,
+  onNodeClick,
 }: {
   graphData: GraphDataWithMetadata;
-  localDataFetcher: (id: string | number) => void;
   options: {
     highlightArtifact: boolean;
     highlightVuln: boolean;
@@ -45,6 +44,7 @@ export default function Graph({
     width: number;
     height: number;
   };
+  onNodeClick: (node: any) => void;
 }) {
   const { isDarkTheme } = useContext(GuacVizThemeContext);
   const bgColor = isDarkTheme ? "#262626" : "#e7e5e4";
@@ -60,13 +60,13 @@ export default function Graph({
   };
   return (
     <ForceGraph2D
+      onNodeClick={(node) => onNodeClick(node)}
       bgdColor={bgColor}
       graphData={graphData}
       nodeLabel={nodeLabelFromNodeObject}
       linkDirectionalArrowLength={3}
       linkDirectionalArrowRelPos={3}
       linkDirectionalParticles={0}
-      dataFetcher={localDataFetcher}
       width={containerOptions.width}
       height={containerOptions.height}
       onNodeDragEnd={(node) => {

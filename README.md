@@ -13,6 +13,9 @@ use of GUAC, we recommend using the
 
 To get started with GUAC visualizer, look at our guide [here](docs/setup.md).
 
+Once started, looking through packages might look something like this:
+
+<img src="https://github.com/guacsec/guac-visualizer/assets/68356865/9835362c-8138-44aa-b94f-fea7c5a99327" height="400" width="500">
 
 ## Looking for GUAC?
 
