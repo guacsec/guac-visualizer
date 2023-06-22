@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@apollo/client";
-import {
-  GetNeighborsQuery,
-  GetPkgTypesDocument,
-} from "@/gql/__generated__/graphql";
+import { GetPkgTypesDocument } from "@/gql/__generated__/graphql";
 import {
   fetchNeighbors,
   ParseAndFilterGraph,
@@ -21,7 +18,6 @@ import PackageSelector, {
 import { NodeFragment } from "@/gql/types/nodeFragment";
 
 export default function Home() {
-  // state management
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
 
   const [highlightArtifact, setHighlightArtifact] = useState(false);
@@ -29,14 +25,36 @@ export default function Home() {
   const [highlightSbom, setHighlightSbom] = useState(false);
   const [highlightBuilder, setHighlightBuilder] = useState(false);
 
+  const [firstNode, setFirstNode] = useState(null);
+  const [backStack, setBackStack] = useState([]);
+  const [forwardStack, setForwardStack] = useState([]);
+  const [currentNode, setCurrentNode] = useState(null);
+
+  const [initialGraphData, setInitialGraphData] = useState(null);
+
+  const setGraphDataWithInitial = (data: GraphData) => {
+    setGraphData(data);
+    if (!initialGraphData) {
+      setInitialGraphData(data);
+    }
+  };
+
+  const reset = () => {
+    if (initialGraphData) {
+      setGraphData(initialGraphData);
+      setBackStack([]);
+      setForwardStack([]);
+      setCurrentNode(null);
+    }
+  };
+
   // this is for the visual graph
   const [graphData, setGraphData] = useState<GraphDataWithMetadata>({
     nodes: [],
     links: [],
   });
 
-  // Track the width and height of the canvas container to determine size of
-  // canvas
+  // Track the width and height of the canvas container to determine size of canvas
 
   const containerRef = useRef<HTMLDivElement>();
   const containerCurrentElem = containerRef?.current;
@@ -60,10 +78,6 @@ export default function Home() {
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
-  useEffect(() => {
-    console.log(graphData.nodes);
-  }, [graphData]);
-
   const packageTypesQuery = useQuery(GetPkgTypesDocument, { variables: {} });
   const packageLoading = packageTypesQuery.loading;
   const packageError = packageTypesQuery.error;
@@ -85,22 +99,65 @@ export default function Home() {
   const handleBuilderClick = () => {
     setHighlightBuilder(!highlightBuilder);
   };
-  // ...
 
-  const localDataFetcher = (id: string | number) => {
-    fetchNeighbors(id.toString()).then(
-      (res: GetNeighborsQuery["neighbors"]) => {
-        const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
-        res.forEach((n) => {
-          let node = n as NodeFragment;
-          ParseAndFilterGraph(graphData, ParseNode(node));
-        });
-        setGraphData(graphData);
-      }
-    );
+  // helper function to fetch data related to the node and update the graph
+  const fetchAndSetGraphData = (nodeId: string) => {
+    fetchNeighbors(nodeId).then((res) => {
+      const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
+      res.forEach((n) => {
+        ParseAndFilterGraph(graphData, ParseNode(n as NodeFragment));
+      });
+      setGraphDataWithInitial(graphData);
+    });
   };
 
   let packageTypes = INITIAL_PACKAGE_NAMESPACES;
+  // handler for node click events
+  // if a current node exists, add it to the back stack
+  // clear the forward stack when a new node is clicked
+  const handleNodeClick = (node) => {
+    if (currentNode) {
+      setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
+      setForwardStack([]);
+    }
+    if (!firstNode) {
+      setFirstNode(node);
+    }
+    setCurrentNode(node);
+    fetchAndSetGraphData(node.id);
+  };
+
+  // handler for the 'Back' button click event
+  // updates the back and forward stacks, sets the previous node as the current node,
+  // and fetches and sets data for the new current node
+  const handleBackClick = () => {
+    if (backStack.length === 0) return;
+
+    const newNode = backStack[backStack.length - 1];
+    const newBackStack = backStack.slice(0, backStack.length - 1);
+
+    setForwardStack((prevForwardStack) => [currentNode, ...prevForwardStack]);
+    setCurrentNode(newNode);
+    setBackStack(newBackStack);
+
+    fetchAndSetGraphData(newNode.id);
+  };
+
+  // handler for the 'Forward' button click event
+  // updates the back and forward stacks, sets the next node as the current node,
+  // and fetches and sets data for the new current node
+  const handleForwardClick = () => {
+    if (forwardStack.length === 0) return;
+
+    const newNode = forwardStack[0];
+    const newForwardStack = forwardStack.slice(1);
+
+    setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
+    setCurrentNode(newNode);
+    setForwardStack(newForwardStack);
+
+    fetchAndSetGraphData(newNode.id);
+  };
 
   if (!packageError && !packageLoading) {
     // check if any params passed in to visualize, otherwise just go get the package types
@@ -111,13 +168,14 @@ export default function Home() {
       .map((t) => ({ label: t.type, value: t.type }));
 
     if (router.query.path != null && !renderedInitialGraph) {
-      const nodeIds = router.query.path.split(",");
+      const path = router.query.path as string;
+      const nodeIds = path.split(",");
 
       const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
       nodeIds.forEach((nodeId: string) => {
         GetNodeById(nodeId).then((res) => {
           ParseAndFilterGraph(graphData, ParseNode(res.node as NodeFragment));
-          setGraphData(graphData);
+          setGraphDataWithInitial(graphData);
         });
       });
       setRenderedInitialGraph(true);
@@ -134,6 +192,7 @@ export default function Home() {
         <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
           <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
             <div className="my-5 text-lg">Highlight Nodes</div>
+            <p className="py-2">Tip: Use click and scroll to adjust graph</p>
             <div className="flex flex-col justify-center gap-y-2 w-full">
               <Toggle
                 label="Artifacts"
@@ -156,6 +215,32 @@ export default function Home() {
                 onClick={() => handleBuilderClick()}
               />
             </div>
+            <div className="py-10 my-5 flex space-x-3">
+              <button
+                type="button"
+                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                title="Go back to previous visualization"
+                onClick={handleBackClick}
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                title="Go forward to next visualization"
+                onClick={handleForwardClick}
+              >
+                Forward
+              </button>
+              <button
+                type="button"
+                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                title="Reset visualization"
+                onClick={reset}
+              >
+                Reset
+              </button>
+            </div>
           </div>
           <div
             className="lg:col-span-3 row-span-3 h-full w-full"
@@ -163,7 +248,7 @@ export default function Home() {
           >
             <Graph
               graphData={graphData}
-              localDataFetcher={localDataFetcher}
+              onNodeClick={handleNodeClick}
               options={{
                 highlightArtifact,
                 highlightVuln,
