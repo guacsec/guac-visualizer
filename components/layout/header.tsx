@@ -17,8 +17,8 @@ export default function Header() {
           >
             <Image
               className="dark:white-filter"
-              src="/github.png"
-              alt="GitHub Logo"
+              src="images/icons/guac-logo.svg"
+              alt="GUAC Logo"
               width={27}
               height={27}
             />

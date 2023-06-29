@@ -15,7 +15,6 @@ import PackageSelector, {
   INITIAL_PACKAGE_NAMESPACES,
 } from "@/components/guac/packageSelector";
 import { GraphDataWithMetadata } from "@/components/graph/types";
-import Image from "next/image";
 
 export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
@@ -257,30 +256,29 @@ export default function Home() {
           setGraphData={setGraphDataWithInitial}
           resetTypeFunc={resetGraph}
         />
-        <div className="pt-5 mt-3">
-          <ul className="pt-5 mt-3">
-            <li>
-              <a href="#" className="text-gray-500 hover:text-gray-700">
-                Path:{" "}
-                {breadcrumb.map((label, index) => {
-                  // truncate long labels
-                  const maxLabelLength = 15;
-                  let truncatedLabel = label;
+        <div className="flex flex-wrap py-5 px-4">
+          <div className="pt-5 mt-3 flex items-end flex-wrap">
+            {breadcrumb.map((label, index) => {
+              // truncate long labels
+              const maxLabelLength = 15;
+              let truncatedLabel = label;
 
-                  if (label.length > maxLabelLength) {
-                    truncatedLabel = label.substr(0, maxLabelLength) + "...";
-                  }
+              if (label.length > maxLabelLength) {
+                truncatedLabel = label.substr(0, maxLabelLength) + "...";
+              }
 
-                  return (
-                    <React.Fragment key={index}>
-                      {index > 0 && " > "}
+              return (
+                <div className="my-1" key={index}>
+                  <div className="text-gray-500 hover:text-gray-700">
+                    {index > 0 && " > "}
+                    <span className="bg-blue-300 text-gray-800 px-2 py-1 rounded-md mr-2">
                       {truncatedLabel}
-                    </React.Fragment>
-                  );
-                })}
-              </a>
-            </li>
-          </ul>
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
         <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
           <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
