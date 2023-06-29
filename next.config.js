@@ -13,10 +13,11 @@ let gqlEndpoint = GUAC_GQL_ADDR;
 try {
   let fileContents = fs.readFileSync(GUAC_CONFIG_PATH, 'utf8');
   let guacConfig = yaml.load(fileContents);
-  gqlEndpoint = guacConfig['gql-addr'] || GUAC_GQL_ADDR;
+  gqlEndpoint = guacConfig['gql-addr'] || (guacConfig['gql'] ? guacConfig['gql']['gql-addr'] : null) || GUAC_GQL_ADDR;
 } catch (err) {
   console.error(`Error reading guac.yaml file at ${GUAC_CONFIG_PATH}: `, err);
 }
+
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
