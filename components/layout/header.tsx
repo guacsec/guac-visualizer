@@ -40,17 +40,22 @@ export default function Header() {
             <h1 className="sm:text-2xl ml-2 dark:text-stone-300">
               GUAC Visualizer
             </h1>
+            <span className="text-gray-400 ml-3"> *Experimental </span>
           </a>
         </div>
-        <div className="hidden md:flex w-1/2 flex-wrap justify-between items-center">
-          <NavigationLinks />
-          <button type="button" onClick={toggleThemeHandler}>
-            {isDarkTheme ? (
-              <SunIcon className="h-8 w-8 text-stone-300" />
-            ) : (
-              <MoonIcon className="h-8 w-8 text-zinc-600" />
-            )}
-          </button>
+        <div className="hidden md:flex w-1/3 flex-wrap justify-between items-center">
+          <div className="flex">
+            <NavigationLinks />
+          </div>
+          <div>
+            <button type="button" onClick={toggleThemeHandler}>
+              {isDarkTheme ? (
+                <SunIcon className="h-8 w-8 text-stone-300" />
+              ) : (
+                <MoonIcon className="h-8 w-8 text-zinc-600" />
+              )}
+            </button>
+          </div>
         </div>
         <div className="md:hidden">
           <button type="button" onClick={() => setIsMenuOpen(!isMenuOpen)}>
