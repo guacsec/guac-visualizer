@@ -47,7 +47,7 @@ export default function Graph({
   onNodeClick: (node: any) => void;
 }) {
   const { isDarkTheme } = useContext(GuacVizThemeContext);
-  const bgColor = isDarkTheme ? "#262626" : "#e7e5e4";
+  const bgColor = isDarkTheme ? "#909090" : "#e7e5e4";
 
   const { metadata } = getMetadataFromGraphData(graphData);
 

@@ -7,6 +7,7 @@ import PackageVersionSelect from "@/components/guac/packageVersionSelect";
 import { useState } from "react";
 import { GraphData } from "react-force-graph-2d";
 import { PackageSelectorOption } from "@/components/guac/packageGenericSelector";
+import DropdownWrapper from "@/utils/dropdownWrapper";
 
 export const INITIAL_PACKAGE_NAMESPACES: PackageSelectorOption<string>[] = [
   { label: "loading...", value: "loading" },
@@ -51,47 +52,52 @@ export default function PackageSelector({
   return (
     <div
       id="ptDiv"
-      className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm space-y-2 lg:flex"
+      className="z-10 w-full max-w-5xl items-center justify-between font-mono dark:text-black text-sm space-y-2 lg:flex"
     >
-      <div className="left-0 flex w-full items-end justify-center lg:static lg:h-auto lg:w-auto lg:bg-none">
-        <PackageTypeSelect
-          label="Package Type"
-          options={packageTypes}
-          setPackageTypeFunc={setPackageType}
-          setPackageNamespacesFunc={setPackageNamespaces}
-          resetTypeFunc={resetType}
-        />
-      </div>
-      <div className="left-0 flex w-full items-end justify-center lg:static lg:h-auto lg:w-auto lg:bg-none">
-        <PackageNamespaceSelect
-          label="Package Namespace"
-          options={packageNamespaces}
-          packageType={packageType}
-          setPackageNamespaceFunc={setPackageNamespace}
-          setPackageNamesFunc={setPackageNames}
-          resetNamespaceFunc={resetName}
-        />
-      </div>
-      <div className="left-0 flex w-full items-end justify-center bg-gradient-to-t lg:static lg:h-auto lg:w-auto lg:bg-none">
-        <PackageNameSelect
-          label="Package Name"
-          options={packageNames}
-          packageType={packageType}
-          packageNamespace={packageNamespace}
-          setPackageNameFunc={setPackageName}
-          setPackageVersionsFunc={setPackageVersions}
-          resetNameFunc={resetName}
-        />
-      </div>
-      <div className="left-0 flex w-full items-end justify-center bg-gradient-to-t lg:static lg:h-auto lg:w-auto lg:bg-none">
-        <PackageVersionSelect
-          label="Package Version"
-          options={packageVersions}
-          packageType={packageType}
-          packageNamespace={packageNamespace}
-          packageName={packageName}
-          setGraphDataFunc={setGraphData}
-        />
+      <div
+        id="ptDiv"
+        className="z-10 w-full max-w-5xl items-center justify-between font-mono dark:text-black text-sm space-y-2 lg:flex"
+      >
+        <DropdownWrapper>
+          <PackageTypeSelect
+            label="Package Type"
+            options={packageTypes}
+            setPackageTypeFunc={setPackageType}
+            setPackageNamespacesFunc={setPackageNamespaces}
+            resetTypeFunc={resetType}
+          />
+        </DropdownWrapper>
+        <DropdownWrapper>
+          <PackageNamespaceSelect
+            label="Package Namespace"
+            options={packageNamespaces}
+            packageType={packageType}
+            setPackageNamespaceFunc={setPackageNamespace}
+            setPackageNamesFunc={setPackageNames}
+            resetNamespaceFunc={resetName}
+          />
+        </DropdownWrapper>
+        <DropdownWrapper>
+          <PackageNameSelect
+            label="Package Name"
+            options={packageNames}
+            packageType={packageType}
+            packageNamespace={packageNamespace}
+            setPackageNameFunc={setPackageName}
+            setPackageVersionsFunc={setPackageVersions}
+            resetNameFunc={resetName}
+          />
+        </DropdownWrapper>
+        <DropdownWrapper>
+          <PackageVersionSelect
+            label="Package Version"
+            options={packageVersions}
+            packageType={packageType}
+            packageNamespace={packageNamespace}
+            packageName={packageName}
+            setGraphDataFunc={setGraphData}
+          />
+        </DropdownWrapper>
       </div>
     </div>
   );
