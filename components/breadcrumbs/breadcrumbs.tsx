@@ -10,11 +10,16 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   breadcrumb,
   handleNodeClick,
 }) => {
+  if (breadcrumb.length === 0) {
+    // Don't render the component if there are no breadcrumb items
+    return null;
+  }
+
   return (
     <nav className="flex" aria-label="Breadcrumb">
       <ol
         role="list"
-        className="flex space-x-4 rounded-md bg-white dark:bg-gray-800 px-6 py-2 shadow"
+        className="flex flex-wrap space-x-4 rounded-xl bg-white mt-10 px-6 py-2 shadow"
       >
         {breadcrumb.map((label, index) => {
           const maxLabelLength = 15;
@@ -28,13 +33,18 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
             <li className="flex" key={index}>
               <div className="flex items-center">
                 {index !== 0 && (
-                  <ChevronDoubleRightIcon className="w-8 text-gray-400 dark:text-white" />
+                  <ChevronDoubleRightIcon
+                    className="w-8"
+                    style={{ color: "rgba(90, 75, 60, 0.3)" }}
+                  />
                 )}
-                <div
-                  className="ml-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-white dark:hover:text-gray-300"
-                  onClick={() => handleNodeClick(label)}
-                >
-                  {truncatedLabel}
+                <div className="text-gray-500 hover:text-gray-700">
+                  <span
+                    className="ml-2 text-sm font-medium"
+                    onClick={() => handleNodeClick(label)}
+                  >
+                    {truncatedLabel}
+                  </span>
                 </div>
               </div>
             </li>

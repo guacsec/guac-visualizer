@@ -15,7 +15,7 @@ import PackageSelector, {
   INITIAL_PACKAGE_NAMESPACES,
 } from "@/components/guac/packageSelector";
 import { GraphDataWithMetadata } from "@/components/graph/types";
-import { Breadcrumb } from "@/utils/breadcrumbs";
+import { Breadcrumb } from "@/components/breadcrumbs/breadcrumbs";
 
 export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
