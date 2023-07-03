@@ -11,7 +11,6 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   handleNodeClick,
 }) => {
   if (breadcrumb.length === 0) {
-    // Don't render the component if there are no breadcrumb items
     return null;
   }
 
