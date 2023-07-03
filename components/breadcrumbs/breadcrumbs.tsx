@@ -37,11 +37,8 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
                     style={{ color: "rgba(90, 75, 60, 0.3)" }}
                   />
                 )}
-                <div className="text-gray-500 hover:text-gray-700">
-                  <span
-                    className="ml-2 text-sm font-medium"
-                    onClick={() => handleNodeClick(label)}
-                  >
+                <div className="text-gray-500">
+                  <span className="ml-2 text-sm font-medium">
                     {truncatedLabel}
                   </span>
                 </div>
