@@ -10,13 +10,13 @@ const PackageGenericSelector = <T extends unknown>({
   label,
   options,
   onSelect,
-  className = "", // Add a default value here to prevent errors when it's undefined
+  className = "",
   ...rest
 }: {
   label: string;
   options: PackageSelectorOption<T>[];
   onSelect: (value: T) => void;
-  className?: string; // Allow className to be passed in as a prop
+  className?: string;
 }) => {
   return (
     <div className="flex flex-col w-full lg:w-52 space-y-2 text-lg dark:text-black">
