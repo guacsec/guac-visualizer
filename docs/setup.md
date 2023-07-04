@@ -12,15 +12,14 @@ use of GUAC, we recommend using the [GraphQL interface directly](https://github.
 
 ## Requirements
 
-### Tools:
+**Tools:**
 
 - yarn
 - docker
 
 ### Services
 
-The GUAC visualizer requires the running of the GUAC services. For more
-information on how to do this, click
+To use the GUAC visualizer, you need to have the main GUAC server running. For more information on how to do this, click
 [here](https://docs.guac.sh/getting-started/).
 
 ## Getting started
@@ -76,21 +75,6 @@ success Saved lockfile.
 
 By default, the GUAC Visualizer assumes that the GraphQL server is running on http://localhost:8080/query. However, you can optionally configure the visualizer to connect to a different GraphQL endpoint or to read from a `guac.yaml` config file from your curent working directory.
 
-### Optional:
-
-If you need to, you can use environmental variables to configure the GraphQL endpoint for the visualizer, specifying the endpoint: `GUAC_GQL_ADDR` and config file: `GUAC_CONFIG_PATH`. To set these environment variables, create a new file in the root of the project called `.env.local`. Inside this file, add the following lines:
-
-```bash
-GUAC_GQL_ADDR='http://graphql-server-endpoint'
-GUAC_CONFIG_PATH='/path/to/guac.yaml'
-```
-
-Replace `http://your-graphql-server-endpoint` with your actual GraphQL server endpoint if it is different from the one specified in your `guac.yaml` file, and `/path/to/guac.yaml` with the actual path to your guac.yaml file.
-
-The `next.config.js` file uses these environment variables to configure the visualizer. If `GUAC_CONFIG_PATH` is set and the `guac.yaml` file specifies a `gql-addr`, it will be used. If `GUAC_GQL_ADDR` is set, it will override the `gql-addr` from the `guac.yaml` file.
-
-**Note:** any changes to the `guac.yaml` file or the `GUAC_GQL_ADDR` and `GUAC_CONFIG_PATH` environment variables will only take effect after you stop and restart the visualizer. Make sure to restart the visualizer any time you make changes to them.
-
 ## Running the visualizer locally:
 
 ```bash
@@ -110,6 +94,11 @@ info  - Using webpack 5. Reason: Enabled by default https://nextjs.org/docs/mess
 You can then go to [localhost:3000](http://localhost:3000) in your browser to
 see the graph visualization.
 
-Using the GUAC visualizer will look something like this:
+<hr />
+<br />
 
- <img src="https://user-images.githubusercontent.com/35208156/240057032-6109baaf-cbb8-4551-a502-ec2451121f21.png" alt="an image of the guac visualizer">
+### Using the GUAC visualizer will look something like this:
+
+<br />
+
+![image](https://github.com/guacsec/guac-visualizer/assets/68356865/0b5460e2-0252-4ba6-8052-bb3426956410)
