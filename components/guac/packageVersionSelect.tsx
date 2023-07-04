@@ -108,6 +108,10 @@ const PackageVersionSelect = ({
     setGraphDataFunc(graphData);
   };
 
+  if (!options) {
+    options = [];
+  }
+
   return (
     <PackageGenericSelector
       label={label}
