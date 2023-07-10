@@ -15,6 +15,7 @@ import PackageSelector, {
   INITIAL_PACKAGE_NAMESPACES,
 } from "@/components/guac/packageSelector";
 import { GraphDataWithMetadata } from "@/components/graph/types";
+import { Breadcrumb } from "@/components/breadcrumbs/breadcrumbs";
 
 export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
@@ -257,33 +258,17 @@ export default function Home() {
           resetTypeFunc={resetGraph}
         />
         <div className="flex flex-wrap py-5 px-4">
-          <div className="pt-5 mt-3 flex items-end flex-wrap">
-            {breadcrumb.map((label, index) => {
-              // truncate long labels
-              const maxLabelLength = 15;
-              let truncatedLabel = label;
-
-              if (label.length > maxLabelLength) {
-                truncatedLabel = label.substr(0, maxLabelLength) + "...";
-              }
-
-              return (
-                <div className="my-1" key={index}>
-                  <div className="text-gray-500 hover:text-gray-700">
-                    {index > 0 && " > "}
-                    <span className="bg-blue-300 text-gray-800 px-2 py-1 rounded-md mr-2">
-                      {truncatedLabel}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <Breadcrumb
+            breadcrumb={breadcrumb}
+            handleNodeClick={handleNodeClick}
+          />
         </div>
         <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
           <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
             <div className="my-5 text-lg">Highlight Nodes</div>
-            <p className="py-2">Tip: Use click and scroll to adjust graph</p>
+            <p className="mb-5 py-3">
+              Tip: Use click and scroll to adjust graph
+            </p>
             <div className="flex flex-col justify-center gap-y-2 w-full">
               <Toggle
                 label="Artifacts"
@@ -311,7 +296,7 @@ export default function Home() {
                 type="button"
                 className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
                   backStack.length === 0
-                    ? "bg-gray-300 cursor-not-allowed"
+                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
                     : "bg-slate-700 text-white"
                 }`}
                 title="Go back to previous visualization"
@@ -324,7 +309,7 @@ export default function Home() {
                 type="button"
                 className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
                   forwardStack.length === 0
-                    ? "bg-gray-300 cursor-not-allowed"
+                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
                     : "bg-slate-700 text-white"
                 }`}
                 title="Go forward to next visualization"
@@ -337,7 +322,7 @@ export default function Home() {
                 type="button"
                 className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
                   breadcrumb.length === 0
-                    ? "bg-gray-300 cursor-not-allowed"
+                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
                     : "bg-slate-700 text-white"
                 }`}
                 title="Reset visualization"
