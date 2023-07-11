@@ -1,81 +1,57 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@apollo/client";
-import { GetPkgTypesDocument } from "@/gql/__generated__/graphql";
 import {
-  DataFetcher,
-  ParseAndFilterGraph,
+  GetNeighborsQuery,
+  GetPkgTypesDocument,
+} from "@/gql/__generated__/graphql";
+import {
+  fetchNeighbors,
+  parseAndFilterGraph,
   GetNodeById,
 } from "@/app/graph_queries";
 import { ParseNode } from "@/app/ggraph";
 import { Toggle } from "@/components/guac/toggleSwitch";
 import { useRouter } from "next/router";
+import React from "react";
 import Graph from "@/components/graph/Graph";
-import { GraphData } from "react-force-graph-2d";
+import { GraphDataWithMetadata } from "@/components/graph/types";
 import PackageSelector, {
   INITIAL_PACKAGE_NAMESPACES,
 } from "@/components/guac/packageSelector";
-import { GraphDataWithMetadata } from "@/components/graph/types";
-import { Breadcrumb } from "@/components/breadcrumbs/breadcrumbs";
+import { NodeFragment } from "@/gql/types/nodeFragment";
 
 export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
 
-  const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
-
-  const [highlightState, setHighlightState] = useState({
-    highlightArtifact: false,
-    highlightVuln: false,
-    highlightSbom: false,
-    highlightBuilder: false,
-  });
+  const [highlightArtifact, setHighlightArtifact] = useState(false);
+  const [highlightVuln, setHighlightVuln] = useState(false);
+  const [highlightSbom, setHighlightSbom] = useState(false);
+  const [highlightBuilder, setHighlightBuilder] = useState(false);
 
   const [firstNode, setFirstNode] = useState(null);
   const [backStack, setBackStack] = useState([]);
   const [forwardStack, setForwardStack] = useState([]);
   const [currentNode, setCurrentNode] = useState(null);
-  const [, setReset] = useState(false);
-  const [, setPackageGraphData] = useState<GraphData>(null);
 
   const [initialGraphData, setInitialGraphData] = useState(null);
 
-  const handleHighlightToggle = (highlightKey: keyof typeof highlightState) => {
-    setHighlightState((prevState) => ({
-      ...prevState,
-      [highlightKey]: !prevState[highlightKey],
-    }));
-  };
-
-  const {
-    highlightArtifact: artifact,
-    highlightVuln: vuln,
-    highlightSbom: sbom,
-    highlightBuilder: builder,
-  } = highlightState;
-
-  const setGraphDataWithInitial = (data: GraphData) => {
-    setGraphData(data);
-    if (!initialGraphData) {
-      setInitialGraphData(data);
-    }
-  };
-
-  const resetGraph = () => {
+  const reset = () => {
     if (initialGraphData) {
       setGraphData(initialGraphData);
       setBackStack([]);
       setForwardStack([]);
       setCurrentNode(null);
-      setBreadcrumb([]);
-      setReset((reset) => !reset);
     }
   };
 
+  // this is for the visual graph
   const [graphData, setGraphData] = useState<GraphDataWithMetadata>({
     nodes: [],
     links: [],
   });
 
   // Track the width and height of the canvas container to determine size of canvas
+
   const containerRef = useRef<HTMLDivElement>();
   const containerCurrentElem = containerRef?.current;
   const [graphWidth, setGraphWidth] = useState(0);
@@ -101,64 +77,60 @@ export default function Home() {
   const packageTypesQuery = useQuery(GetPkgTypesDocument, { variables: {} });
   const packageLoading = packageTypesQuery.loading;
   const packageError = packageTypesQuery.error;
+
+  useEffect(() => {
+    if (packageError || packageLoading) {
+      return;
+    }
+    if (router.query.path != null && !renderedInitialGraph) {
+      const path = router.query.path as string;
+      const nodeIds = path.split(",");
+      let graphData: GraphDataWithMetadata = { nodes: [], links: [] };
+      nodeIds.forEach(async (nodeId: string) => {
+        const res = await GetNodeById(nodeId);
+        const parsedNode = ParseNode(res.node as NodeFragment);
+        parseAndFilterGraph(graphData, parsedNode);
+      });
+      setGraphData(graphData);
+      setRenderedInitialGraph(true);
+    }
+  }, [packageError, packageLoading]);
+
   const router = useRouter();
 
-  // Define fetchNodeData function
-  const fetchNodeData = (nodeIds: string[]) => {
-    const graphData: GraphData = { nodes: [], links: [] };
-    nodeIds.forEach((nodeId: string) => {
-      GetNodeById(nodeId).then((res) => {
-        ParseAndFilterGraph(graphData, ParseNode(res.node));
-        setGraphDataWithInitial(graphData);
-      });
-    });
-    setRenderedInitialGraph(true);
+  const handleArtifactClick = () => {
+    setHighlightArtifact(!highlightArtifact);
   };
 
-  // Use fetchNodeData function where necessary
-  if (router.query.path != null && !renderedInitialGraph) {
-    const nodeIds = router.query.path.split(",");
-    fetchNodeData(nodeIds);
-  }
+  const handleVulnClick = () => {
+    setHighlightVuln(!highlightVuln);
+  };
 
-  // helper function to fetch data related to the node and update the graph
-  const fetchAndSetGraphData = (nodeId: string) => {
-    // Fetch data for the given nodeId
-    DataFetcher(nodeId).then((res) => {
-      const graphData: GraphData = { nodes: [], links: [] };
-      // Parse and filter the graph data
-      res.forEach((n) => {
-        ParseAndFilterGraph(graphData, ParseNode(n));
-      });
-      setGraphDataWithInitial(graphData);
-    });
+  const handleSbomClick = () => {
+    setHighlightSbom(!highlightSbom);
+  };
+
+  const handleBuilderClick = () => {
+    setHighlightBuilder(!highlightBuilder);
+  };
+
+  const fetchAndSetGraphData = (id: string | number) => {
+    fetchNeighbors(id.toString()).then(
+      (res: GetNeighborsQuery["neighbors"]) => {
+        const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
+        res.forEach((n) => {
+          let node = n as NodeFragment;
+          parseAndFilterGraph(graphData, ParseNode(node));
+        });
+        setGraphData(graphData);
+      }
+    );
   };
 
   let packageTypes = INITIAL_PACKAGE_NAMESPACES;
-
-  let packageData = packageTypesQuery.data?.packages;
-  let sortablePackageData = [...(packageData ?? [])];
-  packageTypes = sortablePackageData
-    .sort((a, b) => a.type.localeCompare(b.type))
-    .map((t) => ({ label: t.type, value: t.type }));
-
-  if (router.query.path != null && !renderedInitialGraph) {
-    const nodeIds = router.query.path.split(",");
-
-    const graphData: GraphData = { nodes: [], links: [] };
-    nodeIds.forEach((nodeId: string) => {
-      GetNodeById(nodeId).then((res) => {
-        ParseAndFilterGraph(graphData, ParseNode(res.node));
-
-        // Here is where you set the initial state
-        setPackageGraphData(graphData);
-
-        setGraphDataWithInitial(graphData);
-      });
-    });
-    setRenderedInitialGraph(true);
-  }
-
+  // handler for node click events
+  // if a current node exists, add it to the back stack
+  // clear the forward stack when a new node is clicked
   const handleNodeClick = (node) => {
     if (currentNode) {
       setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
@@ -168,22 +140,12 @@ export default function Home() {
       setFirstNode(node);
     }
     setCurrentNode(node);
-
-    let nodeName = node.label || "Unnamed Node";
-    const count = breadcrumb.filter(
-      (name) => name.split("[")[0] === nodeName
-    ).length;
-
-    if (count > 0) {
-      nodeName = `${nodeName}[${count + 1}]`;
-    }
-
-    setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, nodeName]);
-
-    // Fetch and set the graph data for the clicked node
     fetchAndSetGraphData(node.id);
   };
 
+  // handler for the 'Back' button click event
+  // updates the back and forward stacks, sets the previous node as the current node,
+  // and fetches and sets data for the new current node
   const handleBackClick = () => {
     if (backStack.length === 0) return;
 
@@ -194,14 +156,12 @@ export default function Home() {
     setCurrentNode(newNode);
     setBackStack(newBackStack);
 
-    setBreadcrumb((prevBreadcrumb) =>
-      prevBreadcrumb.slice(0, prevBreadcrumb.length - 1)
-    );
-
-    // Fetch and set the graph data for the new current node
     fetchAndSetGraphData(newNode.id);
   };
 
+  // handler for the 'Forward' button click event
+  // updates the back and forward stacks, sets the next node as the current node,
+  // and fetches and sets data for the new current node
   const handleForwardClick = () => {
     if (forwardStack.length === 0) return;
 
@@ -212,18 +172,6 @@ export default function Home() {
     setCurrentNode(newNode);
     setForwardStack(newForwardStack);
 
-    let nodeName = newNode.label || "Unnamed Node";
-    const count = breadcrumb.filter(
-      (name) => name.split("[")[0] === nodeName
-    ).length;
-
-    if (count > 0) {
-      nodeName = `${nodeName}[${count + 1}]`;
-    }
-
-    setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, nodeName]);
-
-    // Fetch and set the graph data for the new current node
     fetchAndSetGraphData(newNode.id);
   };
 
@@ -234,19 +182,6 @@ export default function Home() {
     packageTypes = sortablePackageData
       .sort((a, b) => a.type.localeCompare(b.type))
       .map((t) => ({ label: t.type, value: t.type }));
-
-    if (router.query.path != null && !renderedInitialGraph) {
-      const nodeIds = router.query.path.split(",");
-
-      const graphData: GraphData = { nodes: [], links: [] };
-      nodeIds.forEach((nodeId: string) => {
-        GetNodeById(nodeId).then((res) => {
-          ParseAndFilterGraph(graphData, ParseNode(res.node));
-          setGraphDataWithInitial(graphData);
-        });
-      });
-      setRenderedInitialGraph(true);
-    }
   }
 
   return (
@@ -254,80 +189,56 @@ export default function Home() {
       <main className="h-full flex flex-col items-center p-12">
         <PackageSelector
           packageTypes={packageTypes}
-          setGraphData={setGraphDataWithInitial}
-          resetTypeFunc={resetGraph}
+          setGraphData={setGraphData}
         />
-        <div className="flex flex-wrap py-5 px-4">
-          <Breadcrumb
-            breadcrumb={breadcrumb}
-            handleNodeClick={handleNodeClick}
-          />
-        </div>
         <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
           <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
             <div className="my-5 text-lg">Highlight Nodes</div>
-            <p className="mb-5 py-3">
-              Tip: Use click and scroll to adjust graph
-            </p>
+            <p className="py-2">Tip: Use click and scroll to adjust graph</p>
             <div className="flex flex-col justify-center gap-y-2 w-full">
               <Toggle
                 label="Artifacts"
-                toggled={artifact}
-                onClick={() => handleHighlightToggle("highlightArtifact")}
+                toggled={highlightArtifact}
+                onClick={() => handleArtifactClick()}
               />
               <Toggle
                 label="Vulnerabilities"
-                toggled={vuln}
-                onClick={() => handleHighlightToggle("highlightVuln")}
+                toggled={highlightVuln}
+                onClick={() => handleVulnClick()}
               />
               <Toggle
                 label="SBOM"
-                toggled={sbom}
-                onClick={() => handleHighlightToggle("highlightSbom")}
+                toggled={highlightSbom}
+                onClick={() => handleSbomClick()}
               />
               <Toggle
                 label="Builder"
-                toggled={builder}
-                onClick={() => handleHighlightToggle("highlightBuilder")}
+                toggled={highlightBuilder}
+                onClick={() => handleBuilderClick()}
               />
             </div>
             <div className="py-10 my-5 flex space-x-3">
               <button
                 type="button"
-                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
-                  backStack.length === 0
-                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
-                    : "bg-slate-700 text-white"
-                }`}
+                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
                 title="Go back to previous visualization"
                 onClick={handleBackClick}
-                disabled={backStack.length === 0}
               >
                 Back
               </button>
               <button
                 type="button"
-                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
-                  forwardStack.length === 0
-                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
-                    : "bg-slate-700 text-white"
-                }`}
+                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
                 title="Go forward to next visualization"
                 onClick={handleForwardClick}
-                disabled={forwardStack.length === 0}
               >
                 Forward
               </button>
               <button
                 type="button"
-                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
-                  breadcrumb.length === 0
-                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
-                    : "bg-slate-700 text-white"
-                }`}
+                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
                 title="Reset visualization"
-                onClick={resetGraph}
-                disabled={breadcrumb.length === 0}
+                onClick={reset}
               >
                 Reset
               </button>
@@ -340,7 +251,12 @@ export default function Home() {
             <Graph
               graphData={graphData}
               onNodeClick={handleNodeClick}
-              options={highlightState}
+              options={{
+                highlightArtifact,
+                highlightVuln,
+                highlightSbom,
+                highlightBuilder,
+              }}
               containerOptions={{
                 width: graphWidth - 1,
                 height: graphHeight,
