@@ -85,14 +85,24 @@ export default function Home() {
     if (router.query.path != null && !renderedInitialGraph) {
       const path = router.query.path as string;
       const nodeIds = path.split(",");
-      let graphData: GraphDataWithMetadata = { nodes: [], links: [] };
-      nodeIds.forEach(async (nodeId: string) => {
-        const res = await GetNodeById(nodeId);
-        const parsedNode = ParseNode(res.node as NodeFragment);
-        parseAndFilterGraph(graphData, parsedNode);
-      });
-      setGraphData(graphData);
-      setRenderedInitialGraph(true);
+
+      Promise.all(nodeIds.map((nodeId) => GetNodeById(nodeId)))
+        .then((nodes) =>
+          nodes.map((node) => ParseNode(node.node as NodeFragment))
+        )
+        .then((parsedNodes) => {
+          let graphData: GraphDataWithMetadata = { nodes: [], links: [] };
+          parsedNodes.forEach((parsedNode) =>
+            parseAndFilterGraph(graphData, parsedNode)
+          );
+          setTimeout(() => {
+            setGraphData(graphData);
+            setRenderedInitialGraph(true);
+          }, 0);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, [packageError, packageLoading]);
 

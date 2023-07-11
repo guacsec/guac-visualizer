@@ -15,7 +15,6 @@ export const INITIAL_PACKAGE_NAMESPACES: PackageSelectorOption<string>[] = [
 export default function PackageSelector({
   packageTypes,
   setGraphData,
-  resetTypeFunc,
 }: {
   packageTypes: PackageSelectorOption<string>[];
   setGraphData: (data: GraphDataWithMetadata) => void;
@@ -44,7 +43,6 @@ export default function PackageSelector({
     setPackageNamespaces(INITIAL_PACKAGE_NAMESPACES);
     setPackageNamespace("");
     resetNamespace();
-    resetTypeFunc();
   };
 
   return (
