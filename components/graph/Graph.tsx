@@ -62,7 +62,10 @@ export default function Graph({
     <ForceGraph2D
       onNodeClick={(node) => onNodeClick(node)}
       bgdColor={bgColor}
-      graphData={graphData}
+      graphData={{
+        ...graphData,
+        nodes: graphData.nodes.map((node) => ({ ...node, x: -50, y: 20 })),
+      }}
       nodeLabel={nodeLabelFromNodeObject}
       linkDirectionalArrowLength={3}
       linkDirectionalArrowRelPos={3}

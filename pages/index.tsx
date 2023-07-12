@@ -4,11 +4,7 @@ import {
   GetNeighborsQuery,
   GetPkgTypesDocument,
 } from "@/gql/__generated__/graphql";
-import {
-  fetchNeighbors,
-  parseAndFilterGraph,
-  GetNodeById,
-} from "@/app/graph_queries";
+import { fetchNeighbors, parseAndFilterGraph } from "@/app/graph_queries";
 import { ParseNode } from "@/app/ggraph";
 import { Toggle } from "@/components/guac/toggleSwitch";
 import { useRouter } from "next/router";
@@ -20,6 +16,10 @@ import PackageSelector, {
 } from "@/components/guac/packageSelector";
 import { NodeFragment } from "@/gql/types/nodeFragment";
 import { Breadcrumb } from "@/components/breadcrumbs/breadcrumbs";
+import {
+  fetchAndParseNodes,
+  generateGraphDataFromNodes,
+} from "@/utils/graphDataHelpers";
 
 export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
@@ -36,6 +36,8 @@ export default function Home() {
 
   const [initialGraphData, setInitialGraphData] = useState(null);
   const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
+
+  const router = useRouter();
 
   const handleBreadcrumbClick = (nodeIndex: number) => {
     const node = backStack[nodeIndex];
@@ -54,7 +56,7 @@ export default function Home() {
     fetchAndSetGraphData(node.id);
   };
 
-  const setGraphDataWithInitial = (data: GraphData) => {
+  const setGraphDataWithInitial = (data: GraphDataWithMetadata) => {
     setGraphData(data);
     if (!initialGraphData) {
       setInitialGraphData(data);
@@ -111,27 +113,23 @@ export default function Home() {
       const path = router.query.path as string;
       const nodeIds = path.split(",");
 
-      Promise.all(nodeIds.map((nodeId) => GetNodeById(nodeId)))
+      fetchAndParseNodes(nodeIds)
         .then((nodes) =>
           nodes.map((node) => ParseNode(node.node as NodeFragment))
         )
-        .then((parsedNodes) => {
-          let graphData: GraphDataWithMetadata = { nodes: [], links: [] };
-          parsedNodes.forEach((parsedNode) =>
-            parseAndFilterGraph(graphData, parsedNode)
-          );
+        .then(generateGraphDataFromNodes)
+        .then((graphData) => {
           setTimeout(() => {
             setGraphData(graphData);
             setRenderedInitialGraph(true);
           }, 0);
         })
         .catch((error) => {
+          // handle error here, maybe set some state variable to show an error message
           console.error(error);
         });
     }
-  }, [packageError, packageLoading]);
-
-  const router = useRouter();
+  }, [packageError, packageLoading, router.query.path, renderedInitialGraph]);
 
   const handleArtifactClick = () => {
     setHighlightArtifact(!highlightArtifact);
@@ -164,21 +162,29 @@ export default function Home() {
 
   let packageTypes = INITIAL_PACKAGE_NAMESPACES;
 
-  const handleNodeClick = (node: Node) => {
+  const handleNodeClick = (node) => {
     if (!firstNode) {
       setFirstNode(node);
-
-      // sets the first node's label into breadcrumb
-      setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, node.label]);
     }
 
     if (currentNode) {
       setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
-      setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, node.label]);
       setForwardStack([]);
     }
 
     setCurrentNode(node);
+
+    let nodeName = node.label || "Unnamed Node";
+    const count = breadcrumb.filter(
+      (name) => name.split("[")[0] === nodeName
+    ).length;
+
+    if (count > 0) {
+      nodeName = `${nodeName}[${count + 1}]`;
+    }
+
+    setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, nodeName]);
+
     fetchAndSetGraphData(node.id);
   };
 
