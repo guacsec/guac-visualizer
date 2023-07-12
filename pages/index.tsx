@@ -19,6 +19,7 @@ import PackageSelector, {
   INITIAL_PACKAGE_NAMESPACES,
 } from "@/components/guac/packageSelector";
 import { NodeFragment } from "@/gql/types/nodeFragment";
+import { Breadcrumb } from "@/components/breadcrumbs/breadcrumbs";
 
 export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
@@ -34,6 +35,31 @@ export default function Home() {
   const [currentNode, setCurrentNode] = useState(null);
 
   const [initialGraphData, setInitialGraphData] = useState(null);
+  const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
+
+  const handleBreadcrumbClick = (nodeIndex: number) => {
+    const node = backStack[nodeIndex];
+
+    setBackStack((prevBackStack) => prevBackStack.slice(0, nodeIndex));
+    setForwardStack((prevForwardStack) => [
+      currentNode,
+      ...prevForwardStack,
+      ...backStack.slice(nodeIndex + 1),
+    ]);
+    setCurrentNode(node);
+
+    // Truncate the breadcrumb array to the clicked node
+    setBreadcrumb((prevBreadcrumb) => prevBreadcrumb.slice(0, nodeIndex + 1));
+
+    fetchAndSetGraphData(node.id);
+  };
+
+  const setGraphDataWithInitial = (data: GraphData) => {
+    setGraphData(data);
+    if (!initialGraphData) {
+      setInitialGraphData(data);
+    }
+  };
 
   const reset = () => {
     if (initialGraphData) {
@@ -41,16 +67,15 @@ export default function Home() {
       setBackStack([]);
       setForwardStack([]);
       setCurrentNode(null);
+      setFirstNode(null);
+      setBreadcrumb([]);
     }
   };
 
-  // this is for the visual graph
   const [graphData, setGraphData] = useState<GraphDataWithMetadata>({
     nodes: [],
     links: [],
   });
-
-  // Track the width and height of the canvas container to determine size of canvas
 
   const containerRef = useRef<HTMLDivElement>();
   const containerCurrentElem = containerRef?.current;
@@ -138,24 +163,25 @@ export default function Home() {
   };
 
   let packageTypes = INITIAL_PACKAGE_NAMESPACES;
-  // handler for node click events
-  // if a current node exists, add it to the back stack
-  // clear the forward stack when a new node is clicked
-  const handleNodeClick = (node) => {
-    if (currentNode) {
-      setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
-      setForwardStack([]);
-    }
+
+  const handleNodeClick = (node: Node) => {
     if (!firstNode) {
       setFirstNode(node);
+
+      // sets the first node's label into breadcrumb
+      setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, node.label]);
     }
+
+    if (currentNode) {
+      setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
+      setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, node.label]);
+      setForwardStack([]);
+    }
+
     setCurrentNode(node);
     fetchAndSetGraphData(node.id);
   };
 
-  // handler for the 'Back' button click event
-  // updates the back and forward stacks, sets the previous node as the current node,
-  // and fetches and sets data for the new current node
   const handleBackClick = () => {
     if (backStack.length === 0) return;
 
@@ -166,12 +192,15 @@ export default function Home() {
     setCurrentNode(newNode);
     setBackStack(newBackStack);
 
+    setBreadcrumb((prevBreadcrumb) => {
+      const newBreadcrumb = [...prevBreadcrumb];
+      newBreadcrumb.pop();
+      return newBreadcrumb;
+    });
+
     fetchAndSetGraphData(newNode.id);
   };
 
-  // handler for the 'Forward' button click event
-  // updates the back and forward stacks, sets the next node as the current node,
-  // and fetches and sets data for the new current node
   const handleForwardClick = () => {
     if (forwardStack.length === 0) return;
 
@@ -182,11 +211,13 @@ export default function Home() {
     setCurrentNode(newNode);
     setForwardStack(newForwardStack);
 
+    // Update breadcrumb
+    setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, newNode.label]);
+
     fetchAndSetGraphData(newNode.id);
   };
 
   if (!packageError && !packageLoading) {
-    // check if any params passed in to visualize, otherwise just go get the package types
     let packageData = packageTypesQuery.data?.packages;
     let sortablePackageData = [...(packageData ?? [])];
     packageTypes = sortablePackageData
@@ -199,7 +230,12 @@ export default function Home() {
       <main className="h-full flex flex-col items-center p-12">
         <PackageSelector
           packageTypes={packageTypes}
-          setGraphData={setGraphData}
+          setGraphData={setGraphDataWithInitial}
+          resetTypeFunc={reset}
+        />
+        <Breadcrumb
+          breadcrumb={breadcrumb}
+          handleNodeClick={handleBreadcrumbClick}
         />
         <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
           <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
@@ -230,25 +266,40 @@ export default function Home() {
             <div className="py-10 my-5 flex space-x-3">
               <button
                 type="button"
-                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
+                  backStack.length === 0
+                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
+                    : "bg-slate-700 text-white"
+                }`}
                 title="Go back to previous visualization"
                 onClick={handleBackClick}
+                disabled={backStack.length === 0}
               >
                 Back
               </button>
               <button
                 type="button"
-                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
+                  forwardStack.length === 0
+                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
+                    : "bg-slate-700 text-white"
+                }`}
                 title="Go forward to next visualization"
                 onClick={handleForwardClick}
+                disabled={forwardStack.length === 0}
               >
                 Forward
               </button>
               <button
                 type="button"
-                className="rounded bg-slate-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
+                  breadcrumb.length === 0
+                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
+                    : "bg-slate-700 text-white"
+                }`}
                 title="Reset visualization"
                 onClick={reset}
+                disabled={breadcrumb.length === 0}
               >
                 Reset
               </button>
