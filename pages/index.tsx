@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery } from "@apollo/client";
 import {
   GetNeighborsQuery,
@@ -6,7 +6,6 @@ import {
 } from "@/gql/__generated__/graphql";
 import { fetchNeighbors, parseAndFilterGraph } from "@/app/graph_queries";
 import { ParseNode } from "@/app/ggraph";
-import { Toggle } from "@/components/guac/toggleSwitch";
 import { useRouter } from "next/router";
 import React from "react";
 import Graph from "@/components/graph/Graph";
@@ -15,19 +14,23 @@ import PackageSelector, {
   INITIAL_PACKAGE_NAMESPACES,
 } from "@/components/guac/packageSelector";
 import { NodeFragment } from "@/gql/types/nodeFragment";
-import { Breadcrumb } from "@/components/breadcrumbs/breadcrumbs";
+import { Breadcrumb } from "@/components/breadcrumbs";
 import {
   fetchAndParseNodes,
   generateGraphDataFromNodes,
 } from "@/utils/graphDataHelpers";
+import { HighlightToggles } from "@/utils/highlightToggles";
+import { NavigationButtons } from "@/components/navigationButtons";
 
 export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
 
-  const [highlightArtifact, setHighlightArtifact] = useState(false);
-  const [highlightVuln, setHighlightVuln] = useState(false);
-  const [highlightSbom, setHighlightSbom] = useState(false);
-  const [highlightBuilder, setHighlightBuilder] = useState(false);
+  const [highlights, setHighlights] = useState({
+    artifact: false,
+    vuln: false,
+    sbom: false,
+    builder: false,
+  });
 
   const [firstNode, setFirstNode] = useState(null);
   const [backStack, setBackStack] = useState([]);
@@ -60,17 +63,6 @@ export default function Home() {
     setGraphData(data);
     if (!initialGraphData) {
       setInitialGraphData(data);
-    }
-  };
-
-  const reset = () => {
-    if (initialGraphData) {
-      setGraphData(initialGraphData);
-      setBackStack([]);
-      setForwardStack([]);
-      setCurrentNode(null);
-      setFirstNode(null);
-      setBreadcrumb([]);
     }
   };
 
@@ -131,22 +123,6 @@ export default function Home() {
     }
   }, [packageError, packageLoading, router.query.path, renderedInitialGraph]);
 
-  const handleArtifactClick = () => {
-    setHighlightArtifact(!highlightArtifact);
-  };
-
-  const handleVulnClick = () => {
-    setHighlightVuln(!highlightVuln);
-  };
-
-  const handleSbomClick = () => {
-    setHighlightSbom(!highlightSbom);
-  };
-
-  const handleBuilderClick = () => {
-    setHighlightBuilder(!highlightBuilder);
-  };
-
   const fetchAndSetGraphData = (id: string | number) => {
     fetchNeighbors(id.toString()).then(
       (res: GetNeighborsQuery["neighbors"]) => {
@@ -162,31 +138,45 @@ export default function Home() {
 
   let packageTypes = INITIAL_PACKAGE_NAMESPACES;
 
-  const handleNodeClick = (node) => {
-    if (!firstNode) {
-      setFirstNode(node);
-    }
-
-    if (currentNode) {
-      setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
+  const reset = () => {
+    if (initialGraphData) {
+      setGraphData(initialGraphData);
+      setBackStack([]);
       setForwardStack([]);
+      setCurrentNode(null);
+      setFirstNode(null);
+      setBreadcrumb([]);
     }
-
-    setCurrentNode(node);
-
-    let nodeName = node.label || "Unnamed Node";
-    const count = breadcrumb.filter(
-      (name) => name.split("[")[0] === nodeName
-    ).length;
-
-    if (count > 0) {
-      nodeName = `${nodeName}[${count + 1}]`;
-    }
-
-    setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, nodeName]);
-
-    fetchAndSetGraphData(node.id);
   };
+
+  const handleNodeClick = useCallback(
+    (node) => {
+      if (!firstNode) {
+        setFirstNode(node);
+      }
+
+      if (currentNode) {
+        setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
+        setForwardStack([]);
+      }
+
+      setCurrentNode(node);
+
+      let nodeName = node.label || "Unnamed Node";
+      const count = breadcrumb.filter(
+        (name) => name.split("[")[0] === nodeName
+      ).length;
+
+      if (count > 0) {
+        nodeName = `${nodeName}[${count + 1}]`;
+      }
+
+      setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, nodeName]);
+
+      fetchAndSetGraphData(node.id);
+    },
+    [currentNode, breadcrumb]
+  ); // These are the dependencies
 
   const handleBackClick = () => {
     if (backStack.length === 0) return;
@@ -246,69 +236,24 @@ export default function Home() {
         <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
           <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
             <div className="my-5 text-lg">Highlight Nodes</div>
-            <p className="py-2">Tip: Use click and scroll to adjust graph</p>
+            <p className="pb-5 pt-3 opacity-70">
+              Tip: Use click and scroll to adjust graph
+            </p>
             <div className="flex flex-col justify-center gap-y-2 w-full">
-              <Toggle
-                label="Artifacts"
-                toggled={highlightArtifact}
-                onClick={() => handleArtifactClick()}
-              />
-              <Toggle
-                label="Vulnerabilities"
-                toggled={highlightVuln}
-                onClick={() => handleVulnClick()}
-              />
-              <Toggle
-                label="SBOM"
-                toggled={highlightSbom}
-                onClick={() => handleSbomClick()}
-              />
-              <Toggle
-                label="Builder"
-                toggled={highlightBuilder}
-                onClick={() => handleBuilderClick()}
+              <HighlightToggles
+                highlights={highlights}
+                setHighlights={setHighlights}
               />
             </div>
             <div className="py-10 my-5 flex space-x-3">
-              <button
-                type="button"
-                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
-                  backStack.length === 0
-                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
-                    : "bg-slate-700 text-white"
-                }`}
-                title="Go back to previous visualization"
-                onClick={handleBackClick}
-                disabled={backStack.length === 0}
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
-                  forwardStack.length === 0
-                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
-                    : "bg-slate-700 text-white"
-                }`}
-                title="Go forward to next visualization"
-                onClick={handleForwardClick}
-                disabled={forwardStack.length === 0}
-              >
-                Forward
-              </button>
-              <button
-                type="button"
-                className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
-                  breadcrumb.length === 0
-                    ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
-                    : "bg-slate-700 text-white"
-                }`}
-                title="Reset visualization"
-                onClick={reset}
-                disabled={breadcrumb.length === 0}
-              >
-                Reset
-              </button>
+              <NavigationButtons
+                backStack={backStack}
+                forwardStack={forwardStack}
+                breadcrumb={breadcrumb}
+                handleBackClick={handleBackClick}
+                handleForwardClick={handleForwardClick}
+                reset={reset}
+              />
             </div>
           </div>
           <div
@@ -319,10 +264,10 @@ export default function Home() {
               graphData={graphData}
               onNodeClick={handleNodeClick}
               options={{
-                highlightArtifact,
-                highlightVuln,
-                highlightSbom,
-                highlightBuilder,
+                highlightArtifact: highlights.artifact,
+                highlightVuln: highlights.vuln,
+                highlightSbom: highlights.sbom,
+                highlightBuilder: highlights.builder,
               }}
               containerOptions={{
                 width: graphWidth - 1,

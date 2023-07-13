@@ -6,10 +6,7 @@ interface BreadcrumbProps {
   handleNodeClick: (nodeIndex: number) => void;
 }
 
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({
-  breadcrumb,
-  handleNodeClick,
-}) => {
+export const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb }) => {
   if (breadcrumb.length === 0) {
     return null;
   }

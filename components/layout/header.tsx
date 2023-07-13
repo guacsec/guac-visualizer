@@ -8,7 +8,6 @@ export default function Header() {
   const { isDarkTheme, toggleThemeHandler } = useContext(GuacVizThemeContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // reverts hamburger menu back to normal menu when screen resizes
   useEffect(() => {
     function handleResize() {
       if (window.innerWidth > 768) {
@@ -23,21 +22,20 @@ export default function Header() {
 
   return (
     <>
-      <div className="flex justify-between bg-stone-200 font-mono dark:bg-stone-800 text-zinc-600 px-2 md:px-20 items-center backdrop-blur-sm w-full py-4">
-        <div>
+      <div className="flex justify-between bg-stone-200 dark:bg-stone-800 text-zinc-600 px-4 md:px-8 py-4 items-center backdrop-blur-sm w-full font-mono transition-colors duration-500">
+        <div className="flex items-center">
           <a
-            className="flex items-center"
-            href="https://github.com/guacsec/guac-visualizer"
-            target="blank"
+            className="flex items-center hover:text-stone-500 dark:hover:text-stone-400 transition-colors duration-500"
+            href="/"
           >
             <Image
-              className="dark:white-filter"
+              className="dark:white-filter transition-all duration-500"
               src="images/icons/guac-logo.svg"
               alt="GUAC Logo"
               width={27}
               height={27}
             />
-            <h1 className="sm:text-2xl ml-2 dark:text-stone-300">
+            <h1 className="ml-2 text-2xl dark:text-stone-300 transition-all duration-500">
               GUAC Visualizer
             </h1>
             <span className="text-gray-400 ml-3"> *Experimental </span>
@@ -48,23 +46,31 @@ export default function Header() {
             <NavigationLinks />
           </div>
           <div>
-            <button type="button" onClick={toggleThemeHandler}>
+            <button
+              className="hover:text-stone-500 dark:hover:text-stone-400 transition-all duration-500"
+              type="button"
+              onClick={toggleThemeHandler}
+            >
               {isDarkTheme ? (
-                <SunIcon className="h-8 w-8 text-stone-300" />
+                <SunIcon className="h-8 w-8 text-stone-300 transition-all duration-500" />
               ) : (
-                <MoonIcon className="h-8 w-8 text-zinc-600" />
+                <MoonIcon className="h-8 w-8 text-zinc-600 transition-all duration-500" />
               )}
             </button>
           </div>
         </div>
         <div className="md:hidden">
-          <button type="button" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <Bars3Icon className="h-8 w-8 text-zinc-600" />
+          <button
+            className="hover:text-stone-500 dark:hover:text-stone-400 transition-all duration-500"
+            type="button"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <Bars3Icon className="h-8 w-8 text-zinc-600 transition-all duration-500" />
           </button>
         </div>
       </div>
       {isMenuOpen && (
-        <div className="flex flex-col items-end z-50 bg-stone-200 font-mono dark:bg-stone-800 text-zinc-600">
+        <div className="flex flex-col items-end z-50 bg-stone-200 dark:bg-stone-800 text-zinc-600 font-mono transition-colors duration-500">
           <NavigationLinks />
         </div>
       )}

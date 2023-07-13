@@ -1,6 +1,6 @@
 import ForceGraph2D from "@/app/ForceGraph2DWrapper";
 import GuacVizThemeContext from "@/store/themeContext";
-import { useContext } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   GraphDataWithMetadata,
   NodeMetadata,
@@ -58,6 +58,82 @@ export default function Graph({
   const nodeTypeFromNodeObject = (node: NodeObject) => {
     return metadata[node.id]?.type;
   };
+
+  const zoomSetRef = useRef(false);
+
+  const nodeCanvasObject = (
+    node: NodeObject,
+    ctx: CanvasRenderingContext2D
+  ) => {
+    if (!zoomSetRef.current && ctx.canvas && ctx.canvas.__zoom) {
+      ctx.canvas.__zoom.x = 500;
+      zoomSetRef.current = true;
+    }
+    const shapeSize = 10; // set a constant size for each shape
+    const nodeType = nodeTypeFromNodeObject(node);
+    const applyRedFillAndOutline =
+      (options.highlightArtifact && nodeType === "Artifact") ||
+      (options.highlightVuln && nodeType === "CertifyVuln") ||
+      (options.highlightSbom && nodeType === "IsDependency") ||
+      (options.highlightBuilder && nodeType === "PackageType");
+
+    switch (nodeType) {
+      case "PackageType":
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "light blue";
+        ctx.fillRect(node.x - 6, node.y - 4, 12, 8);
+        break;
+      case "IsDependency":
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "pink";
+        ctx.beginPath();
+        ctx.moveTo(node.x, node.y - shapeSize / 2);
+        ctx.lineTo(node.x - shapeSize / 2, node.y + shapeSize / 2);
+        ctx.lineTo(node.x + shapeSize / 2, node.y + shapeSize / 2);
+        ctx.fill();
+        break;
+      case "CertifyVuln":
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "orange";
+        const sideLength =
+          shapeSize / Math.sqrt(3.5 - 1.5 * Math.cos(Math.PI / 4));
+        ctx.beginPath();
+        ctx.moveTo(node.x + sideLength, node.y);
+        ctx.lineTo(node.x + sideLength / 2, node.y - sideLength / 2);
+        ctx.lineTo(node.x - sideLength / 2, node.y - sideLength / 2);
+        ctx.lineTo(node.x - sideLength, node.y);
+        ctx.lineTo(node.x - sideLength / 2, node.y + sideLength / 2);
+        ctx.lineTo(node.x + sideLength / 2, node.y + sideLength / 2);
+        ctx.closePath();
+        ctx.fill();
+        break;
+      case "PackageVersion":
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "orange";
+        var side = 10;
+        ctx.fillRect(node.x - side / 2, node.y - side / 2, side, side);
+        break;
+      case "NoVuln":
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "green";
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false);
+        ctx.fill();
+        break;
+      case "Artifact":
+        ctx.strokeStyle = "red";
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "yellow";
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fill();
+        break;
+      default:
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "blue";
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false);
+        ctx.fill();
+        break;
+    }
+    // label the node with text, a little bit under the shape
+    ctx.fillText(nodeLabelFromNodeObject(node), node.x, node.y + 12);
+  };
+
   return (
     <ForceGraph2D
       onNodeClick={(node) => onNodeClick(node)}
@@ -73,71 +149,7 @@ export default function Graph({
         node.fx = node.x;
         node.fy = node.y;
       }}
-      nodeCanvasObject={(node, ctx) => {
-        const shapeSize = 10; // set a constant size for each shape
-        const nodeType = nodeTypeFromNodeObject(node);
-        const applyRedFillAndOutline =
-          (options.highlightArtifact && nodeType === "Artifact") ||
-          (options.highlightVuln && nodeType === "CertifyVuln") ||
-          (options.highlightSbom && nodeType === "IsDependency") ||
-          (options.highlightBuilder && nodeType === "PackageType");
-
-        switch (nodeType) {
-          case "PackageType":
-            ctx.fillStyle = applyRedFillAndOutline ? "red" : "light blue";
-            ctx.fillRect(node.x - 6, node.y - 4, 12, 8);
-            break;
-          case "IsDependency":
-            ctx.fillStyle = applyRedFillAndOutline ? "red" : "pink";
-            ctx.beginPath();
-            ctx.moveTo(node.x, node.y - shapeSize / 2);
-            ctx.lineTo(node.x - shapeSize / 2, node.y + shapeSize / 2);
-            ctx.lineTo(node.x + shapeSize / 2, node.y + shapeSize / 2);
-            ctx.fill();
-            break;
-          case "CertifyVuln":
-            ctx.fillStyle = applyRedFillAndOutline ? "red" : "orange";
-            const sideLength =
-              shapeSize / Math.sqrt(3.5 - 1.5 * Math.cos(Math.PI / 4));
-            ctx.beginPath();
-            ctx.moveTo(node.x + sideLength, node.y);
-            ctx.lineTo(node.x + sideLength / 2, node.y - sideLength / 2);
-            ctx.lineTo(node.x - sideLength / 2, node.y - sideLength / 2);
-            ctx.lineTo(node.x - sideLength, node.y);
-            ctx.lineTo(node.x - sideLength / 2, node.y + sideLength / 2);
-            ctx.lineTo(node.x + sideLength / 2, node.y + sideLength / 2);
-            ctx.closePath();
-            ctx.fill();
-            break;
-          case "PackageVersion":
-            ctx.fillStyle = applyRedFillAndOutline ? "red" : "orange";
-            var side = 10;
-            ctx.fillRect(node.x - side / 2, node.y - side / 2, side, side);
-            break;
-          case "NoVuln":
-            ctx.fillStyle = applyRedFillAndOutline ? "red" : "green";
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false);
-            ctx.fill();
-            break;
-          case "Artifact":
-            ctx.strokeStyle = "red";
-            ctx.fillStyle = applyRedFillAndOutline ? "red" : "yellow";
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
-            ctx.stroke();
-            ctx.fill();
-            break;
-          default:
-            ctx.fillStyle = applyRedFillAndOutline ? "red" : "blue";
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false);
-            ctx.fill();
-            break;
-        }
-        // label the node with text, a little bit under the shape
-        ctx.fillText(nodeLabelFromNodeObject(node), node.x, node.y + 12);
-      }}
+      nodeCanvasObject={nodeCanvasObject}
     />
   );
 }
