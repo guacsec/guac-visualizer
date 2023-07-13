@@ -1,6 +1,6 @@
 import ForceGraph2D from "@/app/ForceGraph2DWrapper";
 import GuacVizThemeContext from "@/store/themeContext";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext } from "react";
 import {
   GraphDataWithMetadata,
   NodeMetadata,
@@ -59,15 +59,12 @@ export default function Graph({
     return metadata[node.id]?.type;
   };
 
-  const zoomSetRef = useRef(false);
-
   const nodeCanvasObject = (
     node: NodeObject,
     ctx: CanvasRenderingContext2D
   ) => {
-    if (!zoomSetRef.current && ctx.canvas && ctx.canvas.__zoom) {
+    if (ctx.canvas && ctx.canvas.__zoom) {
       ctx.canvas.__zoom.x = 500;
-      zoomSetRef.current = true;
     }
     const shapeSize = 10; // set a constant size for each shape
     const nodeType = nodeTypeFromNodeObject(node);
