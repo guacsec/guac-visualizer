@@ -63,9 +63,6 @@ export default function Graph({
     node: NodeObject,
     ctx: CanvasRenderingContext2D
   ) => {
-    if (ctx.canvas && ctx.canvas.__zoom) {
-      ctx.canvas.__zoom.x = 500;
-    }
     const shapeSize = 10; // set a constant size for each shape
     const nodeType = nodeTypeFromNodeObject(node);
     const applyRedFillAndOutline =
