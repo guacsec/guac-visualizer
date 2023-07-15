@@ -117,7 +117,6 @@ export default function Home() {
           }, 0);
         })
         .catch((error) => {
-          // handle error here, maybe set some state variable to show an error message
           console.error(error);
         });
     }
@@ -176,7 +175,7 @@ export default function Home() {
       fetchAndSetGraphData(node.id);
     },
     [currentNode, breadcrumb]
-  ); // These are the dependencies
+  );
 
   const handleBackClick = () => {
     if (backStack.length === 0) return;

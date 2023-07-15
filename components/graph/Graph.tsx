@@ -84,7 +84,7 @@ export default function Graph({
 
     switch (nodeType) {
       case "PackageType":
-        ctx.fillStyle = applyRedFillAndOutline ? "red" : "light blue";
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "teal";
         ctx.fillRect(node.x - 6, node.y - 4, 12, 8);
         break;
       case "IsDependency":
@@ -136,7 +136,7 @@ export default function Graph({
         break;
     }
     // label the node with text, a little bit under the shape
-    ctx.fillText(nodeLabelFromNodeObject(node), node.x, node.y + 12);
+    ctx.fillText(nodeLabelFromNodeObject(node), node.x, node.y + 13);
   };
 
   return (
