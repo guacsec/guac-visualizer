@@ -1,6 +1,6 @@
+import { useContext, useEffect, useState, useRef } from "react";
 import ForceGraph2D from "@/app/ForceGraph2DWrapper";
 import GuacVizThemeContext from "@/store/themeContext";
-import { useContext } from "react";
 import {
   GraphDataWithMetadata,
   NodeMetadata,
@@ -59,10 +59,21 @@ export default function Graph({
     return metadata[node.id]?.type;
   };
 
+  const [isGraphLoaded, setIsGraphLoaded] = useState(false);
+  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+
+  useEffect(() => {
+    if (isGraphLoaded && ctxRef.current && ctxRef.current.canvas.__zoom) {
+      ctxRef.current.canvas.__zoom.x = 500;
+    }
+  }, [isGraphLoaded]);
+
   const nodeCanvasObject = (
     node: NodeObject,
     ctx: CanvasRenderingContext2D
   ) => {
+    ctxRef.current = ctx;
+
     const shapeSize = 10; // set a constant size for each shape
     const nodeType = nodeTypeFromNodeObject(node);
     const applyRedFillAndOutline =
@@ -85,7 +96,7 @@ export default function Graph({
         ctx.fill();
         break;
       case "CertifyVuln":
-        ctx.fillStyle = applyRedFillAndOutline ? "red" : "orange";
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "tomato";
         const sideLength =
           shapeSize / Math.sqrt(3.5 - 1.5 * Math.cos(Math.PI / 4));
         ctx.beginPath();
@@ -130,7 +141,10 @@ export default function Graph({
 
   return (
     <ForceGraph2D
-      onNodeClick={(node) => onNodeClick(node)}
+      onNodeClick={(node) => {
+        setIsGraphLoaded(true);
+        onNodeClick(node);
+      }}
       bgdColor={bgColor}
       graphData={graphData}
       nodeLabel={nodeLabelFromNodeObject}
