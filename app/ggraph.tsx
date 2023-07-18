@@ -1,3 +1,4 @@
+import { NodeFragment } from "@/gql/types/nodeFragment";
 import {
   IsDependency,
   Source,
@@ -47,7 +48,7 @@ export type Edge = {
   };
 };
 
-export type GraphData = {
+export type GuacGraphData = {
   nodes: Node[];
   edges: Edge[];
 };
@@ -67,8 +68,10 @@ export function IsSwTreeNode(n: gqlNode): boolean {
   return false;
 }
 
-export function ParseNode(n: gqlNode): GraphData | undefined {
-  let gd: GraphData;
+export function ParseNode(
+  n: gqlNode | NodeFragment
+): GuacGraphData | undefined {
+  let gd: GuacGraphData;
   let target: Node | undefined;
 
   const typeName = n.__typename;
@@ -155,7 +158,7 @@ export function ParseNode(n: gqlNode): GraphData | undefined {
 
 // parse* returns a set of GraphData that consists of the nodes and edges to create a subgraph
 // it also returns the node which is the main node to link to of the subgraph
-export function parsePackage(n: Package): [GraphData, Node | undefined] {
+export function parsePackage(n: Package): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   // for each check if its the leaf, and if its the leaf that's where the edge goes
@@ -175,10 +178,13 @@ export function parsePackage(n: Package): [GraphData, Node | undefined] {
       ...nodes,
       { data: { id: ns.id, label: ns.namespace, type: "PackageNamespace" } },
     ];
-    edges = [
+
+    const edgesAfter = [
       ...edges,
       { data: { source: typ.id, target: ns.id, label: "pkgNs" } },
     ];
+
+    edges = edgesAfter;
     if (ns.names.length == 0) {
       target = nodes.at(-1);
     }
@@ -188,6 +194,7 @@ export function parsePackage(n: Package): [GraphData, Node | undefined] {
         ...nodes,
         { data: { id: name.id, label: name.name, type: "PackageName" } },
       ];
+
       edges = [
         ...edges,
         { data: { source: ns.id, target: name.id, label: "pkgName" } },
@@ -218,11 +225,10 @@ export function parsePackage(n: Package): [GraphData, Node | undefined] {
       });
     });
   });
-
   return [{ nodes: nodes, edges: edges }, target];
 }
 
-export function parseSource(n: Source): [GraphData, Node | undefined] {
+export function parseSource(n: Source): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   // for each check if its the leaf, and if its the leaf that's where the edge goes
@@ -268,9 +274,8 @@ export function parseSource(n: Source): [GraphData, Node | undefined] {
   return [{ nodes: nodes, edges: edges }, target];
 }
 
-export function parseArtifact(n: Artifact): [GraphData, Node | undefined] {
+export function parseArtifact(n: Artifact): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [
@@ -286,12 +291,11 @@ export function parseArtifact(n: Artifact): [GraphData, Node | undefined] {
   ];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
-export function parseBuilder(n: Builder): [GraphData, Node | undefined] {
+export function parseBuilder(n: Builder): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [
@@ -300,56 +304,52 @@ export function parseBuilder(n: Builder): [GraphData, Node | undefined] {
   ];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
-export function parseOsv(n: Osv): [GraphData, Node | undefined] {
+export function parseOsv(n: Osv): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [...nodes, { data: { id: n.id, label: n.osvId, type: "Osv" } }];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
-export function parseNoVuln(n: NoVuln): [GraphData, Node | undefined] {
+export function parseNoVuln(n: NoVuln): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [...nodes, { data: { id: n.id, label: "NoVuln", type: "NoVuln" } }];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
-export function parseGhsa(n: Ghsa): [GraphData, Node | undefined] {
+export function parseGhsa(n: Ghsa): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [...nodes, { data: { id: n.id, label: n.ghsaId, type: "Ghsa" } }];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
-export function parseCve(n: Cve): [GraphData, Node | undefined] {
+export function parseCve(n: Cve): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
-  let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
   nodes = [...nodes, { data: { id: n.id, label: n.cveId, type: "Cve" } }];
   target = nodes.at(-1);
 
-  return [{ nodes: nodes, edges: edges }, target];
+  return [{ nodes: nodes, edges: [] }, target];
 }
 
 export function parseIsVulnerability(
   n: IsVulnerability
-): [GraphData, Node | undefined] {
+): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
@@ -410,7 +410,7 @@ export function parseIsVulnerability(
 
 export function parseCertifyVuln(
   n: CertifyVuln
-): [GraphData, Node | undefined] {
+): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
@@ -495,7 +495,7 @@ export function parseCertifyVuln(
 
 export function parseCertifyVexStatement(
   n: CertifyVexStatement
-): [GraphData, Node | undefined] {
+): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
@@ -514,7 +514,7 @@ export function parseCertifyVexStatement(
   ];
   target = nodes.at(-1);
 
-  let gd: GraphData;
+  let gd: GuacGraphData;
   let t: Node | undefined;
 
   if (n.subject.__typename == "Artifact") {
@@ -582,7 +582,9 @@ export function parseCertifyVexStatement(
   return [{ nodes: nodes, edges: edges }, target];
 }
 
-export function parseHashEqual(n: HashEqual): [GraphData, Node | undefined] {
+export function parseHashEqual(
+  n: HashEqual
+): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   // for each check if its the leaf, and if its the leaf that's where the edge goes
@@ -618,7 +620,9 @@ export function parseHashEqual(n: HashEqual): [GraphData, Node | undefined] {
   return [{ nodes: nodes, edges: edges }, target];
 }
 
-export function parseCertifyBad(n: CertifyBad): [GraphData, Node | undefined] {
+export function parseCertifyBad(
+  n: CertifyBad
+): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
@@ -637,7 +641,7 @@ export function parseCertifyBad(n: CertifyBad): [GraphData, Node | undefined] {
   ];
   target = nodes.at(-1);
 
-  let gd: GraphData;
+  let gd: GuacGraphData;
   let t: Node | undefined;
 
   if (n.subject.__typename == "Artifact") {
@@ -677,7 +681,7 @@ export function parseCertifyBad(n: CertifyBad): [GraphData, Node | undefined] {
 
 export function parseCertifyGood(
   n: CertifyGood
-): [GraphData, Node | undefined] {
+): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
@@ -696,7 +700,7 @@ export function parseCertifyGood(
   ];
   target = nodes.at(-1);
 
-  let gd: GraphData;
+  let gd: GuacGraphData;
   let t: Node | undefined;
 
   if (n.subject.__typename == "Artifact") {
@@ -736,7 +740,7 @@ export function parseCertifyGood(
 
 export function parseCertifyScorecard(
   n: CertifyScorecard
-): [GraphData, Node | undefined] {
+): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
@@ -770,7 +774,7 @@ export function parseCertifyScorecard(
 
 export function parseHasSourceAt(
   n: HasSourceAt
-): [GraphData, Node | undefined] {
+): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
@@ -812,7 +816,7 @@ export function parseHasSourceAt(
   return [{ nodes: nodes, edges: edges }, target];
 }
 
-export function parseHasSbom(n: HasSbom): [GraphData, Node | undefined] {
+export function parseHasSbom(n: HasSbom): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
@@ -831,7 +835,7 @@ export function parseHasSbom(n: HasSbom): [GraphData, Node | undefined] {
   ];
   target = nodes.at(-1);
 
-  let gd: GraphData;
+  let gd: GuacGraphData;
   let t: Node | undefined;
 
   if (n.subject.__typename == "Source") {
@@ -863,7 +867,7 @@ export function parseHasSbom(n: HasSbom): [GraphData, Node | undefined] {
   return [{ nodes: nodes, edges: edges }, target];
 }
 
-export function parseHasSlsa(n: HasSlsa): [GraphData, Node | undefined] {
+export function parseHasSlsa(n: HasSlsa): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
@@ -882,7 +886,7 @@ export function parseHasSlsa(n: HasSlsa): [GraphData, Node | undefined] {
   ];
   target = nodes.at(-1);
 
-  let gd: GraphData;
+  let gd: GuacGraphData;
   let t: Node | undefined;
 
   [gd, t] = parseArtifact(n.subject);
@@ -929,7 +933,7 @@ export function parseHasSlsa(n: HasSlsa): [GraphData, Node | undefined] {
 // it also returns the node which is the main node to link to of the subgraph
 export function parseIsDependency(
   n: IsDependency
-): [GraphData, Node | undefined] {
+): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   // for each check if its the leaf, and if its the leaf that's where the edge goes
@@ -980,7 +984,7 @@ export function parseIsDependency(
   return [{ nodes: nodes, edges: edges }, target];
 }
 
-export function parsePkgEqual(n: PkgEqual): [GraphData, Node | undefined] {
+export function parsePkgEqual(n: PkgEqual): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   // for each check if its the leaf, and if its the leaf that's where the edge goes
@@ -1018,7 +1022,7 @@ export function parsePkgEqual(n: PkgEqual): [GraphData, Node | undefined] {
 
 export function parseIsOccurrence(
   n: IsOccurrence
-): [GraphData, Node | undefined] {
+): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   // for each check if its the leaf, and if its the leaf that's where the edge goes
@@ -1038,7 +1042,7 @@ export function parseIsOccurrence(
   ];
   target = nodes.at(-1);
 
-  let gd: GraphData;
+  let gd: GuacGraphData;
   let t: Node | undefined;
   if (n.subject.__typename == "Package") {
     [gd, t] = parsePackage(n.subject);

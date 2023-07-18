@@ -3,13 +3,10 @@ import { ChevronDoubleRightIcon } from "@heroicons/react/24/solid";
 
 interface BreadcrumbProps {
   breadcrumb: string[];
-  handleNodeClick: (node: string) => void;
+  handleNodeClick: (nodeIndex: number) => void;
 }
 
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({
-  breadcrumb,
-  handleNodeClick,
-}) => {
+export const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb }) => {
   if (breadcrumb.length === 0) {
     return null;
   }
