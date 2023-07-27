@@ -11,6 +11,7 @@
     "watch": "graphql-codegen -w"
   },
   "dependencies": {
+    "3d-force-graph": "^1.71.2",
     "@apollo/client": "^3.7.10",
     "@apollo/react-hooks": "^4.0.0",
     "@floating-ui/dom": "^1.2.6",
@@ -21,7 +22,6 @@
     "@types/react": "18.0.27",
     "@types/react-cytoscapejs": "^1.2.2",
     "@types/react-dom": "18.0.10",
-    "3d-force-graph": "^1.71.2",
     "autoprefixer": "^10.4.14",
     "cytoscape": "3.23.0",
     "cytoscape-cose-bilkent": "^4.1.0",
@@ -36,6 +36,7 @@
     "graphql-codegen-apollo-next-ssr": "^1.7.4",
     "jerrypick": "^1.1.1",
     "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
     "next": "^13.1.6",
     "next-transpile-modules": "^10.0.0",
     "postcss": "^8.4.21",
@@ -59,6 +60,7 @@
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@graphql-codegen/typescript-resolvers": "^3.1.1",
     "@types/cytoscape": "3.19.9",
+    "@types/lodash": "^4.14.196",
     "@types/uuid": "^9.0.1",
     "cosmos-over-cytoscape": "^1.0.3",
     "cytoscape-cola": "^2.5.1",
