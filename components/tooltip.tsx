@@ -30,16 +30,22 @@ const Tooltip: React.FC<TooltipProps> = ({
           e.stopPropagation();
           onClose();
         }}
-        className="absolute right-1 top-1 flex items-center justify-center bg-red-400 p-2 text-white w-8 h-8"
+        className="absolute right-1 top-1 flex items-center justify-center bg-red-400 hover:bg-red-500 p-2 text-white w-8 h-8"
       >
-        X
+        <Image
+          className="dark:white-filter transition-all duration-500"
+          src="images/icons/close-button.svg"
+          alt="copy to clipboard"
+          width={27}
+          height={27}
+        />
       </button>
       <button
         onClick={(e) => {
           e.stopPropagation();
           onCopy(e);
         }}
-        className="absolute right-10 top-1 flex items-center justify-center bg-green-400 p-2 text-white w-8 h-8"
+        className="absolute right-10 top-1 flex items-center justify-center hover:bg-gray-400 bg-gray-200 p-2 text-white w-8 h-8"
       >
         <Image
           className="dark:white-filter transition-all duration-500"
