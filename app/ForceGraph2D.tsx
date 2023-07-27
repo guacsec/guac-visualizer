@@ -87,10 +87,44 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
     return () => document.removeEventListener("click", hideTooltip);
   }, []);
 
+  const buildContent = (obj: any, parentKey = "", level = 0): JSX.Element[] => {
+    let content: JSX.Element[] = [];
+    let filteredKeys = [
+      "__typename",
+      "x",
+      "y",
+      "vx",
+      "vy",
+      "__indexColor",
+      "index",
+      "expanded",
+    ];
+
+    for (const [key, value] of Object.entries(obj)) {
+      if (filteredKeys.includes(key)) continue;
+      let newKey = parentKey ? `${parentKey}_${key}` : key;
+      if (typeof value !== "object" || value === null) {
+        content.push(
+          <li key={newKey} style={{ textIndent: `${level}em` }}>
+            {`${newKey}: ${value}`}
+          </li>
+        );
+      } else if (Array.isArray(value)) {
+        value.forEach((item, index) => {
+          content.push(...buildContent(item, `${newKey}_${index}`, level + 1));
+        });
+      } else {
+        content.push(...buildContent(value, newKey, level + 1));
+      }
+    }
+
+    return content;
+  };
+
   return (
     <>
       <div
-        className="absolute font-mono bg-white p-2 rounded text-sm text-black shadow-lg border-2 border-black overflow-auto"
+        className="absolute font-mono p-2 rounded text-sm text-black shadow-lg border-2 border-black overflow-auto flex items-center justify-center bg-white text-gray-900 list-none"
         style={{
           ...tooltipStyle,
           width: "400px",
@@ -122,28 +156,9 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
         onNodeRightClick={(node: NodeObject, event: MouseEvent) => {
           event.preventDefault();
           console.log(`Right clicked on node with id: ${node.id}`);
+          console.log(node);
 
-          // traverses the node object and build a list of elements of its properties
-          let content = [];
-          for (const [key, value] of Object.entries(node)) {
-            if (typeof value !== "object" || value === null) {
-              // this adds the key-value pair to the content list if value is not an object
-              content.push(<p key={key}>{`${key}: ${value}`}</p>);
-            } else {
-              // if the value is an object, traverse its properties
-              content.push(<p key={key}>{`${key}: `}</p>);
-              for (const [subKey, subValue] of Object.entries(value)) {
-                if (typeof subValue !== "object" || subValue === null) {
-                  content.push(
-                    <p key={subKey}>{`  ${subKey}: ${subValue}`}</p>
-                  );
-                } else {
-                  content.push(<p key={subKey}>{`  ${subKey}: {Object}`}</p>);
-                }
-              }
-            }
-          }
-
+          let content = buildContent(node);
           setTooltipStyle({
             display: "block",
             top: event.clientY,
