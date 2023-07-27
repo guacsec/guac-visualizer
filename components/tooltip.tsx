@@ -12,7 +12,6 @@ type TooltipProps = {
 const Tooltip: React.FC<TooltipProps> = ({
   style,
   content,
-  plainText,
   onClose,
   onCopy,
 }) => {

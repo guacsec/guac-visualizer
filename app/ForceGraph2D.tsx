@@ -164,7 +164,7 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
         onCopy={copyToClipboard}
       />
       <div
-        className="absolute p-8 m-auto rounded text-sm shadow-lg border-2 border-green-400 flex items-center justify-center bg-green-200 text-green-800"
+        className="absolute p-5 m-auto rounded text-sm shadow-lg border-2 border-green-400 flex items-center justify-center bg-green-200 text-green-800"
         style={{
           ...copyTooltipStyle,
           width: "150px",
