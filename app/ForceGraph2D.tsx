@@ -9,7 +9,7 @@ import ForceGraph, {
 } from "react-force-graph-2d";
 import { CanvasCustomRenderFn, NodeAccessor } from "@/components/graph/types";
 import { cloneDeep } from "lodash";
-import Image from "next/image";
+import Tooltip from "@/components/tooltip";
 
 type ForceGraph2DWrapperProps = {
   graphData: GraphData;
@@ -154,41 +154,15 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
 
   return (
     <>
-      <div
-        className="absolute font-mono p-2 rounded text-sm shadow-lg border-2 border-black overflow-auto flex items-center justify-center bg-white text-gray-900 list-none"
-        style={{
-          ...tooltipStyle,
-          width: "400px",
-          height: "300px",
-          zIndex: 10000,
-        }}
-      >
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setTooltipStyle((prev) => ({ ...prev, display: "none" }));
-          }}
-          className="absolute right-1 top-1 flex items-center justify-center bg-red-400 p-2 text-white w-8 h-8"
-        >
-          X
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            copyToClipboard(e);
-          }}
-          className="absolute right-10 top-1 flex items-center justify-center bg-green-400 p-2 text-white w-8 h-8"
-        >
-          <Image
-            className="dark:white-filter transition-all duration-500"
-            src="images/icons/copy-clipboard.svg"
-            alt="copy to clipboard"
-            width={27}
-            height={27}
-          />
-        </button>
-        <div className="pt-3">{tooltipContent}</div>
-      </div>
+      <Tooltip
+        style={tooltipStyle}
+        content={tooltipContent}
+        plainText={tooltipPlainText}
+        onClose={() =>
+          setTooltipStyle((prev) => ({ ...prev, display: "none" }))
+        }
+        onCopy={copyToClipboard}
+      />
       <div
         className="absolute p-8 m-auto rounded text-sm shadow-lg border-2 border-green-400 flex items-center justify-center bg-green-200 text-green-800"
         style={{
