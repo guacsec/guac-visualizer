@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import ForceGraph, {
   LinkObject,
   ForceGraphMethods,
@@ -8,6 +8,8 @@ import ForceGraph, {
   NodeObject,
 } from "react-force-graph-2d";
 import { CanvasCustomRenderFn, NodeAccessor } from "@/components/graph/types";
+import { cloneDeep } from "lodash";
+import Image from "next/image";
 
 type ForceGraph2DWrapperProps = {
   graphData: GraphData;
@@ -62,6 +64,12 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
     left: 0,
   });
   const [tooltipContent, setTooltipContent] = useState([]);
+  const [tooltipPlainText, setTooltipPlainText] = useState("");
+  const [copyTooltipStyle, setCopyTooltipStyle] = useState({
+    display: "none",
+    top: 0,
+    left: 0,
+  });
 
   const fgRef = useRef<ForceGraphMethods>();
 
@@ -78,17 +86,13 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
     }
   }
 
-  useEffect(() => {
-    const hideTooltip = () => {
-      setTooltipStyle((prev) => ({ ...prev, display: "none" }));
-    };
-
-    document.addEventListener("click", hideTooltip);
-    return () => document.removeEventListener("click", hideTooltip);
-  }, []);
-
-  const buildContent = (obj: any, parentKey = "", level = 0): JSX.Element[] => {
+  const buildContent = (
+    obj: any,
+    parentKey = "",
+    level = 0
+  ): [JSX.Element[], string[]] => {
     let content: JSX.Element[] = [];
+    let plainTextContent: string[] = [];
     let filteredKeys = [
       "__typename",
       "x",
@@ -104,27 +108,54 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
       if (filteredKeys.includes(key)) continue;
       let newKey = parentKey ? `${parentKey}_${key}` : key;
       if (typeof value !== "object" || value === null) {
+        let specialFormat =
+          newKey === "package_namespaces_0_names_0_name" ? "red-bold-text" : "";
         content.push(
           <li key={newKey} style={{ textIndent: `${level}em` }}>
-            {`${newKey}: ${value}`}
+            <span>{`${newKey}: `}</span>
+            <span className={specialFormat}>{String(value)}</span>
           </li>
+        );
+        plainTextContent.push(
+          `${"  ".repeat(level)}${newKey}: ${String(value)}`
         );
       } else if (Array.isArray(value)) {
         value.forEach((item, index) => {
-          content.push(...buildContent(item, `${newKey}_${index}`, level + 1));
+          const [jsx, text] = buildContent(
+            item,
+            `${newKey}_${index}`,
+            level + 1
+          );
+          content.push(...jsx);
+          plainTextContent.push(...text);
         });
       } else {
-        content.push(...buildContent(value, newKey, level + 1));
+        const [jsx, text] = buildContent(value, newKey, level + 1);
+        content.push(...jsx);
+        plainTextContent.push(...text);
       }
     }
 
-    return content;
+    return [content, plainTextContent];
+  };
+
+  const copyToClipboard = (event: React.MouseEvent<HTMLButtonElement>) => {
+    navigator.clipboard.writeText(tooltipPlainText);
+    setCopyTooltipStyle({
+      display: "block",
+      top: event.clientY,
+      left: event.clientX,
+    });
+    setTimeout(
+      () => setCopyTooltipStyle({ display: "none", top: 0, left: 0 }),
+      1000
+    );
   };
 
   return (
     <>
       <div
-        className="absolute font-mono p-2 rounded text-sm text-black shadow-lg border-2 border-black overflow-auto flex items-center justify-center bg-white text-gray-900 list-none"
+        className="absolute font-mono p-2 rounded text-sm shadow-lg border-2 border-black overflow-auto flex items-center justify-center bg-white text-gray-900 list-none"
         style={{
           ...tooltipStyle,
           width: "400px",
@@ -137,11 +168,37 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
             e.stopPropagation();
             setTooltipStyle((prev) => ({ ...prev, display: "none" }));
           }}
-          className="absolute right-1 top-1 bg-red-400 px-2 py-1 text-white"
+          className="absolute right-1 top-1 flex items-center justify-center bg-red-400 p-2 text-white w-8 h-8"
         >
           X
         </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            copyToClipboard(e);
+          }}
+          className="absolute right-10 top-1 flex items-center justify-center bg-green-400 p-2 text-white w-8 h-8"
+        >
+          <Image
+            className="dark:white-filter transition-all duration-500"
+            src="images/icons/copy-clipboard.svg"
+            alt="copy to clipboard"
+            width={27}
+            height={27}
+          />
+        </button>
         <div className="pt-3">{tooltipContent}</div>
+      </div>
+      <div
+        className="absolute p-8 m-auto rounded text-sm shadow-lg border-2 border-green-400 flex items-center justify-center bg-green-200 text-green-800"
+        style={{
+          ...copyTooltipStyle,
+          width: "150px",
+          height: "30px",
+          zIndex: 10001,
+        }}
+      >
+        Copied to clipboard!
       </div>
       <ForceGraph
         backgroundColor={bgdColor}
@@ -158,13 +215,14 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
           console.log(`Right clicked on node with id: ${node.id}`);
           console.log(node);
 
-          let content = buildContent(node);
+          let [content, plainText] = buildContent(cloneDeep(node));
           setTooltipStyle({
             display: "block",
             top: event.clientY,
             left: event.clientX,
           });
           setTooltipContent(content);
+          setTooltipPlainText(plainText.join("\n"));
         }}
         nodeLabel={nodeLabel}
         linkLabel={linkLabel}
