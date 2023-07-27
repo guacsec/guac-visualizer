@@ -61,7 +61,7 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
     top: 0,
     left: 0,
   });
-  const [tooltipContent, setTooltipContent] = useState("");
+  const [tooltipContent, setTooltipContent] = useState([]);
 
   const fgRef = useRef<ForceGraphMethods>();
 
@@ -90,11 +90,11 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
   return (
     <>
       <div
-        className="absolute font-mono bg-white p-2 rounded text-sm text-black shadow-lg border-2 border-black"
+        className="absolute font-mono bg-white p-2 rounded text-sm text-black shadow-lg border-2 border-black overflow-auto"
         style={{
           ...tooltipStyle,
-          width: "200px",
-          height: "200px",
+          width: "400px",
+          height: "300px",
           zIndex: 10000,
         }}
       >
@@ -107,7 +107,7 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
         >
           X
         </button>
-        <p className="pt-3">{tooltipContent}</p>
+        <div className="pt-3">{tooltipContent}</div>
       </div>
       <ForceGraph
         backgroundColor={bgdColor}
@@ -122,12 +122,34 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
         onNodeRightClick={(node: NodeObject, event: MouseEvent) => {
           event.preventDefault();
           console.log(`Right clicked on node with id: ${node.id}`);
+
+          // traverses the node object and build a list of elements of its properties
+          let content = [];
+          for (const [key, value] of Object.entries(node)) {
+            if (typeof value !== "object" || value === null) {
+              // this adds the key-value pair to the content list if value is not an object
+              content.push(<p key={key}>{`${key}: ${value}`}</p>);
+            } else {
+              // if the value is an object, traverse its properties
+              content.push(<p key={key}>{`${key}: `}</p>);
+              for (const [subKey, subValue] of Object.entries(value)) {
+                if (typeof subValue !== "object" || subValue === null) {
+                  content.push(
+                    <p key={subKey}>{`  ${subKey}: ${subValue}`}</p>
+                  );
+                } else {
+                  content.push(<p key={subKey}>{`  ${subKey}: {Object}`}</p>);
+                }
+              }
+            }
+          }
+
           setTooltipStyle({
             display: "block",
             top: event.clientY,
             left: event.clientX,
           });
-          setTooltipContent(`Node ID: ${node.id}`);
+          setTooltipContent(content);
         }}
         nodeLabel={nodeLabel}
         linkLabel={linkLabel}
