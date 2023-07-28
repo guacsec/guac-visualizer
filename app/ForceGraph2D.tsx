@@ -92,7 +92,6 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
     level = 0,
     cache: Map<any, [JSX.Element[], string[]]> = new Map()
   ): [JSX.Element[], string[]] => {
-    // Check if the result is already cached
     if (cache.has(obj)) {
       return cache.get(obj)!;
     }
@@ -117,7 +116,6 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
           `${"  ".repeat(level)}- ${newKey}: ${String(value)}`
         );
       } else if (Array.isArray(value)) {
-        // Use for loop instead of forEach for possible performance improvement
         for (let index = 0; index < value.length; index++) {
           const [jsx, text] = buildTooltipContent(
             value[index],
@@ -140,7 +138,6 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
       }
     }
 
-    // Cache the result before returning
     cache.set(obj, [content, plainTextContent]);
     return [content, plainTextContent];
   };
