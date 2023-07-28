@@ -86,23 +86,20 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
     }
   }
 
-  const buildContent = (
+  const buildTooltipContent = (
     obj: any,
     parentKey = "",
-    level = 0
+    level = 0,
+    cache: Map<any, [JSX.Element[], string[]]> = new Map()
   ): [JSX.Element[], string[]] => {
+    // Check if the result is already cached
+    if (cache.has(obj)) {
+      return cache.get(obj)!;
+    }
+
     let content: JSX.Element[] = [];
     let plainTextContent: string[] = [];
-    let filteredKeys = [
-      "__typename",
-      "x",
-      "y",
-      "vx",
-      "vy",
-      "__indexColor",
-      "index",
-      "expanded",
-    ];
+    let filteredKeys = ["__typename", "__indexColor", "index", "expanded"];
 
     for (const [key, value] of Object.entries(obj)) {
       if (filteredKeys.includes(key)) continue;
@@ -120,22 +117,31 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
           `${"  ".repeat(level)}- ${newKey}: ${String(value)}`
         );
       } else if (Array.isArray(value)) {
-        value.forEach((item, index) => {
-          const [jsx, text] = buildContent(
-            item,
+        // Use for loop instead of forEach for possible performance improvement
+        for (let index = 0; index < value.length; index++) {
+          const [jsx, text] = buildTooltipContent(
+            value[index],
             `${newKey}_${index}`,
-            level + 1
+            level + 1,
+            cache
           );
           content.push(...jsx);
           plainTextContent.push(...text);
-        });
+        }
       } else {
-        const [jsx, text] = buildContent(value, newKey, level + 1);
+        const [jsx, text] = buildTooltipContent(
+          value,
+          newKey,
+          level + 1,
+          cache
+        );
         content.push(...jsx);
         plainTextContent.push(...text);
       }
     }
 
+    // Cache the result before returning
+    cache.set(obj, [content, plainTextContent]);
     return [content, plainTextContent];
   };
 
@@ -189,7 +195,7 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
           console.log(`Right clicked on node with id: ${node.id}`);
           console.log(node);
 
-          let [content, plainText] = buildContent(cloneDeep(node));
+          let [content, plainText] = buildTooltipContent(cloneDeep(node));
           setTooltipStyle({
             display: "block",
             top: event.clientY,
