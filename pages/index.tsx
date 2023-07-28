@@ -256,7 +256,9 @@ export default function Home() {
           <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
             <div className="my-5 text-lg">Highlight Nodes</div>
             <p className="pb-5 pt-3 opacity-70">
-              Tip: Use click and scroll to adjust graph
+              <span className="font-bold uppercase">Tip:</span> Use click and
+              scroll to adjust graph. <br />
+              Right clicking a node displays more information.
             </p>
             <div className="flex flex-col justify-center gap-y-2 w-full">
               <HighlightToggles
