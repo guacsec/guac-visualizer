@@ -112,12 +112,12 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
           newKey === "package_namespaces_0_names_0_name" ? "red-bold-text" : "";
         content.push(
           <li key={newKey} style={{ textIndent: `${level}em` }}>
-            <span>{`${newKey}: `}</span>
+            <span>{`- ${newKey}: `}</span>
             <span className={specialFormat}>{String(value)}</span>
           </li>
         );
         plainTextContent.push(
-          `${"  ".repeat(level)}${newKey}: ${String(value)}`
+          `${"  ".repeat(level)}- ${newKey}: ${String(value)}`
         );
       } else if (Array.isArray(value)) {
         value.forEach((item, index) => {
@@ -164,11 +164,11 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
         onCopy={copyToClipboard}
       />
       <div
-        className="absolute p-5 m-auto rounded text-sm shadow-lg border-2 border-green-400 flex items-center justify-center bg-green-200 text-green-800"
+        className="absolute px-4 py-2 m-auto rounded text-sm shadow-lg border-2 border-green-400 flex items-center justify-center bg-green-200 text-green-800 text-center"
         style={{
           ...copyTooltipStyle,
           width: "150px",
-          height: "30px",
+          height: "auto",
           zIndex: 10001,
         }}
       >
