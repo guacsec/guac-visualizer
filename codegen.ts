@@ -7,7 +7,7 @@ const config: CodegenConfig = {
   schema: [
      '../guac/pkg/assembler/graphql/schema/*.graphql',
   ],
-  documents: ['../guac/pkg/assembler/graphql/examples/*.gql'],
+  documents: ['../guac/pkg/assembler/clients/operations/*.graphql'],
   generates: {
     './gql/__generated__/': {
       preset: 'client',
