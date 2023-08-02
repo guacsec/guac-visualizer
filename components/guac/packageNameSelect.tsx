@@ -1,6 +1,6 @@
 import client from "@/apollo/client";
 import {
-  GetPkgVersionsDocument,
+  PackageVersionsDocument,
   PackageQualifier,
 } from "@/gql/__generated__/graphql";
 import React, { Dispatch, SetStateAction } from "react";
@@ -52,9 +52,9 @@ const PackageNameSelect = ({
     setPackageNameFunc(value);
 
     const packageVersionQuery = client.query({
-      query: GetPkgVersionsDocument,
+      query: PackageVersionsDocument,
       variables: {
-        spec: {
+        filter: {
           name: value,
           type: packageType,
           namespace: packageNamespace,

@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery } from "@apollo/client";
+import client from "@/apollo/client";
 import {
-  GetNeighborsQuery,
-  GetPkgTypesDocument,
+  NeighborsDocument,
+  NeighborsQuery,
+  PackageTypesDocument,
+  PackageTypesQuery,
 } from "@/gql/__generated__/graphql";
 import { fetchNeighbors, parseAndFilterGraph } from "@/app/graph_queries";
 import { ParseNode } from "@/app/ggraph";
@@ -93,9 +96,12 @@ export default function Home() {
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
-  const packageTypesQuery = useQuery(GetPkgTypesDocument, { variables: {} });
-  const packageLoading = packageTypesQuery.loading;
-  const packageError = packageTypesQuery.error;
+  const packageLoading = true
+  const packageError = false
+
+  const packageTypesQuery = client.query({
+    query: PackageTypesDocument,
+    variables: {filter: {},}, })
 
   useEffect(() => {
     if (packageError || packageLoading) {
@@ -124,7 +130,7 @@ export default function Home() {
 
   const fetchAndSetGraphData = (id: string | number) => {
     fetchNeighbors(id.toString()).then(
-      (res: GetNeighborsQuery["neighbors"]) => {
+      (res: NeighborsQuery["neighbors"]) => {
         const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
         res.forEach((n) => {
           let node = n as NodeFragment;
@@ -212,14 +218,13 @@ export default function Home() {
     fetchAndSetGraphData(newNode.id);
   };
 
-  if (!packageError && !packageLoading) {
-    let packageData = packageTypesQuery.data?.packages;
+  packageTypesQuery.then((res) => {
+    let packageData = res.data.packages
     let sortablePackageData = [...(packageData ?? [])];
     packageTypes = sortablePackageData
       .sort((a, b) => a.type.localeCompare(b.type))
       .map((t) => ({ label: t.type, value: t.type }));
-  }
-
+  })
   return (
     <>
       <main className="h-full flex flex-col items-center p-12">
