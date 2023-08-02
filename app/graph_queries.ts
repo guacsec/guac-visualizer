@@ -1,17 +1,17 @@
 import client from "@/apollo/client";
 import {
-  GetNeighborsDocument,
-  GetNodeDocument,
+  NeighborsDocument,
+  NodeDocument,
 } from "@/gql/__generated__/graphql";
 import { GuacGraphData } from "@/app/ggraph";
 import { GraphDataWithMetadata } from "@/components/graph/types";
 
 export async function fetchNeighbors(id: string) {
   const res = await client.query({
-    query: GetNeighborsDocument,
+    query: NeighborsDocument,
     variables: {
-      nodeId: id,
-      edges: [],
+      node: id,
+      usingOnly: [],
     },
   });
 
@@ -20,10 +20,9 @@ export async function fetchNeighbors(id: string) {
 
 export async function GetNodeById(id: string) {
   const res = await client.query({
-    query: GetNodeDocument,
+    query: NodeDocument,
     variables: {
-      nodeId: id,
-      edges: [],
+      node: id
     },
   });
   return res.data;

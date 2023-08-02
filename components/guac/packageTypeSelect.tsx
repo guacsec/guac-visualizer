@@ -1,5 +1,5 @@
 import client from "@/apollo/client";
-import { GetPkgNamespacesDocument } from "@/gql/__generated__/graphql";
+import { PackageNamespacesDocument } from "@/gql/__generated__/graphql";
 import React, { Dispatch, SetStateAction } from "react";
 import PackageGenericSelector, {
   PackageSelectorOption,
@@ -25,9 +25,9 @@ const PackageTypeSelect = ({
     resetTypeFunc();
     setPackageTypeFunc(value);
     const packageNamespacesQuery = client.query({
-      query: GetPkgNamespacesDocument,
+      query: PackageNamespacesDocument,
       variables: {
-        spec: {
+        filter: {
           type: value,
         },
       },
