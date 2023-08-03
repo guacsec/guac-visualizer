@@ -40,6 +40,10 @@ export default function Home() {
   const [forwardStack, setForwardStack] = useState([]);
   const [currentNode, setCurrentNode] = useState(null);
 
+  const [packageTypes, setPackageTypes] = useState(INITIAL_PACKAGE_NAMESPACES);
+  const [packageLoading, setPackageLoading] = useState(true);
+  const [packageError, setPackageError] = useState(null);
+
   const [initialGraphData, setInitialGraphData] = useState(null);
   const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
 
@@ -96,12 +100,28 @@ export default function Home() {
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
-  const packageLoading = true
-  const packageError = false
-
-  const packageTypesQuery = client.query({
-    query: PackageTypesDocument,
-    variables: {filter: {},}, })
+  useEffect(() => {
+    setPackageLoading(true);
+    client
+      .query({
+        query: PackageTypesDocument,
+        variables: { filter: {} },
+      })
+      .then((res) => {
+        let packageData = res.data.packages;
+        let sortablePackageData = [...(packageData ?? [])];
+        const types = sortablePackageData
+          .sort((a, b) => a.type.localeCompare(b.type))
+          .map((t) => ({ label: t.type, value: t.type }));
+        setPackageTypes(types);
+        setPackageLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching package types:", error);
+        setPackageError(error);
+        setPackageLoading(false);
+      });
+  }, []);
 
   useEffect(() => {
     if (packageError || packageLoading) {
@@ -129,19 +149,15 @@ export default function Home() {
   }, [packageError, packageLoading, router.query.path, renderedInitialGraph]);
 
   const fetchAndSetGraphData = (id: string | number) => {
-    fetchNeighbors(id.toString()).then(
-      (res: NeighborsQuery["neighbors"]) => {
-        const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
-        res.forEach((n) => {
-          let node = n as NodeFragment;
-          parseAndFilterGraph(graphData, ParseNode(node));
-        });
-        setGraphData(graphData);
-      }
-    );
+    fetchNeighbors(id.toString()).then((res: NeighborsQuery["neighbors"]) => {
+      const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
+      res.forEach((n) => {
+        let node = n as NodeFragment;
+        parseAndFilterGraph(graphData, ParseNode(node));
+      });
+      setGraphData(graphData);
+    });
   };
-
-  let packageTypes = INITIAL_PACKAGE_NAMESPACES;
 
   const reset = () => {
     if (initialGraphData) {
@@ -218,21 +234,20 @@ export default function Home() {
     fetchAndSetGraphData(newNode.id);
   };
 
-  packageTypesQuery.then((res) => {
-    let packageData = res.data.packages
-    let sortablePackageData = [...(packageData ?? [])];
-    packageTypes = sortablePackageData
-      .sort((a, b) => a.type.localeCompare(b.type))
-      .map((t) => ({ label: t.type, value: t.type }));
-  })
   return (
     <>
       <main className="h-full flex flex-col items-center p-12">
-        <PackageSelector
-          packageTypes={packageTypes}
-          setGraphData={setGraphDataWithInitial}
-          resetTypeFunc={reset}
-        />
+        {packageLoading ? (
+          <div>Loading package types...</div>
+        ) : packageError ? (
+          <div>Error loading package types!</div>
+        ) : (
+          <PackageSelector
+            packageTypes={packageTypes}
+            setGraphData={setGraphDataWithInitial}
+            resetTypeFunc={reset}
+          />
+        )}
         <Breadcrumb
           breadcrumb={breadcrumb}
           handleNodeClick={handleBreadcrumbClick}
