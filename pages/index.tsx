@@ -174,7 +174,7 @@ export default function Home() {
 
       fetchAndSetGraphData(node.id);
     },
-    [currentNode, breadcrumb]
+    [currentNode, breadcrumb, firstNode]
   );
 
   const handleBackClick = () => {
