@@ -2441,6 +2441,7 @@ export type CertifyOsvMutationVariables = Exact<{
 export type CertifyOsvMutation = { __typename?: 'Mutation', ingestVulnerability: (
     { __typename?: 'CertifyVuln' }
     & { ' $fragmentRefs'?: { 'AllCertifyVulnFragment': AllCertifyVulnFragment } }
+
   ) };
 
 export type CertifyCveMutationVariables = Exact<{
@@ -2849,6 +2850,7 @@ export type IngestPackageMutation = { __typename?: 'Mutation', ingestPackage: (
     & { ' $fragmentRefs'?: { 'AllPkgTreeFragment': AllPkgTreeFragment } }
   ) };
 
+
 export type IngestPackagesMutationVariables = Exact<{
   pkgs: Array<PkgInputSpec> | PkgInputSpec;
 }>;
@@ -2868,6 +2870,7 @@ export type PackagesQuery = { __typename?: 'Query', packages: Array<(
     { __typename?: 'Package' }
     & { ' $fragmentRefs'?: { 'AllPkgTreeFragment': AllPkgTreeFragment } }
   )> };
+
 
 export type PackageTypesQueryVariables = Exact<{
   filter: PkgSpec;
@@ -2896,6 +2899,7 @@ export type PackageVersionsQueryVariables = Exact<{
 
 
 export type PackageVersionsQuery = { __typename?: 'Query', packages: Array<{ __typename?: 'Package', id: string, type: string, namespaces: Array<{ __typename?: 'PackageNamespace', id: string, namespace: string, names: Array<{ __typename?: 'PackageName', id: string, name: string, versions: Array<{ __typename?: 'PackageVersion', id: string, version: string, subpath: string, qualifiers: Array<{ __typename?: 'PackageQualifier', key: string, value: string }> }> }> }> }> };
+
 
 export type PathQueryVariables = Exact<{
   subject: Scalars['ID'];
