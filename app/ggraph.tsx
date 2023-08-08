@@ -934,7 +934,6 @@ export function parseHasSlsa(n: HasSlsa): [GuacGraphData, Node | undefined] {
 export function parseIsDependency(
   n: IsDependency
 ): [GuacGraphData, Node | undefined] {
-  console.log("🚀 ~ file: ggraph.tsx:937 ~ n:", n);
   let nodes: Node[] = [];
   let edges: Edge[] = [];
   // for each check if its the leaf, and if its the leaf that's where the edge goes
