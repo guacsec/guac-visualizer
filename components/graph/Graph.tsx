@@ -88,7 +88,7 @@ export default function Graph({
         ctx.fillRect(node.x - 6, node.y - 4, 12, 8);
         break;
       case "IsDependency":
-        ctx.fillStyle = applyRedFillAndOutline ? "red" : "pink";
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "fuchsia";
         ctx.beginPath();
         ctx.moveTo(node.x, node.y - shapeSize / 2);
         ctx.lineTo(node.x - shapeSize / 2, node.y + shapeSize / 2);
