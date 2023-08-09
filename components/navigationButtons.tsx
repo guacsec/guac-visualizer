@@ -1,10 +1,9 @@
-// NavigationButtons.tsx
 import React from "react";
 
 interface NavigationButtonsProps {
   backStack: any[];
-  forwardStack: any[];
   breadcrumb: any[];
+  currentIndex: number;
   handleBackClick: () => void;
   handleForwardClick: () => void;
   reset: () => void;
@@ -12,8 +11,8 @@ interface NavigationButtonsProps {
 
 export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
   backStack,
-  forwardStack,
   breadcrumb,
+  currentIndex,
   handleBackClick,
   handleForwardClick,
   reset,
@@ -36,13 +35,15 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
       <button
         type="button"
         className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
-          forwardStack.length === 0
+          breadcrumb.length === 0 || currentIndex >= breadcrumb.length - 1
             ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
             : "bg-slate-700 text-white"
         }`}
         title="Go forward to next visualization"
         onClick={handleForwardClick}
-        disabled={forwardStack.length === 0}
+        disabled={
+          breadcrumb.length === 0 || currentIndex >= breadcrumb.length - 1
+        }
       >
         Forward
       </button>
