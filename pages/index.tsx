@@ -45,24 +45,17 @@ export default function Home() {
   const [packageError, setPackageError] = useState(null);
 
   const [initialGraphData, setInitialGraphData] = useState(null);
-  const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
+  const [breadcrumb, setBreadcrumb] = useState<{ label: string; id: string }[]>(
+    []
+  );
+
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const router = useRouter();
 
   const handleBreadcrumbClick = (nodeIndex: number) => {
-    const node = backStack[nodeIndex];
-
-    setBackStack((prevBackStack) => prevBackStack.slice(0, nodeIndex));
-    setForwardStack((prevForwardStack) => [
-      currentNode,
-      ...prevForwardStack,
-      ...backStack.slice(nodeIndex + 1),
-    ]);
-    setCurrentNode(node);
-
-    // Truncate the breadcrumb array to the clicked node
-    setBreadcrumb((prevBreadcrumb) => prevBreadcrumb.slice(0, nodeIndex + 1));
-
+    setCurrentIndex(nodeIndex);
+    const node = breadcrumb[nodeIndex];
     fetchAndSetGraphData(node.id);
   };
 
@@ -185,14 +178,21 @@ export default function Home() {
 
       let nodeName = node.label || "Unnamed Node";
       const count = breadcrumb.filter(
-        (name) => name.split("[")[0] === nodeName
+        (item) => item.label.split("[")[0] === nodeName
       ).length;
 
       if (count > 0) {
         nodeName = `${nodeName}[${count + 1}]`;
       }
 
-      setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, nodeName]);
+      setBreadcrumb((prevBreadcrumb) => {
+        const newBreadcrumb = [
+          ...prevBreadcrumb.slice(0, currentIndex + 1),
+          { label: nodeName, id: node.id },
+        ];
+        setCurrentIndex(newBreadcrumb.length - 1);
+        return newBreadcrumb;
+      });
 
       fetchAndSetGraphData(node.id);
     },
@@ -200,38 +200,22 @@ export default function Home() {
   );
 
   const handleBackClick = () => {
-    if (backStack.length === 0) return;
+    if (currentIndex <= 0) return;
+    const newIndex = currentIndex - 1;
+    setCurrentIndex(newIndex);
+    const node = breadcrumb[newIndex];
 
-    const newNode = backStack[backStack.length - 1];
-    const newBackStack = backStack.slice(0, backStack.length - 1);
-
-    setForwardStack((prevForwardStack) => [currentNode, ...prevForwardStack]);
-    setCurrentNode(newNode);
-    setBackStack(newBackStack);
-
-    setBreadcrumb((prevBreadcrumb) => {
-      const newBreadcrumb = [...prevBreadcrumb];
-      newBreadcrumb.pop();
-      return newBreadcrumb;
-    });
-
-    fetchAndSetGraphData(newNode.id);
+    fetchAndSetGraphData(node.id);
   };
 
   const handleForwardClick = () => {
-    if (forwardStack.length === 0) return;
+    if (currentIndex >= breadcrumb.length - 1) return;
 
-    const newNode = forwardStack[0];
-    const newForwardStack = forwardStack.slice(1);
+    const newIndex = currentIndex + 1;
+    setCurrentIndex(newIndex);
+    const node = breadcrumb[newIndex];
 
-    setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
-    setCurrentNode(newNode);
-    setForwardStack(newForwardStack);
-
-    // Update breadcrumb
-    setBreadcrumb((prevBreadcrumb) => [...prevBreadcrumb, newNode.label]);
-
-    fetchAndSetGraphData(newNode.id);
+    fetchAndSetGraphData(node.id);
   };
 
   return (
@@ -249,7 +233,7 @@ export default function Home() {
           />
         )}
         <Breadcrumb
-          breadcrumb={breadcrumb}
+          breadcrumb={breadcrumb.map((item) => item.label)}
           handleNodeClick={handleBreadcrumbClick}
         />
         <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
@@ -269,8 +253,8 @@ export default function Home() {
             <div className="py-10 my-5 flex space-x-3">
               <NavigationButtons
                 backStack={backStack}
-                forwardStack={forwardStack}
                 breadcrumb={breadcrumb}
+                currentIndex={currentIndex}
                 handleBackClick={handleBackClick}
                 handleForwardClick={handleForwardClick}
                 reset={reset}

@@ -6,7 +6,10 @@ interface BreadcrumbProps {
   handleNodeClick: (nodeIndex: number) => void;
 }
 
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb }) => {
+export const Breadcrumb: React.FC<BreadcrumbProps> = ({
+  breadcrumb,
+  handleNodeClick,
+}) => {
   if (breadcrumb.length === 0) {
     return null;
   }
@@ -27,7 +30,12 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb }) => {
 
           return (
             <li className="flex" key={index}>
-              <div className="flex items-center">
+              <button
+                onClick={() => handleNodeClick(index)}
+                className="flex items-center"
+              >
+                {" "}
+                {/* Added button */}
                 {index !== 0 && (
                   <ChevronDoubleRightIcon
                     className="w-8"
@@ -39,7 +47,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb }) => {
                     {truncatedLabel}
                   </span>
                 </div>
-              </div>
+              </button>
             </li>
           );
         })}
