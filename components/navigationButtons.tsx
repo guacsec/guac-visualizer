@@ -7,6 +7,7 @@ interface NavigationButtonsProps {
   handleBackClick: () => void;
   handleForwardClick: () => void;
   reset: () => void;
+  userInteractedWithPath: boolean;
 }
 
 export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
@@ -16,6 +17,7 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
   handleBackClick,
   handleForwardClick,
   reset,
+  userInteractedWithPath,
 }) => {
   return (
     <div className="py-10 my-5 flex space-x-3">
@@ -28,7 +30,7 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
         }`}
         title="Go back to previous visualization"
         onClick={handleBackClick}
-        disabled={backStack.length === 0}
+        disabled={!userInteractedWithPath || backStack.length === 0}
       >
         Back
       </button>
@@ -42,7 +44,9 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
         title="Go forward to next visualization"
         onClick={handleForwardClick}
         disabled={
-          breadcrumb.length === 0 || currentIndex >= breadcrumb.length - 1
+          !userInteractedWithPath ||
+          breadcrumb.length === 0 ||
+          currentIndex >= breadcrumb.length - 1
         }
       >
         Forward

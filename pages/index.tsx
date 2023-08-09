@@ -49,6 +49,9 @@ export default function Home() {
     []
   );
 
+  const [initialPathNodeIds, setInitialPathNodeIds] = useState<string[]>([]);
+  const [userInteractedWithPath, setUserInteractedWithPath] = useState(false);
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const router = useRouter();
@@ -117,21 +120,17 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (packageError || packageLoading) {
-      return;
-    }
     if (router.query.path != null && !renderedInitialGraph) {
       const path = router.query.path as string;
       const nodeIds = path.split(",");
+      setInitialPathNodeIds(nodeIds);
 
       fetchAndParseNodes(nodeIds)
-        .then((nodes) =>
-          nodes.map((node) => ParseNode(node.node as NodeFragment))
-        )
         .then(generateGraphDataFromNodes)
         .then((graphData) => {
           setTimeout(() => {
             setGraphData(graphData);
+            setInitialGraphData(graphData);
             setRenderedInitialGraph(true);
           }, 0);
         })
@@ -140,6 +139,26 @@ export default function Home() {
         });
     }
   }, [packageError, packageLoading, router.query.path, renderedInitialGraph]);
+
+  const loadGraphData = (nodeIds: string[]) => {
+    fetchAndParseNodes(nodeIds)
+      .then((parsedNodes) => generateGraphDataFromNodes(parsedNodes))
+      .then((graphData) => {
+        setTimeout(() => {
+          setGraphData(graphData);
+          setRenderedInitialGraph(true);
+        }, 0);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  useEffect(() => {
+    if (initialPathNodeIds.length > 0 && !renderedInitialGraph) {
+      loadGraphData(initialPathNodeIds);
+    }
+  }, [initialPathNodeIds, renderedInitialGraph]);
 
   const fetchAndSetGraphData = (id: string | number) => {
     fetchNeighbors(id.toString()).then((res: NeighborsQuery["neighbors"]) => {
@@ -160,19 +179,18 @@ export default function Home() {
       setCurrentNode(null);
       setFirstNode(null);
       setBreadcrumb([]);
+      setUserInteractedWithPath(false);
     }
   };
 
   const handleNodeClick = useCallback(
     (node) => {
-      if (!firstNode) {
-        setFirstNode(node);
-      }
+      setUserInteractedWithPath(true);
 
       if (currentNode) {
         setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
-        setForwardStack([]);
       }
+      setForwardStack([]);
 
       setCurrentNode(node);
 
@@ -200,7 +218,16 @@ export default function Home() {
   );
 
   const handleBackClick = () => {
-    if (currentIndex <= 0) return;
+    if (backStack.length === 0) return;
+
+    const newForwardStack = [...forwardStack, currentNode];
+    const lastNode = backStack[backStack.length - 1];
+    const newBackStack = backStack.slice(0, backStack.length - 1);
+
+    setForwardStack(newForwardStack);
+    setBackStack(newBackStack);
+    setCurrentNode(lastNode);
+
     const newIndex = currentIndex - 1;
     setCurrentIndex(newIndex);
     const node = breadcrumb[newIndex];
@@ -209,7 +236,15 @@ export default function Home() {
   };
 
   const handleForwardClick = () => {
-    if (currentIndex >= breadcrumb.length - 1) return;
+    if (forwardStack.length === 0) return;
+
+    const nextNode = forwardStack[forwardStack.length - 1];
+    const newForwardStack = forwardStack.slice(0, forwardStack.length - 1);
+    const newBackStack = [...backStack, currentNode];
+
+    setForwardStack(newForwardStack);
+    setBackStack(newBackStack);
+    setCurrentNode(nextNode);
 
     const newIndex = currentIndex + 1;
     setCurrentIndex(newIndex);
@@ -258,6 +293,7 @@ export default function Home() {
                 handleBackClick={handleBackClick}
                 handleForwardClick={handleForwardClick}
                 reset={reset}
+                userInteractedWithPath={userInteractedWithPath}
               />
             </div>
           </div>
