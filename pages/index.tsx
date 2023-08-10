@@ -1,11 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useQuery } from "@apollo/client";
 import client from "@/apollo/client";
 import {
-  NeighborsDocument,
   NeighborsQuery,
   PackageTypesDocument,
-  PackageTypesQuery,
 } from "@/gql/__generated__/graphql";
 import { fetchNeighbors, parseAndFilterGraph } from "@/app/graph_queries";
 import { ParseNode } from "@/app/ggraph";
@@ -270,6 +267,7 @@ export default function Home() {
         <Breadcrumb
           breadcrumb={breadcrumb.map((item) => item.label)}
           handleNodeClick={handleBreadcrumbClick}
+          currentIndex={currentIndex}
         />
         <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
           <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
