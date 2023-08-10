@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ForceGraph, {
   LinkObject,
   ForceGraphMethods,
@@ -73,11 +73,21 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
 
   const fgRef = useRef<ForceGraphMethods>();
 
+  const centerGraph = () => {
+    if (fgRef.current && width > 0 && height > 0) {
+      fgRef.current.centerAt(width / 20, height / 10, 400);
+    }
+  };
+
+  useEffect(() => {
+    centerGraph();
+  }, [graphData, width, height]);
+
   const handleClick = useCallback(
     (node: NodeObject) => {
       dataFetcher(node.id);
     },
-    [fgRef, dataFetcher]
+    [dataFetcher]
   );
 
   if (selectedNode) {
@@ -205,7 +215,7 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
         linkLabel={linkLabel}
         nodeId="id"
         linkDirectionalParticles={linkDirectionalParticles}
-        linkDirectionalParticleWidth={0.5}
+        linkDirectionalParticleWidth={10.5}
         linkSource={linkSource}
         linkTarget={linkTarget}
         linkWidth={1}
