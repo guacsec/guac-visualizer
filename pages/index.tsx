@@ -230,6 +230,8 @@ export default function Home() {
     setCurrentIndex(currentIndex - 1);
     setForwardStack(newForwardStack);
     setBackStack(newBackStack);
+
+    fetchAndSetGraphData(lastNode.id);
   };
 
   const handleForwardClick = () => {
@@ -244,6 +246,8 @@ export default function Home() {
     setCurrentIndex(currentIndex + 1);
     setBackStack(newBackStack);
     setForwardStack(newForwardStack);
+
+    fetchAndSetGraphData(nextNode.id);
   };
 
   return (
