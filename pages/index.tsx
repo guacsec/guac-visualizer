@@ -1,26 +1,25 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/router";
 import client from "@/apollo/client";
 import {
   NeighborsQuery,
   PackageTypesDocument,
 } from "@/gql/__generated__/graphql";
-import { fetchNeighbors, parseAndFilterGraph } from "@/app/graph_queries";
-import { ParseNode } from "@/app/ggraph";
-import { useRouter } from "next/router";
-import React from "react";
+import { NodeFragment } from "@/gql/types/nodeFragment";
 import Graph from "@/components/graph/Graph";
-import { GraphDataWithMetadata } from "@/components/graph/types";
 import PackageSelector, {
   INITIAL_PACKAGE_NAMESPACES,
 } from "@/components/guac/packageSelector";
-import { NodeFragment } from "@/gql/types/nodeFragment";
 import { Breadcrumb } from "@/components/breadcrumbs";
+import { HighlightToggles } from "@/utils/highlightToggles";
+import { NavigationButtons } from "@/components/navigationButtons";
+import { fetchNeighbors, parseAndFilterGraph } from "@/app/graph_queries";
+import { ParseNode } from "@/app/ggraph";
+import { GraphDataWithMetadata } from "@/components/graph/types";
 import {
   fetchAndParseNodes,
   generateGraphDataFromNodes,
 } from "@/utils/graphDataHelpers";
-import { HighlightToggles } from "@/utils/highlightToggles";
-import { NavigationButtons } from "@/components/navigationButtons";
 
 export default function Home() {
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
@@ -54,9 +53,15 @@ export default function Home() {
   const router = useRouter();
 
   const handleBreadcrumbClick = (nodeIndex: number) => {
+    const newBackStack = breadcrumb.slice(0, nodeIndex);
+    const newForwardStack = breadcrumb.slice(nodeIndex + 1);
+
+    setBackStack(newBackStack);
+    setForwardStack(newForwardStack);
+    setCurrentNode(breadcrumb[nodeIndex]);
     setCurrentIndex(nodeIndex);
-    const node = breadcrumb[nodeIndex];
-    fetchAndSetGraphData(node.id);
+
+    fetchAndSetGraphData(breadcrumb[nodeIndex].id);
   };
 
   const setGraphDataWithInitial = (data: GraphDataWithMetadata) => {
@@ -215,39 +220,30 @@ export default function Home() {
   );
 
   const handleBackClick = () => {
-    if (backStack.length === 0) return;
+    if (currentIndex === 0 || backStack.length === 0) return;
 
-    const newForwardStack = [...forwardStack, currentNode];
-    const lastNode = backStack[backStack.length - 1];
-    const newBackStack = backStack.slice(0, backStack.length - 1);
+    const newForwardStack = [currentNode, ...forwardStack];
+    const newBackStack = [...backStack];
+    const lastNode = newBackStack.pop();
 
+    setCurrentNode(lastNode);
+    setCurrentIndex(currentIndex - 1);
     setForwardStack(newForwardStack);
     setBackStack(newBackStack);
-    setCurrentNode(lastNode);
-
-    const newIndex = currentIndex - 1;
-    setCurrentIndex(newIndex);
-    const node = breadcrumb[newIndex];
-
-    fetchAndSetGraphData(node.id);
   };
 
   const handleForwardClick = () => {
-    if (forwardStack.length === 0) return;
+    if (currentIndex >= breadcrumb.length - 1 || forwardStack.length === 0)
+      return;
 
-    const nextNode = forwardStack[forwardStack.length - 1];
-    const newForwardStack = forwardStack.slice(0, forwardStack.length - 1);
+    const newForwardStack = [...forwardStack];
+    const nextNode = newForwardStack.shift();
     const newBackStack = [...backStack, currentNode];
 
-    setForwardStack(newForwardStack);
-    setBackStack(newBackStack);
     setCurrentNode(nextNode);
-
-    const newIndex = currentIndex + 1;
-    setCurrentIndex(newIndex);
-    const node = breadcrumb[newIndex];
-
-    fetchAndSetGraphData(node.id);
+    setCurrentIndex(currentIndex + 1);
+    setBackStack(newBackStack);
+    setForwardStack(newForwardStack);
   };
 
   return (
