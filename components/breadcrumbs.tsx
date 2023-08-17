@@ -1,12 +1,16 @@
 import React from "react";
 import { ChevronDoubleRightIcon } from "@heroicons/react/24/solid";
-
 interface BreadcrumbProps {
   breadcrumb: string[];
   handleNodeClick: (nodeIndex: number) => void;
+  currentIndex: number;
 }
 
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb }) => {
+export const Breadcrumb: React.FC<BreadcrumbProps> = ({
+  breadcrumb,
+  handleNodeClick,
+  currentIndex,
+}) => {
   if (breadcrumb.length === 0) {
     return null;
   }
@@ -15,7 +19,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb }) => {
     <nav className="flex" aria-label="Breadcrumb">
       <ol
         role="list"
-        className="flex flex-wrap space-x-4 rounded-xl bg-white mt-10 px-6 py-2 shadow"
+        className="flex flex-wrap space-x-4 rounded-xl bg-white mt-10 px-6 shadow"
       >
         {breadcrumb.map((label, index) => {
           const maxLabelLength = 15;
@@ -27,19 +31,24 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb }) => {
 
           return (
             <li className="flex" key={index}>
-              <div className="flex items-center">
-                {index !== 0 && (
-                  <ChevronDoubleRightIcon
-                    className="w-8"
-                    style={{ color: "rgba(90, 75, 60, 0.3)" }}
-                  />
-                )}
+              {index !== 0 && (
+                <ChevronDoubleRightIcon
+                  className="w-5"
+                  style={{ color: "rgba(90, 75, 60, 0.3)" }}
+                />
+              )}
+              <button
+                onClick={() => handleNodeClick(index)}
+                className={`flex items-center ${
+                  index === currentIndex
+                    ? "bg-gray-300 font-bold text-black p-1 m-2"
+                    : ""
+                }`}
+              >
                 <div className="text-gray-500">
-                  <span className="ml-2 text-sm font-medium">
-                    {truncatedLabel}
-                  </span>
+                  <span className="text-sm font-medium">{truncatedLabel}</span>
                 </div>
-              </div>
+              </button>
             </li>
           );
         })}
