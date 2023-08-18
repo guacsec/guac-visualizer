@@ -10,6 +10,8 @@ Since the GUAC Visaulizer is still in an early experimental stage, it is likely
 that there may be some unexpected behavior or usage problems. For a more robust
 use of GUAC, we recommend using the [GraphQL interface directly](https://github.com/guacsec/guac/blob/main/demo/GraphQL.md).
 
+#### NOTE: Since the visualizer is still in an early experimental stage, it is likely that there may be some unexpected behavior or usage problems. Due to ongoing changes, please ensure to use <a href="https://github.com/guacsec/guac-visualizer/releases/tag/v0.1.1" alt="link to visualizer's v0.1.1 release"><span style="color: green;">guac-visualizer's v0.1.1 release</span></a> with <a href="https://github.com/guacsec/guac/releases/tag/v0.1.2"><span style="color: green;">guac's v0.1.2 release</span></a>, since the latest versions of each repo may not work together. The following directions below demonstrate how to do this for a seamless setup.
+
 ## Requirements
 
 **Tools:**
@@ -24,18 +26,14 @@ To use the GUAC visualizer, you need to have the main GUAC server running. For m
 
 ## Getting started
 
-If you already haven't, clone the GUAC visualizer repo. We highly suggest
-cloning it in the same path as you clone the main
-[GUAC repo](https://github.com/guacsec/guac).
+1. If you haven't already, download the main GUAC version `v0.1.2` from [this link](https://github.com/guacsec/guac/releases/tag/v0.1.2).
+   - Follow steps 2-5 in https://docs.guac.sh/setup to get it running.
+2. Download the specific GUAC visualizer version `v0.1.1` from [this link](https://github.com/guacsec/guac-visualizer/releases/tag/v0.1.1) and extract it in the same path as your GUAC repo.
+
+Change directories into the visualizer's repo:
 
 ```bash
-git clone git@github.com:guacsec/guac-visualizer.git
-```
-
-Change directories into the repo.
-
-```bash
-cd guac-visualizer
+cd path/to/guac-visualizer
 ```
 
 All commands run throughout this guide should be in this working directory.
@@ -101,4 +99,4 @@ see the graph visualization.
 
 <br />
 
-![image](https://github.com/guacsec/guac-visualizer/assets/68356865/0b5460e2-0252-4ba6-8052-bb3426956410)
+![image](https://github.com/guacsec/guac-visualizer/assets/68356865/0f60b7f8-c81d-424d-99a2-f3b365e388dc)
