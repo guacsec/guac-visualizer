@@ -64,6 +64,11 @@ input[type='checkbox'] {
   transition: 0.3s;
 }
 
+.red-bold-text {
+  color: red;
+  font-weight: bold;
+}
+
 input:checked + span {
   background-color: #00c853;
 }

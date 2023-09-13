@@ -2,8 +2,8 @@ import client from "@/apollo/client";
 import { parseAndFilterGraph } from "@/app/graph_queries";
 import {
   AllPkgTreeFragment,
-  GetNeighborsDocument,
-  GetPkgDocument,
+  NeighborsDocument,
+  PackagesDocument,
 } from "@/gql/__generated__/graphql";
 import React from "react";
 import { ParseNode } from "@/app/ggraph";
@@ -73,9 +73,9 @@ const PackageVersionSelect = ({
     };
 
     const packageNamespacesQuery = client.query({
-      query: GetPkgDocument,
+      query: PackagesDocument,
       variables: {
-        spec: spec,
+        filter: spec,
       },
       fetchPolicy: "no-cache",
     });
@@ -89,10 +89,10 @@ const PackageVersionSelect = ({
 
       client
         .query({
-          query: GetNeighborsDocument,
+          query: NeighborsDocument,
           variables: {
-            nodeId: pkg.id,
-            edges: [],
+            node: pkg.id,
+            usingOnly: [],
           },
         })
         .then((r) => processGraphData(r.data.neighbors, graphData));
