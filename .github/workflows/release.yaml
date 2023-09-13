@@ -24,9 +24,12 @@ permissions:
   id-token: write # needed for signing the images with GitHub OIDC Token **not production ready**
 
 jobs:
-  build-image-on-release:
+  build-n-release:
     name: Build and publish image
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ env.IMAGE_URI }}
+      digest: ${{ steps.build_n_publish_image.outputs.IMAGE_DIGEST }}
     env:
       IMAGE_URI: ghcr.io/${{ github.repository }}
       BUILDER: paketobuildpacks/builder:base
@@ -68,3 +71,14 @@ jobs:
           IMAGE_URI_DIGEST: ${{ env.IMAGE_URI }}@${{ steps.build_n_publish_image.outputs.IMAGE_DIGEST }}
           GITHUB_ACITONS_OIDC_ISSUER: https://token.actions.githubusercontent.com
           COSIGN_KEYLESS_SIGNING_CERT_SUBJECT: https://github.com/${{ github.repository }}/.github/workflows/release.yaml@${{ github.ref }}
+  provenance-container:
+    name: generate provenance for container
+    needs: [build-n-release]
+    if: startsWith(github.ref, 'refs/tags/')
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v1.9.0 # must use semver here
+    with:
+      image: ${{ needs.build-n-release.outputs.image }}
+      digest: ${{ needs.build-n-release.outputs.digest }}
+      registry-username: ${{ github.actor }}
+    secrets:
+      registry-password: ${{ secrets.GITHUB_TOKEN }}
