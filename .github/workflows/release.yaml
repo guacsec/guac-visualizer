@@ -20,6 +20,7 @@ on:
       - 'v*'
 
 permissions:
+  actions: read   # for detecting the Github Actions environment.
   packages: write # To publish container images to GHCR
   id-token: write # needed for signing the images with GitHub OIDC Token **not production ready**
 
@@ -77,8 +78,6 @@ jobs:
     needs: [build-n-release]
     if: startsWith(github.ref, 'refs/tags/')
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v1.9.0 # must use semver here
-    permissions:
-      actions: read   # for detecting the Github Actions environment.
     with:
       image: ${{ needs.build-n-release.outputs.image }}
       digest: ${{ needs.build-n-release.outputs.digest }}
