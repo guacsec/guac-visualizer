@@ -1,6 +1,6 @@
 import client from "@/apollo/client";
 import {
-  GetNodeDocument,
+  NodeDocument,
   Node as gqlNode,
   CertifyBad,
 } from "@/gql/__generated__/graphql";
@@ -37,10 +37,10 @@ const CertifyBadSelect = ({
     }
     client
       .query({
-        query: GetNodeDocument,
+        query: NodeDocument,
         fetchPolicy: "no-cache",
         variables: {
-          nodeId: nodeId.toString(),
+          node: nodeId.toString(),
         },
       })
       .then((res) => {
@@ -56,7 +56,7 @@ const CertifyBadSelect = ({
       <Select
         options={options}
         onChange={(e) => {
-          onSelectCertifyBad(e);
+          onSelectCertifyBad({ value: e });
         }}
         {...rest}
       />

@@ -1,44 +1,37 @@
 import {
   AllArtifactTreeFragment,
   AllBuilderTreeFragment,
-  AllCertifyBadTreeFragment,
-  AllCertifyGoodTreeFragment,
-  AllCertifyScorecardTreeFragment,
-  AllCertifyVexStatementTreeFragment,
-  AllCertifyVulnTreeFragment,
-  AllCveTreeFragment,
-  AllGhsaTreeFragment,
+  AllCertifyBadFragment,
+  AllCertifyGoodFragment,
+  AllCertifyScorecardFragment,
+  AllCertifyVexStatementFragment,
   AllHashEqualTreeFragment,
   AllHasSbomTreeFragment,
-  AllHasSlsaTreeFragment,
-  AllHasSourceAtTreeFragment,
+  AllSlsaTreeFragment,
+  AllHasSourceAtFragment,
   AllIsDependencyTreeFragment,
   AllIsOccurrencesTreeFragment,
-  AllIsVulnerabilityTreeFragment,
-  AllOsvTreeFragment,
-  AllPkgEqualTreeFragment,
+  AllCertifyVulnFragment,
+  AllPkgEqualFragment,
   AllPkgTreeFragment,
-  AllSrcTreeFragment,
+  AllSourceTreeFragment,
 } from "@/gql/__generated__/graphql";
 
 export type NodeFragment =
   | AllArtifactTreeFragment
   | AllBuilderTreeFragment
-  | AllCveTreeFragment
-  | AllCertifyBadTreeFragment
-  | AllCertifyGoodTreeFragment
-  | AllCertifyScorecardTreeFragment
-  | AllCertifyVexStatementTreeFragment
-  | AllCertifyVulnTreeFragment
-  | AllGhsaTreeFragment
+  | AllCertifyBadFragment
+  | AllCertifyGoodFragment
+  | AllCertifyScorecardFragment
+  | AllCertifyVexStatementFragment
+
   | AllHasSbomTreeFragment
-  | AllHasSlsaTreeFragment
-  | AllHasSourceAtTreeFragment
+  | AllSlsaTreeFragment
+  | AllHasSourceAtFragment
   | AllHashEqualTreeFragment
   | AllIsDependencyTreeFragment
   | AllIsOccurrencesTreeFragment
-  | AllIsVulnerabilityTreeFragment
-  | AllOsvTreeFragment
+  | AllCertifyVulnFragment
   | AllPkgTreeFragment
-  | AllPkgEqualTreeFragment
-  | AllSrcTreeFragment;
+  | AllPkgEqualFragment
+  | AllSourceTreeFragment;
