@@ -7,7 +7,8 @@ import { useGraphData } from "@/hooks/useGraphData";
 import { useContainerSize } from "@/hooks/useContainerSize";
 import { usePackageData } from "@/hooks/usePackageData";
 import PackageSelector from "@/components/packages/packageSelector";
-import { NodeFragment } from "@/gql/types/nodeFragment";
+import { Breadcrumb } from "@/components/breadcrumb";
+import { NavigationButtons } from "@/components/navigationButton";
 
 export default function Home() {
   const [highlights, setHighlights] = useState({
@@ -28,11 +29,17 @@ export default function Home() {
   const { packageTypes, packageLoading, packageError } = usePackageData();
   const [currentNodeId, setCurrentNodeId] = useState(null);
 
-  const { containerRef, size } = useContainerSize();
+  const [breadcrumb, setBreadcrumb] = useState<{ label: string; id: string }[]>(
+    []
+  );
+  const [backStack, setBackStack] = useState([]);
+  const [forwardStack, setForwardStack] = useState([]);
+  const [currentNode, setCurrentNode] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [firstNode, setFirstNode] = useState(null);
+  const [userInteractedWithPath, setUserInteractedWithPath] = useState(false);
 
-  const handleNodeClick = useCallback((node: NodeFragment) => {
-    setCurrentNodeId(node.id);
-  }, []);
+  const { containerRef, size } = useContainerSize();
 
   useEffect(() => {
     if (currentNodeId !== null) {
@@ -40,9 +47,92 @@ export default function Home() {
     }
   }, [currentNodeId]);
 
+  const handleBreadcrumbClick = (nodeIndex: number) => {
+    const newBackStack = breadcrumb.slice(0, nodeIndex);
+    const newForwardStack = breadcrumb.slice(nodeIndex + 1);
+
+    setBackStack(newBackStack);
+    setForwardStack(newForwardStack);
+    setCurrentNode(breadcrumb[nodeIndex]);
+    setCurrentIndex(nodeIndex);
+
+    fetchAndSetGraphData(breadcrumb[nodeIndex].id);
+  };
+
+  const handleNodeClick = useCallback(
+    (node) => {
+      setUserInteractedWithPath(true);
+
+      if (currentNode) {
+        setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
+      }
+      setForwardStack([]);
+
+      setCurrentNode(node);
+
+      let nodeName = node.label || "Unnamed Node";
+      const count = breadcrumb.filter(
+        (item) => item.label.split("[")[0] === nodeName
+      ).length;
+
+      if (count > 0) {
+        nodeName = `${nodeName}[${count + 1}]`;
+      }
+
+      setBreadcrumb((prevBreadcrumb) => {
+        const newBreadcrumb = [
+          ...prevBreadcrumb.slice(0, currentIndex + 1),
+          { label: nodeName, id: node.id },
+        ];
+        setCurrentIndex(newBreadcrumb.length - 1);
+        return newBreadcrumb;
+      });
+
+      fetchAndSetGraphData(node.id);
+    },
+    [currentNode, breadcrumb, firstNode]
+  );
+
+  const handleBackClick = () => {
+    if (currentIndex === 0 || backStack.length === 0) return;
+
+    const newForwardStack = [currentNode, ...forwardStack];
+    const newBackStack = [...backStack];
+    const lastNode = newBackStack.pop();
+
+    setCurrentNode(lastNode);
+    setCurrentIndex(currentIndex - 1);
+    setForwardStack(newForwardStack);
+    setBackStack(newBackStack);
+
+    fetchAndSetGraphData(lastNode.id);
+  };
+
+  const handleForwardClick = () => {
+    if (currentIndex >= breadcrumb.length - 1 || forwardStack.length === 0)
+      return;
+
+    const newForwardStack = [...forwardStack];
+    const nextNode = newForwardStack.shift();
+    const newBackStack = [...backStack, currentNode];
+
+    setCurrentNode(nextNode);
+    setCurrentIndex(currentIndex + 1);
+    setBackStack(newBackStack);
+    setForwardStack(newForwardStack);
+
+    fetchAndSetGraphData(nextNode.id);
+  };
+
   const reset = () => {
     if (initialGraphData) {
       setGraphData(initialGraphData);
+      setBackStack([]);
+      setForwardStack([]);
+      setCurrentNode(null);
+      setFirstNode(null);
+      setBreadcrumb([]);
+      setUserInteractedWithPath(false);
     }
   };
 
@@ -83,6 +173,11 @@ export default function Home() {
             className="lg:col-span-3 row-span-3 h-full w-full"
             ref={containerRef}
           >
+            <Breadcrumb
+              breadcrumb={breadcrumb.map((item) => item.label)}
+              handleNodeClick={handleBreadcrumbClick}
+              currentIndex={currentIndex}
+            />
             <Graph
               graphData={graphData}
               onNodeClick={handleNodeClick}
@@ -98,6 +193,15 @@ export default function Home() {
               }}
             />
           </div>
+          <NavigationButtons
+            backStack={backStack}
+            breadcrumb={breadcrumb}
+            currentIndex={currentIndex}
+            handleBackClick={handleBackClick}
+            handleForwardClick={handleForwardClick}
+            reset={reset}
+            userInteractedWithPath={userInteractedWithPath}
+          />
         </div>
       </main>
     </>

@@ -199,9 +199,6 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
         onNodeClick={onNodeClick ?? handleClick}
         onNodeRightClick={(node: NodeObject, event: MouseEvent) => {
           event.preventDefault();
-          console.log(`Right clicked on node with id: ${node.id}`);
-          console.log(node);
-
           let [content, plainText] = buildTooltipContent(cloneDeep(node));
           setTooltipStyle({
             display: "block",
