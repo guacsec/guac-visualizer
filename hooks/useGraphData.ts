@@ -1,31 +1,42 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { GraphDataWithMetadata } from '@/components/graph/types';
-import { NodeFragment } from '@/gql/types/nodeFragment';
-import { fetchNeighbors, GetNodeById, parseAndFilterGraph } from '@/utils/graph_queries';
-import { ParseNode } from '@/utils/ggraph';
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { GraphDataWithMetadata } from "@/components/graph/types";
+import { NodeFragment } from "@/gql/types/nodeFragment";
+import {
+  fetchNeighbors,
+  GetNodeById,
+  parseAndFilterGraph,
+} from "@/utils/graph_queries";
+import { ParseNode } from "@/utils/ggraph";
 
 export function useGraphData() {
   const searchParams = useSearchParams();
-  const [graphData, setGraphData] = useState<GraphDataWithMetadata>({ nodes: [], links: [] });
-  const [initialGraphData, setInitialGraphData] = useState<GraphDataWithMetadata | null>(null);
+  const [graphData, setGraphData] = useState<GraphDataWithMetadata>({
+    nodes: [],
+    links: [],
+  });
+  const [initialGraphData, setInitialGraphData] =
+    useState<GraphDataWithMetadata | null>(null);
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
 
+  // fetch and parse node information by IDs
   const fetchAndParseNodes = (nodeIds: string[]) =>
-  Promise.all(nodeIds.map((nodeId) => GetNodeById(nodeId))).then((nodes) =>
-    nodes.map((node) => ParseNode(node.node as NodeFragment))
-  );
+    Promise.all(nodeIds.map((nodeId) => GetNodeById(nodeId))).then((nodes) =>
+      nodes.map((node) => ParseNode(node.node as NodeFragment))
+    );
 
-const generateGraphDataFromNodes = (parsedNodes: any[]) => {
-  let graphData: GraphDataWithMetadata = { nodes: [], links: [] };
-  parsedNodes.forEach((parsedNode) =>
-    parseAndFilterGraph(graphData, parsedNode)
-  );
-  return graphData;
-};
+  // generate graph data from parsed nodes
+  const generateGraphDataFromNodes = (parsedNodes: any[]) => {
+    let graphData: GraphDataWithMetadata = { nodes: [], links: [] };
+    parsedNodes.forEach((parsedNode) =>
+      parseAndFilterGraph(graphData, parsedNode)
+    );
+    return graphData;
+  };
 
+  // fetch neighbor nodes and set new graph data
   const fetchAndSetGraphData = async (id: string | number) => {
     try {
       const res = await fetchNeighbors(id.toString());
@@ -40,6 +51,7 @@ const generateGraphDataFromNodes = (parsedNodes: any[]) => {
     }
   };
 
+  // load graph data based on an array of node IDs
   const loadGraphData = async (nodeIds: string[]) => {
     try {
       const parsedNodes = await fetchAndParseNodes(nodeIds);
@@ -51,6 +63,7 @@ const generateGraphDataFromNodes = (parsedNodes: any[]) => {
     }
   };
 
+  // set the initial graph data and the current graph data
   const setGraphDataWithInitial = (data: GraphDataWithMetadata) => {
     setGraphData(data);
     if (!initialGraphData) {
@@ -58,9 +71,10 @@ const generateGraphDataFromNodes = (parsedNodes: any[]) => {
     }
   };
 
-  const fetchData = async () => {
+  // fetch data based on query parameters
+  const fetchDataFromQueryParams = async () => {
     try {
-      const myQuery = searchParams.get('path');
+      const myQuery = searchParams.get("path");
 
       if (myQuery && !renderedInitialGraph) {
         const nodeIds = myQuery.split(",");
@@ -76,9 +90,8 @@ const generateGraphDataFromNodes = (parsedNodes: any[]) => {
     }
   };
 
-
   useEffect(() => {
-    fetchData();
+    fetchDataFromQueryParams();
   }, [renderedInitialGraph, searchParams]);
 
   return {
