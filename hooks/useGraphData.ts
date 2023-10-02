@@ -13,6 +13,7 @@ import { ParseNode } from "@/utils/ggraph";
 
 export function useGraphData() {
   const searchParams = useSearchParams();
+
   const [graphData, setGraphData] = useState<GraphDataWithMetadata>({
     nodes: [],
     links: [],
@@ -20,6 +21,16 @@ export function useGraphData() {
   const [initialGraphData, setInitialGraphData] =
     useState<GraphDataWithMetadata | null>(null);
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
+
+  const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
+
+  const addBreadcrumb = (nodeId: string) => {
+    setBreadcrumbs([...breadcrumbs, nodeId]);
+  };
+
+  const removeBreadcrumbsFromIndex = (index: number) => {
+    setBreadcrumbs(breadcrumbs.slice(0, index + 1));
+  };
 
   // fetch and parse node information by IDs
   const fetchAndParseNodes = (nodeIds: string[]) =>
@@ -102,5 +113,8 @@ export function useGraphData() {
     fetchAndSetGraphData,
     loadGraphData,
     setGraphDataWithInitial,
+    breadcrumbs,
+    addBreadcrumb,
+    removeBreadcrumbsFromIndex,
   };
 }
