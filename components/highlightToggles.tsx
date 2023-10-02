@@ -1,5 +1,5 @@
 import React from "react";
-import { Toggle } from "@/components/guac/toggleSwitch";
+import { Toggle } from "@/components/packages/toggleSwitch";
 
 interface HighlightTogglesProps {
   highlights: {

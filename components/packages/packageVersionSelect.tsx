@@ -1,16 +1,16 @@
 import client from "@/apollo/client";
-import { parseAndFilterGraph } from "@/app/graph_queries";
+import { parseAndFilterGraph } from "@/utils/graph_queries";
 import {
   AllPkgTreeFragment,
   NeighborsDocument,
   PackagesDocument,
 } from "@/gql/__generated__/graphql";
 import React from "react";
-import { ParseNode } from "@/app/ggraph";
+import { ParseNode } from "@/utils/ggraph";
 import PackageGenericSelector, {
   PackageSelectorOption,
-} from "@/components/guac/packageGenericSelector";
-import { VersionQueryVersion } from "@/components/guac/packageNameSelect";
+} from "@/components/packages/packageGenericSelector";
+import { VersionQueryVersion } from "@/components/packages/packageNameSelect";
 import { GraphDataWithMetadata } from "@/components/graph/types";
 
 type PackageNamespaceQuerySpec = {

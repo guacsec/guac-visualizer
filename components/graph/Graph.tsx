@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useRef } from "react";
-import ForceGraph2D from "@/app/ForceGraph2DWrapper";
+import ForceGraph2D from "@/components/graph/ForceGraph2DWrapper";
 import GuacVizThemeContext from "@/store/themeContext";
 import {
   GraphDataWithMetadata,
