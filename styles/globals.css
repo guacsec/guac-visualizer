@@ -33,12 +33,11 @@ label {
   height: 30px;
 }
 
-input[type='checkbox'] {
+input[type="checkbox"] {
   opacity: 0;
   width: 0;
   height: 0;
 }
-
 
 .toggle_span {
   position: absolute;
@@ -84,4 +83,4 @@ strong {
   line-height: 30px;
   margin-left: 10px;
   cursor: pointer;
-} 
+}

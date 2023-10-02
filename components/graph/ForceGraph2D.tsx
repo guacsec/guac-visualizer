@@ -166,7 +166,7 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
   };
 
   return (
-    <>
+    <div className="aspect-w-1 aspect-h-1">
       <Tooltip
         style={tooltipStyle}
         content={tooltipContent}
@@ -225,7 +225,7 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
         nodeCanvasObject={nodeCanvasObject}
         onNodeDragEnd={onNodeDragEnd}
       />
-    </>
+    </div>
   );
 };
 

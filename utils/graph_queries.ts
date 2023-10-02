@@ -3,7 +3,7 @@ import {
   NeighborsDocument,
   NodeDocument,
 } from "@/gql/__generated__/graphql";
-import { GuacGraphData } from "@/app/ggraph";
+import { GuacGraphData } from "@/utils/ggraph";
 import { GraphDataWithMetadata } from "@/components/graph/types";
 
 export async function fetchNeighbors(id: string) {

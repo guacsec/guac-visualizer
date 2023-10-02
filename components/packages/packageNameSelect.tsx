@@ -6,7 +6,7 @@ import {
 import React, { Dispatch, SetStateAction } from "react";
 import PackageGenericSelector, {
   PackageSelectorOption,
-} from "@/components/guac/packageGenericSelector";
+} from "@/components/packages/packageGenericSelector";
 
 export type VersionQueryVersion = {
   __typename?: "PackageVersion";

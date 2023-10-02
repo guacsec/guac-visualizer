@@ -3,7 +3,7 @@ import { PackageNamespacesDocument } from "@/gql/__generated__/graphql";
 import React, { Dispatch, SetStateAction } from "react";
 import PackageGenericSelector, {
   PackageSelectorOption,
-} from "@/components/guac/packageGenericSelector";
+} from "@/components/packages/packageGenericSelector";
 
 const PackageTypeSelect = ({
   label,

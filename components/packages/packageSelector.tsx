@@ -1,11 +1,11 @@
-import PackageTypeSelect from "@/components/guac/packageTypeSelect";
-import PackageNamespaceSelect from "@/components/guac/packageNamespaceSelect";
+import PackageTypeSelect from "@/components/packages/packageTypeSelect";
+import PackageNamespaceSelect from "@/components/packages/packageNamespaceSelect";
 import PackageNameSelect, {
   VersionQueryVersion,
-} from "@/components/guac/packageNameSelect";
-import PackageVersionSelect from "@/components/guac/packageVersionSelect";
+} from "@/components/packages/packageNameSelect";
+import PackageVersionSelect from "@/components/packages/packageVersionSelect";
 import { useState } from "react";
-import { PackageSelectorOption } from "@/components/guac/packageGenericSelector";
+import { PackageSelectorOption } from "@/components/packages/packageGenericSelector";
 import { GraphDataWithMetadata } from "@/components/graph/types";
 
 export const INITIAL_PACKAGE_NAMESPACES: PackageSelectorOption<string>[] = [

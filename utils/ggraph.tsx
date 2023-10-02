@@ -14,9 +14,6 @@ import {
   Artifact,
   IsOccurrence,
   Builder,
-  Osv,
-  Ghsa,
-  IsVulnerability,
   CertifyVexStatement,
   HashEqual,
   CertifyBad,
@@ -25,8 +22,11 @@ import {
   HasSourceAt,
   HasSbom,
   HasSlsa,
-  Cve,
-  NoVuln,
+  Vulnerability,
+  VulnerabilityMetadata,
+  VulnEqual,
+  License,
+  CertifyLegal,
 } from "@/gql/__generated__/graphql";
 
 export type Node = {
@@ -59,10 +59,7 @@ export function IsSwTreeNode(n: gqlNode): boolean {
     case "Source":
     case "Artifact":
     case "Builder":
-    case "CVE":
-    case "OSV":
-    case "GHSA":
-    case "NoVuln":
+    case "Vulnerability":
       return true;
   }
   return false;
@@ -89,58 +86,55 @@ export function ParseNode(
     case "Builder":
       [gd, target] = parseBuilder(n);
       break;
-    case "CVE":
-      [gd, target] = parseCve(n);
-      break;
-    case "OSV":
-      [gd, target] = parseOsv(n);
-      break;
-    case "GHSA":
-      [gd, target] = parseGhsa(n);
-      break;
-    case "NoVuln":
-      [gd, target] = parseNoVuln(n);
-      break;
 
     // Evidence trees
     case "IsDependency":
-      [gd, target] = parseIsDependency(n);
+      [gd, target] = parseIsDependency(n as IsDependency);
       break;
     case "PkgEqual":
-      [gd, target] = parsePkgEqual(n);
+      [gd, target] = parsePkgEqual(n as PkgEqual);
       break;
     case "IsOccurrence":
-      [gd, target] = parseIsOccurrence(n);
-      break;
-    case "IsVulnerability":
-      [gd, target] = parseIsVulnerability(n);
+      [gd, target] = parseIsOccurrence(n as IsOccurrence);
       break;
     case "CertifyVEXStatement":
-      [gd, target] = parseCertifyVexStatement(n);
+      [gd, target] = parseCertifyVexStatement(n as CertifyVexStatement);
       break;
     case "HashEqual":
-      [gd, target] = parseHashEqual(n);
+      [gd, target] = parseHashEqual(n as HashEqual);
       break;
     case "CertifyBad":
-      [gd, target] = parseCertifyBad(n);
+      [gd, target] = parseCertifyBad(n as CertifyBad);
       break;
     case "CertifyGood":
-      [gd, target] = parseCertifyGood(n);
+      [gd, target] = parseCertifyGood(n as CertifyGood);
+      break;
+    case "CertifyLegal":
+      [gd, target] = parseCertifyLegal(n as CertifyLegal);
+      break;
+    case "License":
+      [gd, target] = parseLicense(n as License);
+      break;
+    case "VulnEqual":
+      [gd, target] = parseVulnEqual(n as VulnEqual);
       break;
     case "CertifyScorecard":
-      [gd, target] = parseCertifyScorecard(n);
+      [gd, target] = parseCertifyScorecard(n as CertifyScorecard);
       break;
     case "CertifyVuln":
-      [gd, target] = parseCertifyVuln(n);
+      [gd, target] = parseCertifyVuln(n as CertifyVuln);
       break;
     case "HasSourceAt":
-      [gd, target] = parseHasSourceAt(n);
+      [gd, target] = parseHasSourceAt(n as HasSourceAt);
       break;
     case "HasSBOM":
-      [gd, target] = parseHasSbom(n);
+      [gd, target] = parseHasSbom(n as HasSbom);
       break;
     case "HasSLSA":
-      [gd, target] = parseHasSlsa(n);
+      [gd, target] = parseHasSlsa(n as HasSlsa);
+      break;
+    case "Vulnerability": // Add this case
+      [gd, target] = parseVulnerability(n); // You'll need to implement this function
       break;
 
     default:
@@ -307,48 +301,8 @@ export function parseBuilder(n: Builder): [GuacGraphData, Node | undefined] {
   return [{ nodes: nodes, edges: [] }, target];
 }
 
-export function parseOsv(n: Osv): [GuacGraphData, Node | undefined] {
-  let nodes: Node[] = [];
-  let target: Node | undefined = undefined;
-
-  nodes = [...nodes, { data: { id: n.id, label: n.osvId, type: "Osv" } }];
-  target = nodes.at(-1);
-
-  return [{ nodes: nodes, edges: [] }, target];
-}
-
-export function parseNoVuln(n: NoVuln): [GuacGraphData, Node | undefined] {
-  let nodes: Node[] = [];
-  let target: Node | undefined = undefined;
-
-  nodes = [...nodes, { data: { id: n.id, label: "NoVuln", type: "NoVuln" } }];
-  target = nodes.at(-1);
-
-  return [{ nodes: nodes, edges: [] }, target];
-}
-
-export function parseGhsa(n: Ghsa): [GuacGraphData, Node | undefined] {
-  let nodes: Node[] = [];
-  let target: Node | undefined = undefined;
-
-  nodes = [...nodes, { data: { id: n.id, label: n.ghsaId, type: "Ghsa" } }];
-  target = nodes.at(-1);
-
-  return [{ nodes: nodes, edges: [] }, target];
-}
-
-export function parseCve(n: Cve): [GuacGraphData, Node | undefined] {
-  let nodes: Node[] = [];
-  let target: Node | undefined = undefined;
-
-  nodes = [...nodes, { data: { id: n.id, label: n.cveId, type: "Cve" } }];
-  target = nodes.at(-1);
-
-  return [{ nodes: nodes, edges: [] }, target];
-}
-
-export function parseIsVulnerability(
-  n: IsVulnerability
+export function parseVulnerability(
+  n: Vulnerability
 ): [GuacGraphData, Node | undefined] {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
@@ -356,55 +310,27 @@ export function parseIsVulnerability(
 
   nodes = [
     ...nodes,
-    {
-      data: {
-        ...n,
-        id: n.id,
-        label: "vuln",
-        type: "IsVulnerability",
-        expanded: "true",
-      },
-    },
+    { data: { id: n.id, label: n.type, type: "Vulnerability" } },
   ];
-  target = nodes.at(-1);
 
-  let [gd, t] = parseOsv(n.osv);
-  nodes = [...nodes, ...gd.nodes];
-  edges = [...edges, ...gd.edges];
-
-  if (t != undefined) {
+  n.vulnerabilityIDs.forEach((vulnID) => {
+    nodes = [
+      ...nodes,
+      {
+        data: {
+          id: vulnID.id,
+          label: vulnID.vulnerabilityID,
+          type: "VulnerabilityID",
+        },
+      },
+    ];
     edges = [
       ...edges,
-      { data: { source: n.id, target: t.data.id, label: "subject" } },
+      { data: { source: n.id, target: vulnID.id, label: "has_vuln_id" } },
     ];
-  }
+  });
 
-  if (n.vulnerability.__typename == "CVE") {
-    [gd, t] = parseCve(n.vulnerability);
-    nodes = [...nodes, ...gd.nodes];
-    edges = [...edges, ...gd.edges];
-    if (t != undefined) {
-      edges = [
-        ...edges,
-        {
-          data: { source: n.id, target: t.data.id, label: "is_vulnerability" },
-        },
-      ];
-    }
-  } else if (n.vulnerability.__typename == "GHSA") {
-    [gd, t] = parseGhsa(n.vulnerability);
-    nodes = [...nodes, ...gd.nodes];
-    edges = [...edges, ...gd.edges];
-    if (t != undefined) {
-      edges = [
-        ...edges,
-        {
-          data: { source: n.id, target: t.data.id, label: "is_vulnerability" },
-        },
-      ];
-    }
-  }
-
+  target = nodes.at(-1);
   return [{ nodes: nodes, edges: edges }, target];
 }
 
@@ -440,51 +366,27 @@ export function parseCertifyVuln(
     ];
   }
 
-  if (n.vulnerability.__typename == "CVE") {
-    [gd, t] = parseCve(n.vulnerability);
+  if (n.vulnerability.type === "Vulnerability") {
+    [gd, t] = parseVulnerability(n.vulnerability);
     nodes = [...nodes, ...gd.nodes];
     edges = [...edges, ...gd.edges];
     if (t != undefined) {
       edges = [
         ...edges,
         {
-          data: { source: n.id, target: t.data.id, label: "is_vulnerability" },
+          data: { source: n.id, target: t.data.id, label: "vulnerability" },
         },
       ];
     }
-  } else if (n.vulnerability.__typename == "GHSA") {
-    [gd, t] = parseGhsa(n.vulnerability);
+  } else if (n.vulnerability.type === "NoVuln") {
+    [gd, t] = parseVulnerability(n.vulnerability);
     nodes = [...nodes, ...gd.nodes];
     edges = [...edges, ...gd.edges];
     if (t != undefined) {
       edges = [
         ...edges,
         {
-          data: { source: n.id, target: t.data.id, label: "is_vulnerability" },
-        },
-      ];
-    }
-  } else if (n.vulnerability.__typename == "OSV") {
-    [gd, t] = parseOsv(n.vulnerability);
-    nodes = [...nodes, ...gd.nodes];
-    edges = [...edges, ...gd.edges];
-    if (t != undefined) {
-      edges = [
-        ...edges,
-        {
-          data: { source: n.id, target: t.data.id, label: "is_vulnerability" },
-        },
-      ];
-    }
-  } else if (n.vulnerability.__typename == "NoVuln") {
-    [gd, t] = parseNoVuln(n.vulnerability);
-    nodes = [...nodes, ...gd.nodes];
-    edges = [...edges, ...gd.edges];
-    if (t != undefined) {
-      edges = [
-        ...edges,
-        {
-          data: { source: n.id, target: t.data.id, label: "is_vulnerability" },
+          data: { source: n.id, target: t.data.id, label: "vulnerability" },
         },
       ];
     }
@@ -537,44 +439,6 @@ export function parseCertifyVexStatement(
       edges = [
         ...edges,
         { data: { source: n.id, target: t.data.id, label: "subject" } },
-      ];
-    }
-  }
-
-  if (n.vulnerability.__typename == "CVE") {
-    [gd, t] = parseCve(n.vulnerability);
-    nodes = [...nodes, ...gd.nodes];
-    edges = [...edges, ...gd.edges];
-    if (t != undefined) {
-      edges = [
-        ...edges,
-        {
-          data: { source: n.id, target: t.data.id, label: "is_vulnerability" },
-        },
-      ];
-    }
-  } else if (n.vulnerability.__typename == "GHSA") {
-    [gd, t] = parseGhsa(n.vulnerability);
-    nodes = [...nodes, ...gd.nodes];
-    edges = [...edges, ...gd.edges];
-    if (t != undefined) {
-      edges = [
-        ...edges,
-        {
-          data: { source: n.id, target: t.data.id, label: "is_vulnerability" },
-        },
-      ];
-    }
-  } else if (n.vulnerability.__typename == "OSV") {
-    [gd, t] = parseOsv(n.vulnerability);
-    nodes = [...nodes, ...gd.nodes];
-    edges = [...edges, ...gd.edges];
-    if (t != undefined) {
-      edges = [
-        ...edges,
-        {
-          data: { source: n.id, target: t.data.id, label: "is_vulnerability" },
-        },
       ];
     }
   }
@@ -846,7 +710,7 @@ export function parseHasSbom(n: HasSbom): [GuacGraphData, Node | undefined] {
       edges = [
         ...edges,
         {
-          data: { source: n.id, target: t.data.id, label: "is_vulnerability" },
+          data: { source: n.id, target: t.data.id, label: "vulnerability" },
         },
       ];
     }
@@ -858,7 +722,7 @@ export function parseHasSbom(n: HasSbom): [GuacGraphData, Node | undefined] {
       edges = [
         ...edges,
         {
-          data: { source: n.id, target: t.data.id, label: "is_vulnerability" },
+          data: { source: n.id, target: t.data.id, label: "vulnerability" },
         },
       ];
     }
@@ -970,7 +834,7 @@ export function parseIsDependency(
     ];
   }
 
-  [gd, t] = parsePackage(n.dependentPackage);
+  [gd, t] = parsePackage(n.dependencyPackage);
   nodes = [...nodes, ...gd.nodes];
   edges = [...edges, ...gd.edges];
 
@@ -1079,5 +943,112 @@ export function parseIsOccurrence(
     ];
   }
 
+  return [{ nodes: nodes, edges: edges }, target];
+}
+
+export function parseLicense(n: License): [GuacGraphData, Node | undefined] {
+  let nodes: Node[] = [];
+  let edges: Edge[] = [];
+  let target: Node | undefined = undefined;
+
+  nodes = [
+    ...nodes,
+    {
+      data: {
+        id: n.id,
+        label: n.name,
+        type: "License",
+      },
+    },
+  ];
+
+  target = nodes.at(-1);
+  return [{ nodes: nodes, edges: edges }, target];
+}
+
+export function parseVulnEqual(
+  n: VulnEqual
+): [GuacGraphData, Node | undefined] {
+  let nodes: Node[] = [];
+  let edges: Edge[] = [];
+  let target: Node | undefined = undefined;
+
+  // Adding more attributes to the node
+  nodes = [
+    ...nodes,
+    {
+      data: {
+        ...n,
+        id: n.id,
+        label: "VulnEq",
+        type: "VulnEqual",
+        expanded: "true",
+      },
+    },
+  ];
+  target = nodes.at(-1);
+
+  let gd: GuacGraphData;
+  let t: Node | undefined;
+
+  if (n.vulnerabilities) {
+    n.vulnerabilities.forEach((vulnerability) => {
+      [gd, t] = parseVulnerability(vulnerability); // Assuming a function parseVulnerability exists
+      nodes = [...nodes, ...gd.nodes];
+      edges = [...edges, ...gd.edges];
+
+      if (t != undefined) {
+        edges = [
+          ...edges,
+          { data: { source: n.id, target: t.data.id, label: "is_vuln_equal" } },
+        ];
+      }
+    });
+  }
+
+  return [{ nodes: nodes, edges: edges }, target];
+}
+
+export function parseVulnerabilityMetadata(
+  n: VulnerabilityMetadata
+): [GuacGraphData, Node | undefined] {
+  let nodes: Node[] = [];
+  let edges: Edge[] = [];
+  let target = undefined;
+
+  nodes = [
+    ...nodes,
+    {
+      data: {
+        id: n.id,
+        label: n.origin,
+        type: "VulnerabilityMetadata",
+      },
+    },
+  ];
+
+  target = nodes.at(-1);
+  return [{ nodes: nodes, edges: edges }, target];
+}
+
+export function parseCertifyLegal(
+  n: CertifyLegal
+): [GuacGraphData, Node | undefined] {
+  let nodes: Node[] = [];
+  let edges: Edge[] = [];
+  let target = undefined;
+
+  nodes = [
+    ...nodes,
+    {
+      data: {
+        id: n.id,
+        label: n.origin,
+        type: "CertifyLegal",
+      },
+    },
+  ];
+
+  target = nodes.at(-1);
   return [{ nodes: nodes, edges: edges }, target];
 }

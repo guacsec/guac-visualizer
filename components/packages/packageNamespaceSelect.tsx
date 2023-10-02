@@ -2,7 +2,7 @@ import client from "@/apollo/client";
 import { PackageNamesDocument } from "@/gql/__generated__/graphql";
 import PackageGenericSelector, {
   PackageSelectorOption,
-} from "@/components/guac/packageGenericSelector";
+} from "@/components/packages/packageGenericSelector";
 
 const PackageNamespaceSelect = ({
   label,
