@@ -20,7 +20,7 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
   userInteractedWithPath,
 }) => {
   return (
-    <div className="py-10 my-5 flex space-x-3">
+    <div className=" mt-10 flex space-x-3">
       <button
         type="button"
         className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
