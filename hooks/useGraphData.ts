@@ -82,19 +82,23 @@ export function useGraphData() {
     }
   };
 
-  // fetch data based on query parameters
+  // fetch and update data based on query parameters
   const fetchDataFromQueryParams = async () => {
     try {
       const myQuery = searchParams.get("path");
 
-      if (myQuery && !renderedInitialGraph) {
+      if (myQuery) {
         const nodeIds = myQuery.split(",");
         const parsedNodes = await fetchAndParseNodes(nodeIds);
-        const graphData = await generateGraphDataFromNodes(parsedNodes);
 
-        setGraphData(graphData);
-        setInitialGraphData(graphData);
-        setRenderedInitialGraph(true);
+        if (parsedNodes.length > 0) {
+          const graphData = generateGraphDataFromNodes(parsedNodes);
+
+          setGraphData(graphData);
+          setInitialGraphData(graphData);
+        } else {
+          setGraphData({ nodes: [], links: [] });
+        }
       }
     } catch (error) {
       console.error("An error occurred:", error);
@@ -103,7 +107,7 @@ export function useGraphData() {
 
   useEffect(() => {
     fetchDataFromQueryParams();
-  }, [renderedInitialGraph, searchParams]);
+  }, [searchParams]);
 
   return {
     graphData,
