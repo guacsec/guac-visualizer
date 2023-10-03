@@ -32,6 +32,7 @@ const QueryCertifyVuln: React.FC = () => {
   };
 
   // updates the URL and graph data based on the first result's ID whenever the results state changes.
+  // note: this is temporary until a more stable URL parameter feature is built out
   useEffect(() => {
     if (results && results.length > 0) {
       const firstResultId = results[0].id;
@@ -50,11 +51,12 @@ const QueryCertifyVuln: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <h1 className="py-3 text-lg font-semibold">Query for a vulnerability</h1>
       <input
-        className="border rounded p-2 w-full mb-4"
+        className="border rounded p-2 mb-4"
         value={vulnerabilityID}
         onChange={(e) => setVulnerabilityID(e.target.value)}
-        placeholder="Certify Vulnerability ID"
+        placeholder="Enter vuln ID here..."
       />
       <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -65,26 +67,32 @@ const QueryCertifyVuln: React.FC = () => {
 
       {results ? (
         <div className="mt-4">
-          {results.map((item) => (
-            <div key={item.id} className="border p-4 rounded mb-4">
-              <h3 className="text-xl">
-                <span className="font-semibold">Node ID:</span> {item.id}
-              </h3>
-              <h3 className="text-xl">
-                <span className="font-semibold">Type: </span>
-                {item.package.type}
-              </h3>
-              <h3 className="text-xl mt-2">
-                <span className="font-semibold">Name: </span>{" "}
-                {item.package.namespaces[0].names[0].name}
-              </h3>
-              <h3 className="text-xl mt-2">
-                <span className="font-semibold">Vulnerability ID: </span>
-                {item.vulnerability.vulnerabilityIDs[0].vulnerabilityID}
-              </h3>
-              <p className="mt-2">Last Scanned: {item.metadata.timeScanned}</p>
-            </div>
-          ))}
+          {results.map((node) => {
+            return (
+              <div key={node.id} className="border p-4 rounded mb-4">
+                <h3 className="mt-2">
+                  <span className="font-semibold">Name: </span>{" "}
+                  {node.package.namespaces[0].names[0].name}
+                </h3>
+                <h3 className="mt-2">
+                  <span className="font-semibold">Version:</span>{" "}
+                  {node.package.namespaces[0].names[0].versions[0].version}
+                </h3>
+                <h3 className="mt-2">
+                  <span className="font-semibold">Type: </span>
+                  {node.package.type}
+                </h3>
+                <h3 className="mt-2">
+                  <span className="font-semibold">Vulnerability ID: </span>
+                  {node.vulnerability.vulnerabilityIDs[0].vulnerabilityID}
+                </h3>
+                <p className="mt-2">
+                  Last scanned on{" "}
+                  {new Date(node.metadata.timeScanned).toLocaleString()}
+                </p>
+              </div>
+            );
+          })}
         </div>
       ) : (
         searched && (
