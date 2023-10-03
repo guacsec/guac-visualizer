@@ -39,8 +39,6 @@ export const CERTIFY_VULN_QUERY = gql`
         scannerUri
         scannerVersion
         timeScanned
-        origin
-        collector
       }
     }
   }
