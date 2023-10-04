@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronDoubleRightIcon } from "@heroicons/react/24/solid";
+
 interface BreadcrumbProps {
   breadcrumb: string[];
   handleNodeClick: (nodeIndex: number) => void;
@@ -16,38 +17,34 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   }
 
   return (
-    <div className="flex" aria-label="Breadcrumb">
+    <div className="flex mt-3" aria-label="Breadcrumb">
       <ol
         role="list"
-        className="flex flex-wrap space-x-4 rounded-xl bg-white mt-10 px-6 shadow"
+        className="flex flex-wrap space-x-2 rounded-xl bg-white px-6 shadow"
       >
         {breadcrumb.map((label, index) => {
           const maxLabelLength = 25;
-          let truncatedLabel = label;
+          let truncatedLabel =
+            label.length > maxLabelLength
+              ? `${label.substr(0, maxLabelLength)}...`
+              : label;
 
-          if (label.length > maxLabelLength) {
-            truncatedLabel = label.substr(0, maxLabelLength) + "...";
-          }
+          const isActive = index === currentIndex;
 
           return (
-            <li className="flex" key={index}>
+            <li key={index} className="flex items-center">
               {index !== 0 && (
-                <ChevronDoubleRightIcon
-                  className="w-5 mx-1"
-                  style={{ color: "rgba(90, 75, 60, 0.3)" }}
-                />
+                <ChevronDoubleRightIcon className="w-5 mx-0.5 text-[rgba(90,75,60,0.3)]" />
               )}
               <button
                 onClick={() => handleNodeClick(index)}
-                className={`flex items-center ${
-                  index === currentIndex
-                    ? "bg-gray-300 font-bold text-black p-1 m-2"
-                    : ""
+                className={`flex items-center p-1 m-1 ${
+                  isActive
+                    ? "bg-gray-300 font-bold text-black rounded-lg"
+                    : "text-gray-500"
                 }`}
               >
-                <div className="text-gray-500">
-                  <span className="text-sm font-medium">{truncatedLabel}</span>
-                </div>
+                <span className="text-sm font-medium">{truncatedLabel}</span>
               </button>
             </li>
           );
