@@ -19,6 +19,7 @@ const PackageNamespaceSelect = ({
   setPackageNamesFunc: (value: PackageSelectorOption<string>[]) => void;
   packageType: string;
   resetNamespaceFunc: () => void;
+  disabled?: boolean;
 }) => {
   const onSelectPackageNamespace = (value: string) => {
     resetNamespaceFunc();

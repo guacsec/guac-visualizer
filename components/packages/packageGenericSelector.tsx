@@ -11,12 +11,14 @@ const PackageGenericSelector = <T extends unknown>({
   options,
   onSelect,
   className = "",
+  disabled = false,
   ...rest
 }: {
   label: string;
   options: PackageSelectorOption<T>[];
   onSelect: (value: T) => void;
   className?: string;
+  disabled?: boolean;
 }) => {
   return (
     <div className="flex flex-col w-full lg:w-52 space-y-2 text-lg dark:text-black">
@@ -26,6 +28,7 @@ const PackageGenericSelector = <T extends unknown>({
         onChange={(newValue: PackageSelectorOption<T>) => {
           onSelect(newValue.value);
         }}
+        isDisabled={disabled}
         {...rest}
       />
     </div>

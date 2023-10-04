@@ -11,6 +11,7 @@ const PackageTypeSelect = ({
   setPackageTypeFunc,
   setPackageNamespacesFunc,
   resetTypeFunc,
+  disabled,
   ...rest
 }: {
   label: string;
@@ -20,6 +21,7 @@ const PackageTypeSelect = ({
     SetStateAction<PackageSelectorOption<string>[]>
   >;
   resetTypeFunc: () => void;
+  disabled?: boolean;
 }) => {
   const onSelectPackageType = (value: string) => {
     resetTypeFunc();
@@ -49,6 +51,7 @@ const PackageTypeSelect = ({
       label={label}
       options={options}
       onSelect={onSelectPackageType}
+      className={disabled ? "cursor-not-allowed opacity-50" : ""}
       {...rest}
     />
   );

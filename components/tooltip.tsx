@@ -17,7 +17,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 }) => {
   return (
     <div
-      className="absolute font-mono p-2 rounded text-sm shadow-lg border-2 border-black overflow-auto flex items-center justify-center bg-white text-gray-900 list-none resize"
+      className="absolute p-2 rounded text-sm shadow-lg border-2 border-black overflow-auto flex items-center justify-center bg-white text-gray-900 list-none resize"
       style={{
         ...style,
         width: "400px",
