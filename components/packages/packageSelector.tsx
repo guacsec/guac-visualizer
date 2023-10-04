@@ -51,7 +51,7 @@ export default function PackageSelector({
   return (
     <div
       id="ptDiv"
-      className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm space-y-2 lg:flex"
+      className="z-10 w-full max-w-5xl items-center justify-between text-sm space-y-2 lg:flex"
     >
       <div className="left-0 flex w-full items-end justify-center lg:static lg:h-auto lg:w-auto lg:bg-none">
         <PackageTypeSelect
@@ -70,6 +70,7 @@ export default function PackageSelector({
           setPackageNamespaceFunc={setPackageNamespace}
           setPackageNamesFunc={setPackageNames}
           resetNamespaceFunc={resetName}
+          disabled={!packageType}
         />
       </div>
       <div className="left-0 flex w-full items-end justify-center bg-gradient-to-t lg:static lg:h-auto lg:w-auto lg:bg-none">
@@ -81,6 +82,7 @@ export default function PackageSelector({
           setPackageNameFunc={setPackageName}
           setPackageVersionsFunc={setPackageVersions}
           resetNameFunc={resetName}
+          disabled={!packageNamespace}
         />
       </div>
       <div className="left-0 flex w-full items-end justify-center bg-gradient-to-t lg:static lg:h-auto lg:w-auto lg:bg-none">
@@ -91,6 +93,7 @@ export default function PackageSelector({
           packageNamespace={packageNamespace}
           packageName={packageName}
           setGraphDataFunc={setGraphData}
+          disabled={!packageName}
         />
       </div>
     </div>

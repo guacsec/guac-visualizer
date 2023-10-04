@@ -37,6 +37,7 @@ const PackageNameSelect = ({
   packageType: string;
   packageNamespace: string;
   resetNameFunc: () => void;
+  disabled?: boolean;
 }) => {
   function toVersionString(v: VersionQueryVersion): string {
     return (

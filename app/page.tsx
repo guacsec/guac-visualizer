@@ -84,7 +84,7 @@ export default function Home() {
               />
             )}
             <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
-              <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
+              <div className="flex flex-col text-sm p-4 row-span-1 lg:col-span-1">
                 <div className="my-5 text-lg">Highlight Nodes</div>
                 <p className="pb-5 pt-3 opacity-70">
                   <span className="font-bold uppercase">Tip:</span> Use click
