@@ -72,20 +72,17 @@ export default function Home() {
                 resetTypeFunc={reset}
               />
             )}
-            <NavigationButtons
-              backStack={backStack}
-              breadcrumb={breadcrumb}
-              currentIndex={currentIndex}
-              handleBackClick={handleBackClick}
-              handleForwardClick={handleForwardClick}
-              reset={reset}
-              userInteractedWithPath={userInteractedWithPath}
-            />
-            <Breadcrumb
-              breadcrumb={breadcrumb.map((item) => item.label)}
-              handleNodeClick={handleBreadcrumbClick}
-              currentIndex={currentIndex}
-            />
+            {graphData.nodes.length !== 0 && (
+              <NavigationButtons
+                backStack={backStack}
+                breadcrumb={breadcrumb}
+                currentIndex={currentIndex}
+                handleBackClick={handleBackClick}
+                handleForwardClick={handleForwardClick}
+                reset={reset}
+                userInteractedWithPath={userInteractedWithPath}
+              />
+            )}
             <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full w-full gap-8 lg:gap-4">
               <div className="flex flex-col font-mono text-sm p-4 row-span-1 lg:col-span-1">
                 <div className="my-5 text-lg">Highlight Nodes</div>
@@ -124,6 +121,11 @@ export default function Home() {
                     width: size.width,
                     height: size.height,
                   }}
+                />
+                <Breadcrumb
+                  breadcrumb={breadcrumb.map((item) => item.label)}
+                  handleNodeClick={handleBreadcrumbClick}
+                  currentIndex={currentIndex}
                 />
               </div>
             </div>
