@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
 export function useContainerSize() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -16,8 +15,8 @@ export function useContainerSize() {
 
   useEffect(() => {
     updateSize();
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
   }, []);
 
   return { containerRef, size };
