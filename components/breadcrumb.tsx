@@ -16,13 +16,13 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   }
 
   return (
-    <nav className="flex" aria-label="Breadcrumb">
+    <div className="flex" aria-label="Breadcrumb">
       <ol
         role="list"
         className="flex flex-wrap space-x-4 rounded-xl bg-white mt-10 px-6 shadow"
       >
         {breadcrumb.map((label, index) => {
-          const maxLabelLength = 15;
+          const maxLabelLength = 25;
           let truncatedLabel = label;
 
           if (label.length > maxLabelLength) {
@@ -33,7 +33,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
             <li className="flex" key={index}>
               {index !== 0 && (
                 <ChevronDoubleRightIcon
-                  className="w-5"
+                  className="w-5 mx-1"
                   style={{ color: "rgba(90, 75, 60, 0.3)" }}
                 />
               )}
@@ -53,6 +53,6 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
           );
         })}
       </ol>
-    </nav>
+    </div>
   );
 };
