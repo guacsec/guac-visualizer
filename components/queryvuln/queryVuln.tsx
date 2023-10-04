@@ -51,7 +51,7 @@ const QueryCertifyVuln: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="py-3 text-lg font-semibold">Query for a vulnerability</h1>
+      <h1 className="py-3 text-lg font-semibold">Query vulnerability</h1>
       <input
         className="border rounded p-2 mb-4"
         value={vulnerabilityID}

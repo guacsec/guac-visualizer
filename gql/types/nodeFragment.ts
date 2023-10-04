@@ -15,6 +15,7 @@ import {
   AllPkgEqualFragment,
   AllPkgTreeFragment,
   AllSourceTreeFragment,
+  VulnerabilityId,
 } from "@/gql/__generated__/graphql";
 
 export type NodeFragment =
@@ -24,7 +25,7 @@ export type NodeFragment =
   | AllCertifyGoodFragment
   | AllCertifyScorecardFragment
   | AllCertifyVexStatementFragment
-
+  | VulnerabilityId
   | AllHasSbomTreeFragment
   | AllSlsaTreeFragment
   | AllHasSourceAtFragment
