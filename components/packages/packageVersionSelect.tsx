@@ -43,7 +43,6 @@ const PackageVersionSelect = ({
   packageType: string;
   packageNamespace: string;
   packageName: string;
-  disabled?: boolean;
 }) => {
   const onSelectPackageVersion = (option: VersionQueryVersion) => {
     let specVersion;

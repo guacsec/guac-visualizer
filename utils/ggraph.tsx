@@ -204,7 +204,7 @@ export function parsePackage(n: Package): [GuacGraphData, Node | undefined] {
             data: {
               ...version,
               id: version.id,
-              label: version.version,
+              label: version.version || "Package Version Unknown",
               type: "PackageVersion",
             },
           },
@@ -809,7 +809,7 @@ export function parseIsDependency(
       data: {
         ...n,
         id: n.id,
-        label: "Dep",
+        label: "depends on",
         type: "IsDependency",
         expanded: "true",
       },
@@ -956,7 +956,7 @@ export function parseLicense(n: License): [GuacGraphData, Node | undefined] {
     {
       data: {
         id: n.id,
-        label: n.name,
+        label: `License-${n.id}`,
         type: "License",
       },
     },
@@ -1043,7 +1043,7 @@ export function parseCertifyLegal(
     {
       data: {
         id: n.id,
-        label: n.origin,
+        label: `CertifyLegal-${n.id} ${n.origin}`,
         type: "CertifyLegal",
       },
     },
