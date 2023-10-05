@@ -1,6 +1,6 @@
 {
   "name": "guac-visualizer",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -22,9 +22,6 @@
     "@types/react-cytoscapejs": "^1.2.2",
     "@types/react-dom": "18.0.10",
     "autoprefixer": "^10.4.14",
-    "cytoscape": "3.23.0",
-    "cytoscape-cose-bilkent": "^4.1.0",
-    "cytoscape-spread": "^3.0.0",
     "deepmerge": "^4.3.0",
     "eslint": "8.32.0",
     "eslint-config-next": "^13.5.3",
@@ -62,8 +59,6 @@
     "@types/lodash": "^4.14.196",
     "@types/uuid": "^9.0.1",
     "cosmos-over-cytoscape": "^1.0.3",
-    "cytoscape-cola": "^2.5.1",
-    "cytoscape-dagre": "^2.5.0",
     "react-multi-select-component": "^4.3.4",
     "styled-components": "^5.3.9"
   }
