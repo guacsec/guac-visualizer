@@ -1,6 +1,4 @@
-import { useContext, useEffect, useState, useRef } from "react";
 import ForceGraph2D from "@/components/graph/ForceGraph2DWrapper";
-import GuacVizThemeContext from "@/store/themeContext";
 import {
   GraphDataWithMetadata,
   NodeMetadata,
@@ -27,45 +25,6 @@ const getMetadataFromGraphData = (graphData: {
   return { metadata: metadataObj, graphData: graphData };
 };
 
-const linkCanvasObject = (link, ctx) => {
-  const MAX_ARROW_SIZE = 6;
-  const ARROW_OFFSET = 5;
-  const LINE_COLOR = "black";
-  const ARROW_COLOR = "blue";
-
-  ctx.globalAlpha = 0.4;
-
-  const start = link.source;
-  const end = link.target;
-  if (typeof start !== "object" || typeof end !== "object") return;
-
-  const angle = Math.atan2(end.y - start.y, end.x - start.x);
-  const lineEndX = end.x - ARROW_OFFSET * Math.cos(angle);
-  const lineEndY = end.y - ARROW_OFFSET * Math.sin(angle);
-
-  ctx.lineWidth = 1;
-
-  ctx.beginPath();
-  ctx.moveTo(start.x, start.y);
-  ctx.lineTo(lineEndX, lineEndY);
-  ctx.strokeStyle = LINE_COLOR;
-  ctx.stroke();
-
-  const arrowAngle1 = angle + Math.PI / 7;
-  const arrowAngle2 = angle - Math.PI / 7;
-  const arrowX1 = lineEndX - MAX_ARROW_SIZE * Math.cos(arrowAngle1);
-  const arrowY1 = lineEndY - MAX_ARROW_SIZE * Math.sin(arrowAngle1);
-  const arrowX2 = lineEndX - MAX_ARROW_SIZE * Math.cos(arrowAngle2);
-  const arrowY2 = lineEndY - MAX_ARROW_SIZE * Math.sin(arrowAngle2);
-
-  ctx.beginPath();
-  ctx.moveTo(arrowX1, arrowY1);
-  ctx.lineTo(lineEndX, lineEndY);
-  ctx.lineTo(arrowX2, arrowY2);
-  ctx.fillStyle = ARROW_COLOR;
-  ctx.fill();
-};
-
 export default function Graph({
   graphData,
   options,
@@ -85,8 +44,7 @@ export default function Graph({
   };
   onNodeClick: (node: any) => void;
 }) {
-  const { isDarkTheme } = useContext(GuacVizThemeContext);
-  const bgColor = isDarkTheme ? "#909090" : "#e7e5e4";
+  const bgColor = "#e7e5e4";
 
   const { metadata } = getMetadataFromGraphData(graphData);
 
@@ -98,26 +56,15 @@ export default function Graph({
     return metadata[node.id]?.type;
   };
 
-  const [isGraphLoaded, setIsGraphLoaded] = useState(false);
-  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
-
-  useEffect(() => {
-    if (isGraphLoaded && ctxRef.current && ctxRef.current.canvas.__zoom) {
-      ctxRef.current.canvas.__zoom.x = 500;
-    }
-  }, [isGraphLoaded]);
-
   const nodeCanvasObject = (
     node: NodeObject,
     ctx: CanvasRenderingContext2D
   ) => {
-    ctxRef.current = ctx;
-
     const shapeSize = 10;
     const nodeType = nodeTypeFromNodeObject(node);
     const applyRedFillAndOutline =
       (options.highlightArtifact && nodeType === "Artifact") ||
-      (options.highlightVuln && nodeType === "CertifyVuln") ||
+      (options.highlightVuln && nodeType === "VulnerabilityID") ||
       (options.highlightSbom && nodeType === "IsDependency") ||
       (options.highlightBuilder && nodeType === "PackageType");
 
@@ -127,21 +74,59 @@ export default function Graph({
         ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
         ctx.shadowBlur = 3;
         ctx.fillRect(node.x - 6, node.y - 4, 12, 8);
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
         break;
       case "PackageName":
-        ctx.fillStyle = applyRedFillAndOutline ? "red" : "SteelBlue";
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "#7D0541";
         ctx.beginPath();
         ctx.arc(node.x, node.y, 6, 0, 2 * Math.PI, false);
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
         ctx.fill();
         break;
-
+      case "PackageVersion":
+        var side = 10;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
+        ctx.fillRect(node.x - side / 2, node.y - side / 2, side, side);
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
+        ctx.fill();
+        break;
       case "PackageNamespace":
         ctx.fillStyle = applyRedFillAndOutline ? "red" : "DarkOrchid";
         ctx.beginPath();
         ctx.arc(node.x, node.y, 6, 0, 2 * Math.PI, false);
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
         ctx.fill();
         break;
-
+      case "IsOccurrence":
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "NavajoWhite";
+        ctx.beginPath();
+        ctx.fillRect(node.x - side / 2, node.y - side / 2, side, side);
+        ctx.arc(node.x, node.y, 6, 0, 2 * Math.PI, false);
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
+        ctx.fill();
+        break;
+      case "HasSlsa":
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "PaleTurquoise";
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 6, 0, 2 * Math.PI, false);
+        ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+        ctx.shadowBlur = 3;
+        ctx.fill();
+        break;
+      case "Builder":
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "RebeccaPurple";
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 6, 0, 2 * Math.PI, false);
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
+        ctx.fill();
+        break;
       case "Vulnerability":
         ctx.fillStyle = applyRedFillAndOutline ? "red" : "Brown";
         ctx.beginPath();
@@ -152,10 +137,12 @@ export default function Graph({
         ctx.fill();
         break;
       case "VulnerabilityID":
-        ctx.fillStyle = applyRedFillAndOutline ? "red" : "DarkGoldenRod";
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "darkorange";
         ctx.beginPath();
         ctx.arc(node.x, node.y, 6, 0, 2 * Math.PI, false);
         ctx.fill();
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
         break;
       case "VulnEqual":
         ctx.fillStyle = applyRedFillAndOutline ? "red" : "DarkMagenta";
@@ -163,6 +150,8 @@ export default function Graph({
         ctx.arc(node.x, node.y, 6, 0, 2 * Math.PI, false);
         ctx.lineTo(node.x, node.y);
         ctx.closePath();
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
         ctx.fill();
         break;
       case "CertifyLegal":
@@ -209,13 +198,6 @@ export default function Graph({
         ctx.shadowBlur = 3;
         ctx.fill();
         break;
-      case "PackageVersion":
-        ctx.fillStyle = applyRedFillAndOutline ? "red" : "DarkTurquoise";
-        var side = 10;
-        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
-        ctx.shadowBlur = 3;
-        ctx.fillRect(node.x - side / 2, node.y - side / 2, side, side);
-        break;
       case "NoVuln":
         ctx.fillStyle = applyRedFillAndOutline ? "red" : "green";
         ctx.beginPath();
@@ -225,11 +207,51 @@ export default function Graph({
         ctx.fill();
         break;
       case "Artifact":
-        ctx.strokeStyle = "red";
         ctx.fillStyle = applyRedFillAndOutline ? "red" : "yellow";
         ctx.beginPath();
         ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
         ctx.stroke();
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
+        ctx.fill();
+        break;
+      case "HasSourceAt":
+        ctx.fillStyle = "#C4AEAD";
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
+        ctx.fill();
+        break;
+      case "SourceType":
+        ctx.fillStyle = "#997070";
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
+        ctx.fill();
+        break;
+      case "SourceName":
+        ctx.strokeStyle = "red";
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "SandyBrown";
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
+        ctx.fill();
+        break;
+      case "SourceNamespace":
+        ctx.fillStyle = "#C48189";
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
+        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+        ctx.shadowBlur = 3;
+        ctx.fill();
+        break;
+      case "CertifyScorecard":
+        ctx.fillStyle = "#7E354D";
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
         ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
         ctx.shadowBlur = 3;
         ctx.fill();
@@ -249,14 +271,13 @@ export default function Graph({
   return (
     <ForceGraph2D
       onNodeClick={(node) => {
-        setIsGraphLoaded(true);
         onNodeClick(node);
       }}
       bgdColor={bgColor}
       graphData={graphData}
       nodeLabel={nodeLabelFromNodeObject}
-      linkDirectionalArrowLength={1}
-      linkDirectionalArrowRelPos={20}
+      linkDirectionalArrowLength={9}
+      linkDirectionalArrowRelPos={3}
       linkDirectionalParticles={0}
       width={containerOptions.width}
       height={containerOptions.height}
@@ -265,8 +286,7 @@ export default function Graph({
         node.fy = node.y;
       }}
       nodeCanvasObject={nodeCanvasObject}
-      linkCanvasObject={linkCanvasObject}
-      d3AlphaDecay={0.00028}
+      d3AlphaDecay={0.000288}
       d3VelocityDecay={0.5}
     />
   );

@@ -53,18 +53,6 @@ export type GuacGraphData = {
   edges: Edge[];
 };
 
-export function IsSwTreeNode(n: gqlNode): boolean {
-  switch (n.__typename) {
-    case "Package":
-    case "Source":
-    case "Artifact":
-    case "Builder":
-    case "Vulnerability":
-      return true;
-  }
-  return false;
-}
-
 export function ParseNode(
   n: gqlNode | NodeFragment
 ): GuacGraphData | undefined {
@@ -186,7 +174,9 @@ export function parsePackage(n: Package): [GuacGraphData, Node | undefined] {
     ns.names.forEach((name: PackageName) => {
       nodes = [
         ...nodes,
-        { data: { id: name.id, label: name.name, type: "PackageName" } },
+        {
+          data: { id: name.id, label: `pkg:${name.name}`, type: "PackageName" },
+        },
       ];
 
       edges = [
@@ -196,27 +186,32 @@ export function parsePackage(n: Package): [GuacGraphData, Node | undefined] {
       if (name.versions.length == 0) {
         target = nodes.at(-1);
       }
-
-      name.versions.forEach((version: PackageVersion) => {
-        nodes = [
-          ...nodes,
-          {
-            data: {
-              ...version,
-              id: version.id,
-              label: version.version || "Package Version Unknown",
-              type: "PackageVersion",
+      if (name.versions.length !== 0) {
+        name.versions.forEach((version: PackageVersion) => {
+          nodes = [
+            ...nodes,
+            {
+              data: {
+                ...version,
+                id: version.id,
+                label: version.version,
+                type: "PackageVersion",
+              },
             },
-          },
-        ];
-        edges = [
-          ...edges,
-          {
-            data: { source: name.id, target: version.id, label: "pkgVersion" },
-          },
-        ];
-        target = nodes.at(-1);
-      });
+          ];
+          edges = [
+            ...edges,
+            {
+              data: {
+                source: name.id,
+                target: version.id,
+                label: "pkgVersion",
+              },
+            },
+          ];
+          target = nodes.at(-1);
+        });
+      }
     });
   });
   return [{ nodes: nodes, edges: edges }, target];
@@ -308,29 +303,32 @@ export function parseVulnerability(
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
-  nodes = [
-    ...nodes,
-    { data: { id: n.id, label: n.type, type: "Vulnerability" } },
-  ];
-
-  n.vulnerabilityIDs.forEach((vulnID) => {
+  if (n.type !== "novuln") {
     nodes = [
       ...nodes,
-      {
-        data: {
-          id: vulnID.id,
-          label: vulnID.vulnerabilityID,
-          type: "VulnerabilityID",
-        },
-      },
+      { data: { id: n.id, label: n.type, type: "Vulnerability" } },
     ];
-    edges = [
-      ...edges,
-      { data: { source: n.id, target: vulnID.id, label: "has_vuln_id" } },
-    ];
-  });
 
-  target = nodes.at(-1);
+    n.vulnerabilityIDs.forEach((vulnID) => {
+      nodes = [
+        ...nodes,
+        {
+          data: {
+            id: vulnID.id,
+            label: vulnID.vulnerabilityID,
+            type: "VulnerabilityID",
+          },
+        },
+      ];
+      edges = [
+        ...edges,
+        { data: { source: n.id, target: vulnID.id, label: "has_vuln_id" } },
+      ];
+    });
+
+    target = nodes.at(-1);
+  }
+
   return [{ nodes: nodes, edges: edges }, target];
 }
 
@@ -341,9 +339,12 @@ export function parseCertifyVuln(
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
-  nodes = [
-    ...nodes,
-    {
+  // if there's a valid vulnID and vulnerability type is not "NoVuln", i.e., there's no vulnerabilites to match nodes with, don't show CertifyVuln node
+  if (
+    n.vulnerability.vulnerabilityIDs[0].vulnerabilityID &&
+    n.vulnerability.type !== "NoVuln"
+  ) {
+    nodes.push({
       data: {
         ...n,
         id: n.id,
@@ -351,44 +352,42 @@ export function parseCertifyVuln(
         type: "CertifyVuln",
         expanded: "true",
       },
-    },
-  ];
-  target = nodes.at(-1);
+    });
 
-  let [gd, t] = parsePackage(n.package);
-  nodes = [...nodes, ...gd.nodes];
-  edges = [...edges, ...gd.edges];
+    n.vulnerability.vulnerabilityIDs.forEach((vulnID) => {
+      nodes.push({
+        data: {
+          id: vulnID.id,
+          label: vulnID.vulnerabilityID,
+          type: "VulnerabilityID",
+        },
+      });
+      edges.push({
+        data: { source: n.id, target: vulnID.id, label: "has_vuln_id" },
+      });
+    });
 
-  if (t != undefined) {
-    edges = [
-      ...edges,
-      { data: { source: n.id, target: t.data.id, label: "subject" } },
-    ];
-  }
+    target = nodes.at(-1);
 
-  if (n.vulnerability.type === "Vulnerability") {
-    [gd, t] = parseVulnerability(n.vulnerability);
+    let [gd, t] = parsePackage(n.package);
     nodes = [...nodes, ...gd.nodes];
     edges = [...edges, ...gd.edges];
+
     if (t != undefined) {
-      edges = [
-        ...edges,
-        {
-          data: { source: n.id, target: t.data.id, label: "vulnerability" },
-        },
-      ];
+      edges.push({
+        data: { source: n.id, target: t.data.id, label: "subject" },
+      });
     }
-  } else if (n.vulnerability.type === "NoVuln") {
-    [gd, t] = parseVulnerability(n.vulnerability);
-    nodes = [...nodes, ...gd.nodes];
-    edges = [...edges, ...gd.edges];
-    if (t != undefined) {
-      edges = [
-        ...edges,
-        {
+
+    if (n.vulnerability.type === "Vulnerability") {
+      [gd, t] = parseVulnerability(n.vulnerability);
+      nodes = [...nodes, ...gd.nodes];
+      edges = [...edges, ...gd.edges];
+      if (t != undefined) {
+        edges.push({
           data: { source: n.id, target: t.data.id, label: "vulnerability" },
-        },
-      ];
+        });
+      }
     }
   }
 
@@ -973,7 +972,6 @@ export function parseVulnEqual(
   let edges: Edge[] = [];
   let target: Node | undefined = undefined;
 
-  // Adding more attributes to the node
   nodes = [
     ...nodes,
     {
@@ -993,7 +991,7 @@ export function parseVulnEqual(
 
   if (n.vulnerabilities) {
     n.vulnerabilities.forEach((vulnerability) => {
-      [gd, t] = parseVulnerability(vulnerability); // Assuming a function parseVulnerability exists
+      [gd, t] = parseVulnerability(vulnerability);
       nodes = [...nodes, ...gd.nodes];
       edges = [...edges, ...gd.edges];
 

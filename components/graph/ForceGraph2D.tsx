@@ -31,7 +31,6 @@ type ForceGraph2DWrapperProps = {
     translate: { x: number; y: number }
   ) => void;
   bgdColor?: string;
-  linkCanvasObject: any;
   d3AlphaDecay: number;
   d3VelocityDecay: number;
 };
@@ -60,7 +59,6 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
   width,
   height,
   bgdColor,
-  linkCanvasObject,
   d3AlphaDecay,
   d3VelocityDecay,
 }) => {
@@ -172,7 +170,7 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
   };
 
   return (
-    <div className="aspect-w-1 aspect-h-1">
+    <div>
       <Tooltip
         style={tooltipStyle}
         content={tooltipContent}
@@ -221,13 +219,12 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
         linkDirectionalParticleWidth={10.5}
         linkSource={linkSource}
         linkTarget={linkTarget}
-        linkWidth={1000}
+        linkWidth={3}
         cooldownTicks={100}
         cooldownTime={15000}
         nodeCanvasObjectMode={nodeCanvasObjectMode}
         nodeCanvasObject={nodeCanvasObject}
         onNodeDragEnd={onNodeDragEnd}
-        linkCanvasObject={linkCanvasObject}
         d3AlphaDecay={d3AlphaDecay}
         d3VelocityDecay={d3VelocityDecay}
       />
