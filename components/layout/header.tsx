@@ -1,10 +1,11 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import Image from "next/image";
 import { MoonIcon, SunIcon, Bars3Icon } from "@heroicons/react/24/solid";
 import GuacVizThemeContext from "@/store/themeContext";
 import Link from "next/link";
+import packageJson from "../../package.json";
 
 export default function Header() {
   const { isDarkTheme, toggleThemeHandler } = useContext(GuacVizThemeContext);
@@ -37,24 +38,12 @@ export default function Header() {
     );
   }
 
-  useEffect(() => {
-    function handleResize() {
-      if (window.innerWidth > 768) {
-        setIsMenuOpen(false);
-      }
-    }
-
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
     <>
       <div className="flex justify-between bg-stone-200 dark:bg-stone-800 text-zinc-600 px-4 md:px-8 py-4 items-center backdrop-blur-sm w-full font-mono transition-colors duration-500">
         <div className="flex items-center">
           <Link href="/">
-            <div className="flex items-center hover:text-stone-500 dark:hover:text-stone-400 transition-colors duration-500">
+            <div className="flex flex-col md:flex-row items-center hover:text-stone-500 dark:hover:text-stone-400 transition-colors duration-500">
               <Image
                 className="dark:white-filter transition-all duration-500"
                 src="images/icons/guac-logo.svg"
@@ -62,10 +51,13 @@ export default function Header() {
                 width={27}
                 height={27}
               />
+              <span className="text-gray-400 pl-3 ml-3"> *Experimental </span>
               <h1 className="ml-2 text-2xl dark:text-stone-300 transition-all duration-500">
-                GUAC Visualizer
+                GUAC Visualizer{" "}
+                <span className="text-sm dark:text-stone-300">
+                  v{packageJson.version}
+                </span>
               </h1>
-              <span className="text-gray-400 ml-3"> *Experimental </span>
             </div>
           </Link>
         </div>
