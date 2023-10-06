@@ -3,9 +3,9 @@
 import { useContext, useState } from "react";
 import Image from "next/image";
 import { MoonIcon, SunIcon, Bars3Icon } from "@heroicons/react/24/solid";
-import GuacVizThemeContext from "@/store/themeContext";
 import Link from "next/link";
 import packageJson from "../../package.json";
+import GuacVizThemeContext from "@/app/themeContext";
 
 export default function Header() {
   const { isDarkTheme, toggleThemeHandler } = useContext(GuacVizThemeContext);
@@ -13,7 +13,7 @@ export default function Header() {
 
   function NavigationLinks() {
     return (
-      <>
+      <div className="flex flex-col md:flex-row">
         <a
           className="block py-1 text-sm text-gray-800 dark:text-stone-300 hover:bg-white dark:hover:bg-black rounded-xl p-3 my-2"
           href="https://github.com/guacsec/guac-visualizer"
@@ -34,12 +34,12 @@ export default function Header() {
         >
           Community
         </a>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div>
       <div className="flex justify-between bg-stone-200 dark:bg-stone-800 text-zinc-600 px-4 md:px-8 py-4 items-center backdrop-blur-sm w-full font-mono transition-colors duration-500">
         <div className="flex items-center">
           <Link href="/">
@@ -62,9 +62,7 @@ export default function Header() {
           </Link>
         </div>
         <div className="hidden md:flex w-1/3 flex-wrap justify-between items-center">
-          <div className="flex">
-            <NavigationLinks />
-          </div>
+          <NavigationLinks />
           <div>
             <button
               className="hover:text-stone-500 dark:hover:text-stone-400 transition-all duration-500"
@@ -94,6 +92,6 @@ export default function Header() {
           <NavigationLinks />
         </div>
       )}
-    </>
+    </div>
   );
 }

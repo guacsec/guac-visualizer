@@ -47,7 +47,7 @@ const QueryCertifyVuln: React.FC = () => {
 
       setGraphData(firstResultId);
     }
-  }, [results]);
+  }, [setGraphData, results]);
 
   return (
     <div className="container mx-auto p-4">
