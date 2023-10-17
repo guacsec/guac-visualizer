@@ -39,8 +39,6 @@ export const useBreadcrumbNavigation = (
     (node) => {
       setUserInteractedWithPath(true);
 
-      console.log(node);
-
       if (currentNode) {
         setBackStack((prevBackStack) => [...prevBackStack, currentNode]);
       }

@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
-import { GuacVizThemeContextProvider } from "@/store/themeContext";
+import { GuacVizThemeContextProvider } from "@/app/themeContext";
 
 export const metadata = {
   title: "GUAC Visualizer",
