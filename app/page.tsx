@@ -13,6 +13,8 @@ import QueryVuln from "@/components/queryvuln/queryVuln";
 import { ApolloProvider } from "@apollo/client";
 import client from "@/apollo/client";
 import { useDimensions } from "@/hooks/useDimensions";
+import { PackageDataProvider } from "@/store/packageDataContext";
+import KnownInfo from "@/components/known/knownInfo";
 
 export default function Home() {
   const [highlights, setHighlights] = useState({
@@ -50,76 +52,81 @@ export default function Home() {
 
   const { containerWidth, containerHeight } = useDimensions();
 
+  // console.log(graphData);
+
   return (
     <div>
       <ApolloProvider client={client}>
-        <main className="h-full w-screen md:w-auto flex flex-col items-center p-12">
-          {packageLoading ? (
-            <div>Loading package types...</div>
-          ) : packageError ? (
-            <div>Error loading package types!</div>
-          ) : (
-            <PackageSelector
-              packageTypes={packageTypes}
-              setGraphData={setGraphDataWithInitial}
-              resetTypeFunc={reset}
-            />
-          )}
-          {graphData.nodes.length !== 0 && graphData.links.length !== 0 && (
-            <NavigationButtons
-              backStack={backStack}
-              breadcrumb={breadcrumb}
-              currentIndex={currentIndex}
-              handleBackClick={handleBackClick}
-              handleForwardClick={handleForwardClick}
-              reset={reset}
-              userInteractedWithPath={userInteractedWithPath}
-            />
-          )}
-          <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full gap-8 lg:gap-4">
-            <div className="flex flex-col text-sm p-4 row-span-1 lg:col-span-1">
-              <p className="pb-5 pt-3 opacity-70">
-                <span className="font-bold uppercase">Tip:</span> Use click and
-                scroll to adjust graph. <br />
-                Right clicking a node displays more information.
-              </p>
-              <h1 className="my-5 text-lg">Highlight Nodes</h1>
-              <div className="flex flex-col justify-start gap-y-2 w-full">
-                <div>
-                  <HighlightToggles
-                    highlights={highlights}
-                    setHighlights={setHighlights}
-                  />
+        <PackageDataProvider>
+          <main className="h-full w-screen md:w-auto flex flex-col items-center p-12">
+            {packageLoading ? (
+              <div>Loading package types...</div>
+            ) : packageError ? (
+              <div>Error loading package types!</div>
+            ) : (
+              <PackageSelector
+                packageTypes={packageTypes}
+                setGraphData={setGraphDataWithInitial}
+                resetTypeFunc={reset}
+              />
+            )}
+            {graphData.nodes.length !== 0 && graphData.links.length !== 0 && (
+              <NavigationButtons
+                backStack={backStack}
+                breadcrumb={breadcrumb}
+                currentIndex={currentIndex}
+                handleBackClick={handleBackClick}
+                handleForwardClick={handleForwardClick}
+                reset={reset}
+                userInteractedWithPath={userInteractedWithPath}
+              />
+            )}
+            <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full gap-8 lg:gap-4">
+              {/* <div className="flex flex-col text-sm p-4 row-span-1 lg:col-span-1">
+                <p className="pb-5 pt-3 opacity-70">
+                  <span className="font-bold uppercase">Tip:</span> Use click
+                  and scroll to adjust graph. <br />
+                  Right clicking a node displays more information.
+                </p>
+                <h1 className="my-5 text-lg">Highlight Nodes</h1>
+                <div className="flex flex-col justify-start gap-y-2 w-full">
+                  <div>
+                    <HighlightToggles
+                      highlights={highlights}
+                      setHighlights={setHighlights}
+                    />
+                  </div>
+
                 </div>
-                <div>
-                  <QueryVuln />
-                </div>
+              </div>  */}
+              <div>
+                <QueryVuln />
+              </div>
+              <div className="col-span-3 row-span-3 h-full md:w-3/4 lg:w-4/5">
+                <Graph
+                  graphData={graphData}
+                  onNodeClick={handleNodeClick}
+                  options={{
+                    highlightArtifact: highlights.artifact,
+                    highlightVuln: highlights.vuln,
+                    highlightSbom: highlights.sbom,
+                    highlightBuilder: highlights.builder,
+                  }}
+                  containerOptions={{
+                    width: containerWidth,
+                    height: containerHeight,
+                  }}
+                />
+                <Breadcrumb
+                  breadcrumb={breadcrumb.map((item) => item.label)}
+                  handleNodeClick={handleBreadcrumbClick}
+                  currentIndex={currentIndex}
+                />
               </div>
             </div>
-
-            <div className="col-span-3 row-span-3 h-full md:w-3/4 lg:w-4/5">
-              <Graph
-                graphData={graphData}
-                onNodeClick={handleNodeClick}
-                options={{
-                  highlightArtifact: highlights.artifact,
-                  highlightVuln: highlights.vuln,
-                  highlightSbom: highlights.sbom,
-                  highlightBuilder: highlights.builder,
-                }}
-                containerOptions={{
-                  width: containerWidth,
-                  height: containerHeight,
-                }}
-              />
-              <Breadcrumb
-                breadcrumb={breadcrumb.map((item) => item.label)}
-                handleNodeClick={handleBreadcrumbClick}
-                currentIndex={currentIndex}
-              />
-            </div>
-          </div>
-        </main>
+            <KnownInfo />
+          </main>
+        </PackageDataProvider>
       </ApolloProvider>
     </div>
   );

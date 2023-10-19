@@ -12,6 +12,7 @@ import PackageGenericSelector, {
 } from "@/components/packages/packageGenericSelector";
 import { VersionQueryVersion } from "@/components/packages/packageNameSelect";
 import { GraphDataWithMetadata } from "@/components/graph/types";
+import { usePackageData } from "@/store/packageDataContext";
 
 type PackageNamespaceQuerySpec = {
   type: string;
@@ -45,6 +46,7 @@ const PackageVersionSelect = ({
   packageName: string;
   disabled?: boolean;
 }) => {
+  const { setPkgID, setPackageName, setPkgType } = usePackageData();
   const onSelectPackageVersion = (option: VersionQueryVersion) => {
     let specVersion;
     let specQualifiers: {
@@ -83,11 +85,19 @@ const PackageVersionSelect = ({
 
     packageNamespacesQuery.then((res) => {
       const pkg = res.data.packages[0] as AllPkgTreeFragment;
+      const pkgID = pkg.namespaces[0].names[0].versions[0].id;
+      const pkgType = pkg.type;
+
+      console.log("PACKAGE HERE", pkg);
+
+      setPkgID(pkgID);
+      setPackageName(pkg.namespaces[0].names[0].name);
+      setPkgType(pkgType);
 
       const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
-      const parsedNode = ParseNode(pkg); // is this a problem?
-      parseAndFilterGraph(graphData, parsedNode);
+      const parsedNode = ParseNode(pkg);
 
+      parseAndFilterGraph(graphData, parsedNode);
       client
         .query({
           query: NeighborsDocument,
