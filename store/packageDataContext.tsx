@@ -7,6 +7,8 @@ type PackageDataContextType = {
   setPackageName: React.Dispatch<React.SetStateAction<string>>;
   pkgType: string;
   setPkgType: (pkg: string) => void;
+  pkgVersion: string;
+  setPkgVersion: (pkg: string) => void;
 };
 
 const PackageDataContext = createContext<PackageDataContextType | undefined>(
@@ -31,6 +33,7 @@ export const PackageDataProvider: React.FC<PackageDataProviderProps> = ({
   const [pkgID, setPkgID] = useState<string>("");
   const [packageName, setPackageName] = useState<string>("");
   const [pkgType, setPkgType] = useState("");
+  const [pkgVersion, setPkgVersion] = useState("");
 
   return (
     <PackageDataContext.Provider
@@ -41,6 +44,8 @@ export const PackageDataProvider: React.FC<PackageDataProviderProps> = ({
         setPkgType,
         packageName,
         setPackageName,
+        pkgVersion,
+        setPkgVersion,
       }}
     >
       {children}
