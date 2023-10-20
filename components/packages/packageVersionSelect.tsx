@@ -46,7 +46,8 @@ const PackageVersionSelect = ({
   packageName: string;
   disabled?: boolean;
 }) => {
-  const { setPkgID, setPackageName, setPkgType } = usePackageData();
+  const { setPkgID, setPackageName, setPkgType, setPkgVersion } =
+    usePackageData();
   const onSelectPackageVersion = (option: VersionQueryVersion) => {
     let specVersion;
     let specQualifiers: {
@@ -86,13 +87,16 @@ const PackageVersionSelect = ({
     packageNamespacesQuery.then((res) => {
       const pkg = res.data.packages[0] as AllPkgTreeFragment;
       const pkgID = pkg.namespaces[0].names[0].versions[0].id;
+      const pkgName = pkg.namespaces[0].names[0].name;
       const pkgType = pkg.type;
-
-      console.log("PACKAGE HERE", pkg);
+      const pkgVersion = pkg.namespaces[0].names[0].versions[0].version;
 
       setPkgID(pkgID);
-      setPackageName(pkg.namespaces[0].names[0].name);
+      setPackageName(pkgName);
       setPkgType(pkgType);
+      setPkgVersion(pkgVersion);
+
+      console.log("PACKAGE HERE", pkg);
 
       const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
       const parsedNode = ParseNode(pkg);
