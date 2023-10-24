@@ -14,7 +14,7 @@ import { ApolloProvider } from "@apollo/client";
 import client from "@/apollo/client";
 import { useDimensions } from "@/hooks/useDimensions";
 import { PackageDataProvider } from "@/store/packageDataContext";
-import KnownInfo from "@/components/known/knownInfo";
+import NodeInfo from "@/components/nodeInfo/nodeInfo";
 
 export default function Home() {
   const [highlights, setHighlights] = useState({
@@ -55,10 +55,10 @@ export default function Home() {
   // console.log(graphData);
 
   return (
-    <div>
+    <div className="flex flex-col sm:flex-row items-center justify-between m-auto">
       <ApolloProvider client={client}>
         <PackageDataProvider>
-          <main className="h-full w-screen md:w-auto flex flex-col items-center p-12">
+          <main className="h-full w-screen md:w-auto flex flex-col  p-10">
             {packageLoading ? (
               <div>Loading package types...</div>
             ) : packageError ? (
@@ -70,18 +70,8 @@ export default function Home() {
                 resetTypeFunc={reset}
               />
             )}
-            {graphData.nodes.length !== 0 && graphData.links.length !== 0 && (
-              <NavigationButtons
-                backStack={backStack}
-                breadcrumb={breadcrumb}
-                currentIndex={currentIndex}
-                handleBackClick={handleBackClick}
-                handleForwardClick={handleForwardClick}
-                reset={reset}
-                userInteractedWithPath={userInteractedWithPath}
-              />
-            )}
-            <div className="mt-8 grid grid-cols-none grid-rows-4 lg:grid-rows-none lg:grid-cols-4 h-full gap-8 lg:gap-4">
+
+            <div className="flex flex-col max-w-fit justify-between md:flex-row m-10">
               {/* <div className="flex flex-col text-sm p-4 row-span-1 lg:col-span-1">
                 <p className="pb-5 pt-3 opacity-70">
                   <span className="font-bold uppercase">Tip:</span> Use click
@@ -99,10 +89,10 @@ export default function Home() {
 
                 </div>
               </div>  */}
-              <div>
+              {/* <div>
                 <QueryVuln />
-              </div>
-              <div className="col-span-3 row-span-3 h-full md:w-3/4 lg:w-4/5">
+              </div> */}
+              <div>
                 <Graph
                   graphData={graphData}
                   onNodeClick={handleNodeClick}
@@ -117,14 +107,26 @@ export default function Home() {
                     height: containerHeight,
                   }}
                 />
+                {graphData.nodes.length !== 0 &&
+                  graphData.links.length !== 0 && (
+                    <NavigationButtons
+                      backStack={backStack}
+                      breadcrumb={breadcrumb}
+                      currentIndex={currentIndex}
+                      handleBackClick={handleBackClick}
+                      handleForwardClick={handleForwardClick}
+                      reset={reset}
+                      userInteractedWithPath={userInteractedWithPath}
+                    />
+                  )}
                 <Breadcrumb
                   breadcrumb={breadcrumb.map((item) => item.label)}
                   handleNodeClick={handleBreadcrumbClick}
                   currentIndex={currentIndex}
                 />
               </div>
+              <NodeInfo />
             </div>
-            <KnownInfo />
           </main>
         </PackageDataProvider>
       </ApolloProvider>
