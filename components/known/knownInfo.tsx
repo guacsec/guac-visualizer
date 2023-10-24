@@ -3,6 +3,11 @@ import React, { useEffect, useState } from "react";
 import gql from "graphql-tag";
 import { usePackageData } from "@/store/packageDataContext";
 import client from "@/apollo/client";
+import {
+  ExclamationCircleIcon,
+  FolderOpenIcon,
+  Square3Stack3DIcon,
+} from "@heroicons/react/24/solid";
 
 // TODO: Everything is in one file right now, before making PR, branch these out to their respective folders
 // TODO: Use queries from generated code, the queries here are just for quick and dirty testing
@@ -117,32 +122,67 @@ const GET_SBOMS = gql`
 `;
 
 // OCCURENCES + SLSA
-const GET_OCCURRENCES_BY_TYPE = gql`
-  query IsOccurrenceByType($pkgType: String!) {
-    IsOccurrence(
-      isOccurrenceSpec: { subject: { package: { type: $pkgType } } }
-    ) {
-      id
-      subject {
-        ... on Package {
+const GET_OCCURRENCES_BY_VERSION = gql`
+  fragment allIsOccurrencesTree on IsOccurrence {
+    id
+    subject {
+      __typename
+      ... on Package {
+        id
+        type
+        namespaces {
           id
-          type
+          namespace
+          names {
+            id
+            name
+            versions {
+              id
+              version
+              qualifiers {
+                key
+                value
+              }
+              subpath
+            }
+          }
         }
       }
-
-      artifact {
+      ... on Source {
         id
-        algorithm
-        digest
+        type
+        namespaces {
+          id
+          namespace
+          names {
+            id
+            name
+            tag
+            commit
+          }
+        }
       }
-      justification
-      origin
-      collector
+    }
+    artifact {
+      id
+      algorithm
+      digest
+    }
+    justification
+    origin
+    collector
+  }
+
+  query IsOccurrenceByVersion($pkgName: String!) {
+    IsOccurrence(
+      isOccurrenceSpec: { subject: { package: { name: $pkgName } } }
+    ) {
+      ...allIsOccurrencesTree
     }
   }
 `;
 
-const CHECK_SLSA = gql`
+const GET_SLSAS = gql`
   fragment allHasSLSATree on HasSLSA {
     id
     subject {
@@ -183,10 +223,15 @@ const CHECK_SLSA = gql`
 `;
 
 const KnownInfo = () => {
-  const { pkgID, packageName, pkgType, pkgVersion } = usePackageData();
+  const { pkgID, packageName, pkgVersion } = usePackageData();
 
   const [sboms, setSboms] = useState([]);
   const [vulns, setVulns] = useState([]);
+  const [slsas, setSLSAs] = useState([]);
+
+  const [handleSbomClicked, setHandleSbomClicked] = useState(false);
+  const [handleVulnClicked, setHandleVulnClicked] = useState(false);
+  const [handleSLSAClicked, setHandleSLSAClicked] = useState(false);
 
   // VULN
   const {
@@ -200,18 +245,26 @@ const KnownInfo = () => {
   });
 
   const fetchVulns = async () => {
-    const { data } = await vulnsRefetch({ pkgVersion });
-    if (
-      data?.CertifyVuln &&
-      Array.isArray(data.CertifyVuln) &&
-      data.CertifyVuln.length > 0
-    ) {
-      setVulns(data.CertifyVuln);
-    } else {
-      console.error("Unexpected data structure:", data);
-      setVulns([]);
+    setHandleVulnClicked(true);
+    if (pkgVersion !== "") {
+      const { data } = await vulnsRefetch({ pkgVersion });
+      if (
+        data?.CertifyVuln &&
+        Array.isArray(data.CertifyVuln) &&
+        data.CertifyVuln.length > 0
+      ) {
+        setVulns(data.CertifyVuln);
+      } else {
+        console.error("Unexpected data structure:", data);
+        setVulns([]);
+      }
     }
   };
+
+  // do not capture "novuln" vals
+  const filteredVulns = vulns.filter(
+    (vuln) => vuln?.vulnerability?.type !== "novuln"
+  );
 
   // SBOM
   const {
@@ -225,90 +278,130 @@ const KnownInfo = () => {
   });
 
   const fetchSBOMs = async () => {
-    const { data } = await sbomRefetch({ name: packageName, pkgID });
-    setSboms(data?.HasSBOM || []);
-    console.log("Fetched all SBOMs");
+    setHandleSbomClicked(true); // Set to true when button is clicked
+    if (packageName) {
+      const { data } = await sbomRefetch({ name: packageName, pkgID });
+      setSboms(data?.HasSBOM || []);
+      console.log("Fetched all SBOMs");
+    } else {
+      return;
+    }
   };
 
-  // SLSA
-  // const {
-  //   loading: occLoading,
+  const {
+    loading: slsaLoading,
+    error: slsaError,
+    refetch: slsaRefetch,
+  } = useQuery(GET_SLSAS, {
+    skip: true,
+  });
 
-  //   error: occError,
+  const fetchSLSAs = async (algorithm, digest) => {
+    setHandleSLSAClicked(true);
+    const { data } = await slsaRefetch({ algorithm, digest });
+    setSLSAs(data?.HasSLSA || []);
+    console.log("Fetched all SLSAs");
+  };
 
-  //   data: occData,
-  // } = useQuery(GET_OCCURRENCES_BY_TYPE, {
-  //   variables: { pkgType },
-  // });
+  const {
+    loading: occurrenceLoading,
+    error: occurrenceError,
+    refetch: occurrenceRefetch,
+  } = useQuery(GET_OCCURRENCES_BY_VERSION, {
+    skip: true,
+  });
 
-  // TODO: Fix performance, linear fetch is too long and slows browser
-  // useEffect(() => {
-  //   const fetchSLSA = async (algorithm, digest) => {
-  //     const { data } = await client.query({
-  //       query: CHECK_SLSA,
-  //       variables: { algorithm, digest },
-  //     });
+  const fetchOccurrences = async () => {
+    const { data } = await occurrenceRefetch({ pkgName: packageName });
+    setHandleSLSAClicked(true);
+    if (data?.IsOccurrence) {
+      console.log(data);
+      data.IsOccurrence.forEach((item) => {
+        const algorithm = item.artifact?.algorithm;
+        const digest = item.artifact?.digest;
+        if (algorithm && digest) {
+          fetchSLSAs(algorithm, digest);
+        }
+      });
+    }
+  };
 
-  //     console.log("SLSA Data for artifact:", data);
-  //   };
-
-  //   if (occData && occData.IsOccurrence && occData.IsOccurrence.length > 0) {
-  //     occData.IsOccurrence.forEach((occurrence) => {
-  //       const { algorithm, digest } = occurrence.artifact;
-
-  //       if (algorithm && digest) {
-  //         fetchSLSA(algorithm, digest);
-  //       }
-  //     });
-  //   }
-
-  //   console.log("I ran!");
-  // }, [occData, client]);
+  useEffect(() => {
+    console.log("Package changed");
+    setSboms([]);
+    setVulns([]);
+    setSLSAs([]);
+    setHandleSbomClicked(false);
+    setHandleVulnClicked(false);
+    setHandleSLSAClicked(false);
+  }, [pkgID, packageName, pkgVersion]);
 
   return (
     <div className="">
-      {pkgID && (
-        <button className="bg-red-100 m-2" onClick={fetchSBOMs}>
-          Get SBOM Location
-        </button>
-      )}
-      {pkgVersion && (
-        <button className="bg-red-100 m-2" onClick={fetchVulns}>
-          Get Vulnerabilities
-        </button>
-      )}
+      <button
+        disabled={!pkgVersion}
+        type="button"
+        className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
+          !pkgVersion ? "cursor-not-allowed opacity-50" : ""
+        }`}
+        onClick={fetchVulns}
+      >
+        Vulnerabilities
+        <ExclamationCircleIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
+      </button>
+      <button
+        disabled={!packageName || !pkgID}
+        type="button"
+        className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
+          !packageName || !pkgID ? "cursor-not-allowed opacity-50" : ""
+        }`}
+        onClick={fetchSBOMs}
+      >
+        SBOM
+        <FolderOpenIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        className="inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5"
+        onClick={fetchOccurrences}
+      >
+        SLSA
+        <Square3Stack3DIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
+      </button>
 
       <div className="m-10">
-        {sboms.length === 0 ? (
-          <h2>No sboms found</h2>
-        ) : (
-          <ul>
-            {sboms.map((sbom) => (
-              <li key={sbom.id}>
-                {sbom.__typename === "HasSBOM" && (
-                  <div>
-                    <h1 className="font-semibold">
-                      Package {sbom.subject?.namespaces[0]?.names[0]?.name} has
-                      an SBOM located in this location:{" "}
-                    </h1>
-                    <p className="bg-gray-200 p-2">{sbom.downloadLocation}</p>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
+        {handleSbomClicked &&
+          (sboms.length === 0 ? (
+            <h2>This package doesn't have an SBOM associated with it</h2>
+          ) : (
+            <ul>
+              {sboms.map((sbom) => (
+                <li key={sbom.id}>
+                  {sbom.__typename === "HasSBOM" && (
+                    <div>
+                      <h1 className="font-semibold">
+                        Package {sbom.subject?.namespaces[0]?.names[0]?.name}{" "}
+                        has an SBOM located in this location:{" "}
+                      </h1>
+                      <p className="bg-gray-200 p-2">{sbom.downloadLocation}</p>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ))}
       </div>
+
       <div className="m-10">
-        {vulns.length === 0 ? (
-          <h2>No vulnerabilities found</h2>
-        ) : (
-          <ul>
-            {vulns.map((vuln, index) => (
-              <li key={index}>
-                {vuln?.vulnerability?.type === "novuln" ? (
-                  <p>No vulns found</p>
-                ) : (
+        {handleVulnClicked &&
+          (filteredVulns.length === 0 ? (
+            <h2>
+              This package doesn't have any vulnerabilities associated with it
+            </h2>
+          ) : (
+            <ul>
+              {filteredVulns.map((vuln, index) => (
+                <li key={index}>
                   <div>
                     <h1 className="font-semibold">
                       Name:{" "}
@@ -328,11 +421,38 @@ const KnownInfo = () => {
                     </p>
                     <p>Last scanned: {vuln?.metadata?.timeScanned || "N/A"}</p>
                   </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
+                  <br />
+                </li>
+              ))}
+            </ul>
+          ))}
+      </div>
+      <div className="m-10">
+        {handleSLSAClicked &&
+          (slsas.length === 0 ? (
+            <h2>No SLSA attestations found</h2>
+          ) : (
+            <ul>
+              {slsas.map((slsa, index) => (
+                <li key={index}>
+                  <div>
+                    <p className="break-all">
+                      Hash: {slsa.subject?.algorithm}
+                      {slsa.subject?.digest}
+                    </p>
+                    {/* NODE ID: */}
+                    {/* <p>{slsa.id}</p> */}
+                    <br />
+                    <p>Build Type: {slsa.slsa?.buildType}</p>
+                    <p>Built By: {slsa.slsa?.builtBy?.uri}</p>
+                    <p>Origin: {slsa.slsa?.origin}</p>
+                    <p>SLSA Version: {slsa.slsa?.slsaVersion}</p>
+                  </div>
+                  <br />
+                </li>
+              ))}
+            </ul>
+          ))}
       </div>
     </div>
   );
