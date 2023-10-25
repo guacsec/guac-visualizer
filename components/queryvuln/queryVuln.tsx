@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useApolloClient } from "@apollo/client";
 import { CERTIFY_VULN_QUERY } from "./certifyVulnQuery";
 import { useRouter } from "next/navigation";
-import { useGraphData } from "@/hooks/useGraphData";
-import { pushIdToURL } from "@/utils/pushIdToURLAndSetGraphData";
+import { ArrowRightCircleIcon } from "@heroicons/react/24/solid";
 
 const QueryCertifyVuln: React.FC = () => {
   const [vulnerabilityID, setVulnerabilityID] = useState("");
@@ -32,19 +31,24 @@ const QueryCertifyVuln: React.FC = () => {
 
   return (
     <div className="ml-10 container mx-auto p-4">
-      <h1 className="py-3 text-lg">Query vulnerability</h1>
-      <input
-        className="border rounded p-2 mb-4"
-        value={vulnerabilityID}
-        onChange={(e) => setVulnerabilityID(e.target.value)}
-        placeholder="Enter vuln ID here..."
-      />
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        onClick={handleVulnSearch}
-      >
-        Search
-      </button>
+      <h1 className="text-lg">Query vulnerability</h1>
+      <div className="flex items-center justify-center mt-2">
+        <input
+          className="border rounded p-2.5 w-11/12"
+          value={vulnerabilityID}
+          onChange={(e) => setVulnerabilityID(e.target.value)}
+          placeholder="Enter vuln ID here..."
+        />
+        <button
+          className="inline-flex items-center gap-x-1.5 rounded-md bg-gray-300 p-2.5 text-sm font-semibold text-gray shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2"
+          onClick={handleVulnSearch}
+        >
+          <ArrowRightCircleIcon
+            className="-mr-0.5 h-5 w-5 text-stone-600"
+            aria-hidden="true"
+          />
+        </button>
+      </div>
 
       {results ? (
         <div className="mt-4">
