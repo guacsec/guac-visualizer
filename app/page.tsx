@@ -52,10 +52,8 @@ export default function Home() {
 
   const { containerWidth, containerHeight } = useDimensions();
 
-  // console.log(graphData);
-
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between m-auto">
+    <div className="flex flex-col lg:flex-row items-center justify-between m-auto">
       <ApolloProvider client={client}>
         <PackageDataProvider>
           <main className="h-full w-screen md:w-auto flex flex-col  p-10">
@@ -64,14 +62,20 @@ export default function Home() {
             ) : packageError ? (
               <div>Error loading package types!</div>
             ) : (
-              <PackageSelector
-                packageTypes={packageTypes}
-                setGraphData={setGraphDataWithInitial}
-                resetTypeFunc={reset}
-              />
+              <div className="flex flex-col md:flex-row justify-center">
+                <PackageSelector
+                  packageTypes={packageTypes}
+                  setGraphData={setGraphDataWithInitial}
+                  resetTypeFunc={reset}
+                />
+                <div>
+                  <QueryVuln />
+                </div>
+              </div>
             )}
 
-            <div className="flex flex-col max-w-fit justify-between md:flex-row m-10">
+            <div className="flex flex-col max-w-fit justify-center items-center lg:items-start lg:flex-row m-10">
+              {/* TODO: Fix highlighter, until then keep it commented */}
               {/* <div className="flex flex-col text-sm p-4 row-span-1 lg:col-span-1">
                 <p className="pb-5 pt-3 opacity-70">
                   <span className="font-bold uppercase">Tip:</span> Use click
@@ -89,10 +93,8 @@ export default function Home() {
 
                 </div>
               </div>  */}
-              {/* <div>
-                <QueryVuln />
-              </div> */}
-              <div>
+
+              <div className="p-8 lg:p-0">
                 <Graph
                   graphData={graphData}
                   onNodeClick={handleNodeClick}
