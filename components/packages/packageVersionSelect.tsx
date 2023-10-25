@@ -46,7 +46,7 @@ const PackageVersionSelect = ({
   packageName: string;
   disabled?: boolean;
 }) => {
-  const { setPkgID, setPackageName, setPkgType, setPkgVersion } =
+  const { setPkgContext, setPkgID, setPackageName, setPkgType, setPkgVersion } =
     usePackageData();
   const onSelectPackageVersion = (option: VersionQueryVersion) => {
     let specVersion;
@@ -91,6 +91,7 @@ const PackageVersionSelect = ({
       const pkgType = pkg.type;
       const pkgVersion = pkg.namespaces[0].names[0].versions[0].version;
 
+      setPkgContext(pkg);
       setPkgID(pkgID);
       setPackageName(pkgName);
       setPkgType(pkgType);

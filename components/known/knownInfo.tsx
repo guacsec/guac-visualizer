@@ -1,13 +1,16 @@
 import { useQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import gql from "graphql-tag";
 import { usePackageData } from "@/store/packageDataContext";
-import client from "@/apollo/client";
 import {
+  ArrowPathIcon,
   ExclamationCircleIcon,
   FolderOpenIcon,
   Square3Stack3DIcon,
 } from "@heroicons/react/24/solid";
+import { useGraphData } from "@/hooks/useGraphData";
+import { useRouter } from "next/navigation";
+import { HasSlsa } from "@/gql/__generated__/graphql";
 
 // TODO: Everything is in one file right now, before making PR, branch these out to their respective folders
 // TODO: Use queries from generated code, the queries here are just for quick and dirty testing
@@ -223,6 +226,7 @@ const GET_SLSAS = gql`
 `;
 
 const KnownInfo = () => {
+  const router = useRouter();
   const { pkgID, packageName, pkgVersion } = usePackageData();
 
   const [sboms, setSboms] = useState([]);
@@ -232,6 +236,8 @@ const KnownInfo = () => {
   const [handleSbomClicked, setHandleSbomClicked] = useState(false);
   const [handleVulnClicked, setHandleVulnClicked] = useState(false);
   const [handleSLSAClicked, setHandleSLSAClicked] = useState(false);
+
+  const { resetGraph } = useGraphData();
 
   // VULN
   const {
@@ -245,6 +251,7 @@ const KnownInfo = () => {
   });
 
   const fetchVulns = async () => {
+    let pathWithIDs = "";
     setHandleVulnClicked(true);
     if (pkgVersion !== "") {
       const { data } = await vulnsRefetch({ pkgVersion });
@@ -254,6 +261,10 @@ const KnownInfo = () => {
         data.CertifyVuln.length > 0
       ) {
         setVulns(data.CertifyVuln);
+        for (let vuln of data.CertifyVuln) {
+          pathWithIDs += `${vuln.id},`;
+        }
+        router.push(`/?path=${pathWithIDs?.slice(0, pathWithIDs.length - 1)}`);
       } else {
         console.error("Unexpected data structure:", data);
         setVulns([]);
@@ -278,13 +289,50 @@ const KnownInfo = () => {
   });
 
   const fetchSBOMs = async () => {
-    setHandleSbomClicked(true); // Set to true when button is clicked
+    setHandleSbomClicked(true);
     if (packageName) {
       const { data } = await sbomRefetch({ name: packageName, pkgID });
       setSboms(data?.HasSBOM || []);
+
+      console.log(data?.HasSBOM);
+      const sbomResultID = data?.HasSBOM[0]?.id;
+
+      if (sbomResultID) {
+        router.push(`/?path=${sbomResultID}`);
+      }
       console.log("Fetched all SBOMs");
     } else {
       return;
+    }
+  };
+
+  const {
+    loading: occurrenceLoading,
+    error: occurrenceError,
+    refetch: occurrenceRefetch,
+  } = useQuery(GET_OCCURRENCES_BY_VERSION, {
+    skip: true,
+  });
+
+  let allSLSAIds: string[] = [];
+
+  const fetchOccurrences = async () => {
+    const { data } = await occurrenceRefetch({ pkgName: packageName });
+    setHandleSLSAClicked(true);
+    if (data?.IsOccurrence) {
+      const allSLSAs = [];
+      for (const item of data.IsOccurrence) {
+        const algorithm = item.artifact?.algorithm;
+        const digest = item.artifact?.digest;
+        if (algorithm && digest) {
+          const fetchedSLSAs = await fetchSLSAs(algorithm, digest);
+          allSLSAs.push(...fetchedSLSAs);
+        }
+      }
+      setSLSAs(allSLSAs);
+
+      const idString = allSLSAIds.join(",");
+      router.push(`/?path=${idString}`);
     }
   };
 
@@ -296,79 +344,81 @@ const KnownInfo = () => {
     skip: true,
   });
 
-  const fetchSLSAs = async (algorithm, digest) => {
-    setHandleSLSAClicked(true);
+  const fetchSLSAs = async (algorithm: string, digest: string) => {
     const { data } = await slsaRefetch({ algorithm, digest });
-    setSLSAs(data?.HasSLSA || []);
-    console.log("Fetched all SLSAs");
+    const slsaResults = data?.HasSLSA || [];
+    slsaResults.forEach((slsa: HasSlsa) => {
+      if (slsa?.id) {
+        allSLSAIds.push(slsa.id);
+      }
+    });
+    return slsaResults;
   };
 
-  const {
-    loading: occurrenceLoading,
-    error: occurrenceError,
-    refetch: occurrenceRefetch,
-  } = useQuery(GET_OCCURRENCES_BY_VERSION, {
-    skip: true,
-  });
-
-  const fetchOccurrences = async () => {
-    const { data } = await occurrenceRefetch({ pkgName: packageName });
-    setHandleSLSAClicked(true);
-    if (data?.IsOccurrence) {
-      console.log(data);
-      data.IsOccurrence.forEach((item) => {
-        const algorithm = item.artifact?.algorithm;
-        const digest = item.artifact?.digest;
-        if (algorithm && digest) {
-          fetchSLSAs(algorithm, digest);
-        }
-      });
-    }
-  };
-
-  useEffect(() => {
-    console.log("Package changed");
+  const resetState = () => {
     setSboms([]);
     setVulns([]);
     setSLSAs([]);
     setHandleSbomClicked(false);
     setHandleVulnClicked(false);
     setHandleSLSAClicked(false);
+    resetGraph(pkgID);
+  };
+  // reset
+  useEffect(() => {
+    resetState();
   }, [pkgID, packageName, pkgVersion]);
 
   return (
-    <div className="">
-      <button
-        disabled={!pkgVersion}
-        type="button"
-        className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
-          !pkgVersion ? "cursor-not-allowed opacity-50" : ""
-        }`}
-        onClick={fetchVulns}
-      >
-        Vulnerabilities
-        <ExclamationCircleIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
-      </button>
-      <button
-        disabled={!packageName || !pkgID}
-        type="button"
-        className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
-          !packageName || !pkgID ? "cursor-not-allowed opacity-50" : ""
-        }`}
-        onClick={fetchSBOMs}
-      >
-        SBOM
-        <FolderOpenIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
-      </button>
-      <button
-        type="button"
-        className="inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5"
-        onClick={fetchOccurrences}
-      >
-        SLSA
-        <Square3Stack3DIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
-      </button>
-
+    <div className="text-black">
+      <div className="flex items-center justify-center">
+        <button
+          disabled={!pkgID}
+          type="button"
+          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
+            !pkgID ? "cursor-not-allowed opacity-50" : ""
+          }`}
+          onClick={fetchVulns}
+        >
+          Vulnerabilities
+          <ExclamationCircleIcon
+            className="-mr-0.5 h-5 w-5"
+            aria-hidden="true"
+          />
+        </button>
+        <button
+          disabled={!packageName || !pkgID}
+          type="button"
+          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
+            !packageName || !pkgID ? "cursor-not-allowed opacity-50" : ""
+          }`}
+          onClick={fetchSBOMs}
+        >
+          SBOM
+          <FolderOpenIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
+        </button>
+        <button
+          disabled={!packageName}
+          type="button"
+          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
+            !packageName || !pkgID ? "cursor-not-allowed opacity-50" : ""
+          }`}
+          onClick={fetchOccurrences}
+        >
+          SLSA
+          <Square3Stack3DIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
+        </button>
+        <button
+          disabled={!pkgID}
+          type="button"
+          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-300 px-2.5 py-1.5 text-sm font-semibold text-gray shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
+            !pkgID ? "cursor-not-allowed opacity-50" : ""
+          }`}
+          onClick={resetState}
+        >
+          <ArrowPathIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
+        </button>
+      </div>
       <div className="m-10">
         {handleSbomClicked &&
           (sboms.length === 0 ? (
@@ -434,21 +484,40 @@ const KnownInfo = () => {
           ) : (
             <ul>
               {slsas.map((slsa, index) => (
-                <li key={index}>
+                <li className="border border-b-slate-600 py-2" key={index}>
                   <div>
                     <p className="break-all">
-                      Hash: {slsa.subject?.algorithm}
+                      <span className="font-bold text-md mr-2">Hash:</span>{" "}
+                      {slsa.subject?.algorithm}
                       {slsa.subject?.digest}
                     </p>
-                    {/* NODE ID: */}
-                    {/* <p>{slsa.id}</p> */}
-                    <br />
-                    <p>Build Type: {slsa.slsa?.buildType}</p>
-                    <p>Built By: {slsa.slsa?.builtBy?.uri}</p>
-                    <p>Origin: {slsa.slsa?.origin}</p>
-                    <p>SLSA Version: {slsa.slsa?.slsaVersion}</p>
+                    <div className="flex flex-col space-y-1">
+                      <p>
+                        <span className="font-bold text-md mr-2">
+                          Build Type:{" "}
+                        </span>
+                        {slsa.slsa?.buildType}
+                      </p>
+                      <p>
+                        <span className="font-bold text-md mr-2">
+                          Built By:{" "}
+                        </span>
+                        {slsa.slsa?.builtBy?.uri}
+                      </p>
+                      <p>
+                        <span className="font-bold text-md mr-2">Origin: </span>
+                        {slsa.slsa?.origin}
+                      </p>
+                      <p>
+                        <span className="font-bold text-md mr-2">
+                          SLSA Version:
+                        </span>{" "}
+                        {slsa.slsa?.slsaVersion}
+                      </p>
+                    </div>
                   </div>
                   <br />
+                  <hr />
                 </li>
               ))}
             </ul>

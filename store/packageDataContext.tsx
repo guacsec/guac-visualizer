@@ -1,6 +1,9 @@
+import { Package } from "@/gql/__generated__/graphql";
 import { createContext, useContext, useState, ReactNode } from "react";
 
 type PackageDataContextType = {
+  pkgContext: any;
+  setPkgContext: (pkg: any) => void;
   pkgID: string;
   setPkgID: (pkg: string) => void;
   packageName: string;
@@ -30,6 +33,7 @@ type PackageDataProviderProps = {
 export const PackageDataProvider: React.FC<PackageDataProviderProps> = ({
   children,
 }) => {
+  const [pkgContext, setPkgContext] = useState<Package>();
   const [pkgID, setPkgID] = useState<string>("");
   const [packageName, setPackageName] = useState<string>("");
   const [pkgType, setPkgType] = useState("");
@@ -38,6 +42,8 @@ export const PackageDataProvider: React.FC<PackageDataProviderProps> = ({
   return (
     <PackageDataContext.Provider
       value={{
+        pkgContext,
+        setPkgContext,
         pkgID,
         setPkgID,
         pkgType,

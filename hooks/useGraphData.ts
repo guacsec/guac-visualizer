@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { GraphDataWithMetadata } from "@/components/graph/types";
 import { NodeFragment } from "@/gql/types/nodeFragment";
 import {
@@ -13,6 +13,7 @@ import { ParseNode } from "@/utils/ggraph";
 
 export function useGraphData() {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [graphData, setGraphData] = useState<GraphDataWithMetadata>({
     nodes: [],
@@ -82,12 +83,15 @@ export function useGraphData() {
     }
   };
 
+  const resetGraph = (nodeId: string) => {
+    router.push(`/?path=${nodeId}`);
+  };
+
   // fetch and update data based on query parameters
   const fetchDataFromQueryParams = async () => {
     try {
       const myQuery = searchParams.get("path");
-
-      if (myQuery) {
+      if (myQuery !== null) {
         const nodeIds = myQuery.split(",");
         const parsedNodes = await fetchAndParseNodes(nodeIds);
 
@@ -120,5 +124,6 @@ export function useGraphData() {
     breadcrumbs,
     addBreadcrumb,
     removeBreadcrumbsFromIndex,
+    resetGraph,
   };
 }
