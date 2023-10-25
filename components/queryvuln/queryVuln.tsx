@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useApolloClient } from "@apollo/client";
 import { CERTIFY_VULN_QUERY } from "./certifyVulnQuery";
 import { useRouter } from "next/navigation";
-import { useGraphData } from "@/hooks/useGraphData";
-import { pushIdToURL } from "@/utils/pushIdToURLAndSetGraphData";
+import { ArrowRightCircleIcon } from "@heroicons/react/24/solid";
 
 const QueryCertifyVuln: React.FC = () => {
   const [vulnerabilityID, setVulnerabilityID] = useState("");
@@ -45,7 +44,6 @@ const QueryCertifyVuln: React.FC = () => {
       >
         Search
       </button>
-
       {results ? (
         <div className="mt-4">
           {results.map((node) => {

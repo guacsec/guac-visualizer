@@ -1,229 +1,20 @@
 import { useQuery } from "@apollo/client";
 import React, { useContext, useEffect, useState } from "react";
-import gql from "graphql-tag";
 import { usePackageData } from "@/store/packageDataContext";
 import {
-  ArrowPathIcon,
   ExclamationCircleIcon,
   FolderOpenIcon,
   Square3Stack3DIcon,
+  TrashIcon,
 } from "@heroicons/react/24/solid";
-import { useGraphData } from "@/hooks/useGraphData";
 import { useRouter } from "next/navigation";
 import { HasSlsa } from "@/gql/__generated__/graphql";
-
-// TODO: Everything is in one file right now, before making PR, branch these out to their respective folders
-// TODO: Use queries from generated code, the queries here are just for quick and dirty testing
-// TODO: Get vulns for a package
-/*
-
-.
-.
-.
-*/
-
-// VULN QUERY
-const GET_VULNS = gql`
-  fragment allCertifyVulnTree on CertifyVuln {
-    id
-    package {
-      id
-      type
-      namespaces {
-        id
-        namespace
-        names {
-          id
-          name
-          versions {
-            id
-            version
-            qualifiers {
-              key
-              value
-            }
-            subpath
-          }
-        }
-      }
-    }
-    vulnerability {
-      id
-      type
-      vulnerabilityIDs {
-        id
-        vulnerabilityID
-      }
-    }
-    metadata {
-      dbUri
-      dbVersion
-      scannerUri
-      scannerVersion
-      timeScanned
-      origin
-      collector
-    }
-  }
-
-  query CertifyVuln($pkgVersion: String!) {
-    CertifyVuln(certifyVulnSpec: { package: { version: $pkgVersion } }) {
-      ...allCertifyVulnTree
-    }
-  }
-`;
-
-// SBOM QUERY
-const GET_SBOMS = gql`
-  query HasSBOM($name: String!, $pkgID: ID!) {
-    HasSBOM(
-      hasSBOMSpec: { subject: { package: { name: $name, id: $pkgID } } }
-    ) {
-      ...allHasSBOMTree
-    }
-  }
-
-  fragment allHasSBOMTree on HasSBOM {
-    id
-    subject {
-      __typename
-      ... on Package {
-        id
-        type
-        namespaces {
-          id
-          namespace
-          names {
-            id
-            name
-            versions {
-              id
-              version
-              qualifiers {
-                key
-                value
-              }
-              subpath
-            }
-          }
-        }
-      }
-
-      ... on Artifact {
-        id
-        algorithm
-        digest
-      }
-    }
-    uri
-    algorithm
-    digest
-    downloadLocation
-    origin
-    collector
-  }
-`;
-
-// OCCURENCES + SLSA
-const GET_OCCURRENCES_BY_VERSION = gql`
-  fragment allIsOccurrencesTree on IsOccurrence {
-    id
-    subject {
-      __typename
-      ... on Package {
-        id
-        type
-        namespaces {
-          id
-          namespace
-          names {
-            id
-            name
-            versions {
-              id
-              version
-              qualifiers {
-                key
-                value
-              }
-              subpath
-            }
-          }
-        }
-      }
-      ... on Source {
-        id
-        type
-        namespaces {
-          id
-          namespace
-          names {
-            id
-            name
-            tag
-            commit
-          }
-        }
-      }
-    }
-    artifact {
-      id
-      algorithm
-      digest
-    }
-    justification
-    origin
-    collector
-  }
-
-  query IsOccurrenceByVersion($pkgName: String!) {
-    IsOccurrence(
-      isOccurrenceSpec: { subject: { package: { name: $pkgName } } }
-    ) {
-      ...allIsOccurrencesTree
-    }
-  }
-`;
-
-const GET_SLSAS = gql`
-  fragment allHasSLSATree on HasSLSA {
-    id
-    subject {
-      id
-      algorithm
-      digest
-    }
-    slsa {
-      builtFrom {
-        id
-        algorithm
-        digest
-      }
-      builtBy {
-        id
-        uri
-      }
-      buildType
-      slsaPredicate {
-        key
-        value
-      }
-      slsaVersion
-      startedOn
-      finishedOn
-      origin
-      collector
-    }
-  }
-
-  query HasSLSA($algorithm: String!, $digest: String!) {
-    HasSLSA(
-      hasSLSASpec: { subject: { algorithm: $algorithm, digest: $digest } }
-    ) {
-      ...allHasSLSATree
-    }
-  }
-`;
+import {
+  GET_OCCURRENCES_BY_VERSION,
+  GET_SBOMS,
+  GET_SLSAS,
+  GET_VULNS,
+} from "./knownQueries";
 
 const KnownInfo = () => {
   const router = useRouter();
@@ -236,8 +27,6 @@ const KnownInfo = () => {
   const [handleSbomClicked, setHandleSbomClicked] = useState(false);
   const [handleVulnClicked, setHandleVulnClicked] = useState(false);
   const [handleSLSAClicked, setHandleSLSAClicked] = useState(false);
-
-  const { resetGraph } = useGraphData();
 
   // VULN
   const {
@@ -255,10 +44,12 @@ const KnownInfo = () => {
     setHandleVulnClicked(true);
     if (pkgVersion !== "") {
       const { data } = await vulnsRefetch({ pkgVersion });
+      console.log(data?.CertifyVuln);
       if (
         data?.CertifyVuln &&
         Array.isArray(data.CertifyVuln) &&
-        data.CertifyVuln.length > 0
+        data.CertifyVuln.length > 0 &&
+        data.CertifyVuln[0].vulnerability.type !== "novuln"
       ) {
         setVulns(data.CertifyVuln);
         for (let vuln of data.CertifyVuln) {
@@ -277,7 +68,7 @@ const KnownInfo = () => {
     (vuln) => vuln?.vulnerability?.type !== "novuln"
   );
 
-  // SBOM
+  // SBOMs
   const {
     loading: sbomLoading,
     error: sbomError,
@@ -328,11 +119,11 @@ const KnownInfo = () => {
           const fetchedSLSAs = await fetchSLSAs(algorithm, digest);
           allSLSAs.push(...fetchedSLSAs);
         }
-      }
-      setSLSAs(allSLSAs);
+        setSLSAs(allSLSAs);
 
-      const idString = allSLSAIds.join(",");
-      router.push(`/?path=${idString}`);
+        const idString = allSLSAIds.join(",");
+        router.push(`/?path=${idString}`);
+      }
     }
   };
 
@@ -362,7 +153,7 @@ const KnownInfo = () => {
     setHandleSbomClicked(false);
     setHandleVulnClicked(false);
     setHandleSLSAClicked(false);
-    resetGraph(pkgID);
+    // resetGraph(pkgID);
   };
   // reset
   useEffect(() => {
@@ -416,7 +207,10 @@ const KnownInfo = () => {
           }`}
           onClick={resetState}
         >
-          <ArrowPathIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
+          <TrashIcon
+            className="-mr-0.5 h-5 w-5 text-stone-600"
+            aria-hidden="true"
+          />
         </button>
       </div>
       <div className="m-10">
