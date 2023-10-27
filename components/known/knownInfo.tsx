@@ -45,16 +45,21 @@ const KnownInfo = () => {
   });
 
   const fetchVulns = async () => {
+    console.log("fetchVulns called");
+    console.log("pkg version here", pkgVersion);
     let pathWithIDs = "";
     setHandleVulnClicked(true);
     if (pkgVersion !== "") {
       const { data } = await vulnsRefetch({ pkgVersion });
-      console.log(data?.CertifyVuln);
+      console.log(
+        "All vulnerability types:",
+        data?.CertifyVuln.map((v) => v?.vulnerability?.type)
+      );
       if (
         data?.CertifyVuln &&
         Array.isArray(data.CertifyVuln) &&
         data.CertifyVuln.length > 0 &&
-        data.CertifyVuln[0].vulnerability.type !== "novuln"
+        data.CertifyVuln.some((vuln) => vuln.vulnerability.type !== "novuln")
       ) {
         setVulns(data.CertifyVuln);
         for (let vuln of data.CertifyVuln) {
@@ -164,11 +169,9 @@ const KnownInfo = () => {
   };
 
   // trigger for resetting
-  useEffect(() => {
-    resetState();
-  }, [pkgID, packageName, pkgVersion]);
-
-  console.log(slsas);
+  // useEffect(() => {
+  //   resetState();
+  // }, [pkgID, packageName, pkgVersion]);
 
   return (
     <div className="text-black">
