@@ -15,6 +15,7 @@ import client from "@/apollo/client";
 import { useDimensions } from "@/hooks/useDimensions";
 import { PackageDataProvider } from "@/store/packageDataContext";
 import NodeInfo from "@/components/nodeInfo/nodeInfo";
+import { VulnResultsProvider } from "@/store/vulnResultsContext";
 
 export default function Home() {
   const [highlights, setHighlights] = useState({
@@ -55,28 +56,29 @@ export default function Home() {
   return (
     <div className="flex flex-col lg:flex-row items-center justify-between m-auto">
       <ApolloProvider client={client}>
-        <PackageDataProvider>
-          <main className="h-full w-screen md:w-auto flex flex-col  p-10">
-            {packageLoading ? (
-              <div>Loading package types...</div>
-            ) : packageError ? (
-              <div>Error loading package types!</div>
-            ) : (
-              <div className="flex flex-col md:flex-row justify-center">
-                <PackageSelector
-                  packageTypes={packageTypes}
-                  setGraphData={setGraphDataWithInitial}
-                  resetTypeFunc={reset}
-                />
-                <div>
-                  <QueryVuln />
+        <VulnResultsProvider>
+          <PackageDataProvider>
+            <main className="h-full w-screen md:w-auto flex flex-col  p-10">
+              {packageLoading ? (
+                <div>Loading package types...</div>
+              ) : packageError ? (
+                <div>Error loading package types!</div>
+              ) : (
+                <div className="flex flex-col md:flex-row justify-center">
+                  <PackageSelector
+                    packageTypes={packageTypes}
+                    setGraphData={setGraphDataWithInitial}
+                    resetTypeFunc={reset}
+                  />
+                  <div>
+                    <QueryVuln />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <div className="flex flex-col max-w-fit justify-center items-center lg:items-start lg:flex-row m-10">
-              {/* TODO: Fix highlighter, until then keep it commented */}
-              {/* <div className="flex flex-col text-sm p-4 row-span-1 lg:col-span-1">
+              <div className="flex flex-col max-w-fit justify-center items-center lg:items-start lg:flex-row m-10">
+                {/* TODO: Fix highlighter, until then keep it commented */}
+                {/* <div className="flex flex-col text-sm p-4 row-span-1 lg:col-span-1">
                 <p className="pb-5 pt-3 opacity-70">
                   <span className="font-bold uppercase">Tip:</span> Use click
                   and scroll to adjust graph. <br />
@@ -94,43 +96,44 @@ export default function Home() {
                 </div>
               </div>  */}
 
-              <div className="p-8 lg:p-0">
-                <Graph
-                  graphData={graphData}
-                  onNodeClick={handleNodeClick}
-                  options={{
-                    highlightArtifact: highlights.artifact,
-                    highlightVuln: highlights.vuln,
-                    highlightSbom: highlights.sbom,
-                    highlightBuilder: highlights.builder,
-                  }}
-                  containerOptions={{
-                    width: containerWidth,
-                    height: containerHeight,
-                  }}
-                />
-                {graphData.nodes.length !== 0 &&
-                  graphData.links.length !== 0 && (
-                    <NavigationButtons
-                      backStack={backStack}
-                      breadcrumb={breadcrumb}
-                      currentIndex={currentIndex}
-                      handleBackClick={handleBackClick}
-                      handleForwardClick={handleForwardClick}
-                      reset={reset}
-                      userInteractedWithPath={userInteractedWithPath}
-                    />
-                  )}
-                <Breadcrumb
-                  breadcrumb={breadcrumb.map((item) => item.label)}
-                  handleNodeClick={handleBreadcrumbClick}
-                  currentIndex={currentIndex}
-                />
+                <div className="p-8 lg:p-0">
+                  <Graph
+                    graphData={graphData}
+                    onNodeClick={handleNodeClick}
+                    options={{
+                      highlightArtifact: highlights.artifact,
+                      highlightVuln: highlights.vuln,
+                      highlightSbom: highlights.sbom,
+                      highlightBuilder: highlights.builder,
+                    }}
+                    containerOptions={{
+                      width: containerWidth,
+                      height: containerHeight,
+                    }}
+                  />
+                  {graphData.nodes.length !== 0 &&
+                    graphData.links.length !== 0 && (
+                      <NavigationButtons
+                        backStack={backStack}
+                        breadcrumb={breadcrumb}
+                        currentIndex={currentIndex}
+                        handleBackClick={handleBackClick}
+                        handleForwardClick={handleForwardClick}
+                        reset={reset}
+                        userInteractedWithPath={userInteractedWithPath}
+                      />
+                    )}
+                  <Breadcrumb
+                    breadcrumb={breadcrumb.map((item) => item.label)}
+                    handleNodeClick={handleBreadcrumbClick}
+                    currentIndex={currentIndex}
+                  />
+                </div>
+                <NodeInfo />
               </div>
-              <NodeInfo />
-            </div>
-          </main>
-        </PackageDataProvider>
+            </main>
+          </PackageDataProvider>
+        </VulnResultsProvider>
       </ApolloProvider>
     </div>
   );
