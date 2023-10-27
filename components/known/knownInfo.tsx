@@ -15,10 +15,7 @@ import {
   GET_SLSAS,
   GET_VULNS,
 } from "./knownQueries";
-import {
-  VulnResultsProvider,
-  useVulnResults,
-} from "@/store/vulnResultsContext";
+import { useVulnResults } from "@/store/vulnResultsContext";
 import VulnResults from "./vulnResults";
 
 const KnownInfo = () => {
@@ -166,10 +163,12 @@ const KnownInfo = () => {
     setHandleSLSAClicked(false);
   };
 
-  // // trigger for resetting
-  // useEffect(() => {
-  //   resetState();
-  // }, [pkgID, packageName, pkgVersion]);
+  // trigger for resetting
+  useEffect(() => {
+    resetState();
+  }, [pkgID, packageName, pkgVersion]);
+
+  console.log(slsas);
 
   return (
     <div className="text-black">
@@ -301,6 +300,12 @@ const KnownInfo = () => {
                           Build Type:{" "}
                         </span>
                         {slsa.slsa?.buildType}
+                      </p>
+                      <p>
+                        <span className="font-bold text-md mr-2">
+                          Visualizer URL:{" "}
+                        </span>
+                        {`http:localhost:3000/?path=${slsa?.id},${slsa.slsa.builtFrom[0].id}`}
                       </p>
                       <p>
                         <span className="font-bold text-md mr-2">
