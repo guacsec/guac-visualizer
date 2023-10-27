@@ -5,6 +5,7 @@ import { useApolloClient } from "@apollo/client";
 import { CERTIFY_VULN_QUERY } from "./certifyVulnQuery";
 import { useRouter } from "next/navigation";
 import { ArrowRightCircleIcon } from "@heroicons/react/24/solid";
+import { useVulnResults } from "@/store/vulnResultsContext";
 
 const QueryCertifyVuln: React.FC = () => {
   const [vulnerabilityID, setVulnerabilityID] = useState("");
@@ -12,6 +13,7 @@ const QueryCertifyVuln: React.FC = () => {
   const [searched, setSearched] = useState(false);
   const client = useApolloClient();
   const router = useRouter();
+  const { setVulnResults } = useVulnResults();
 
   // triggers a GraphQL query based on the user input, updates the results state, and navigates to a URL with its corresponding id
   const handleVulnSearch = async () => {
@@ -22,10 +24,16 @@ const QueryCertifyVuln: React.FC = () => {
         filter: { vulnerability: { vulnerabilityID } },
       },
     });
-    setResults(data.CertifyVuln);
+
     if (data.CertifyVuln && data.CertifyVuln.length > 0) {
+      setResults(data.CertifyVuln);
+      setVulnResults(data.CertifyVuln);
+
       const firstResultId = data.CertifyVuln[0].id;
       router.push(`/?path=${firstResultId}`);
+    } else {
+      setResults([]);
+      setVulnResults([]);
     }
   };
 
@@ -49,41 +57,6 @@ const QueryCertifyVuln: React.FC = () => {
           />
         </button>
       </div>
-
-      {results ? (
-        <div className="mt-4">
-          {results.map((node) => {
-            return (
-              <div key={node.id} className="border p-4 rounded mb-4">
-                <h3 className="mt-2">
-                  <span className="font-semibold">Name: </span>{" "}
-                  {node.package.namespaces[0].names[0].name}
-                </h3>
-                <h3 className="mt-2">
-                  <span className="font-semibold">Version:</span>{" "}
-                  {node.package.namespaces[0].names[0].versions[0].version}
-                </h3>
-                <h3 className="mt-2">
-                  <span className="font-semibold">Type: </span>
-                  {node.package.type}
-                </h3>
-                <h3 className="mt-2">
-                  <span className="font-semibold">Vulnerability ID: </span>
-                  {node.vulnerability.vulnerabilityIDs[0].vulnerabilityID}
-                </h3>
-                <p className="mt-2">
-                  Last scanned on{" "}
-                  {new Date(node.metadata.timeScanned).toLocaleString()}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        searched && (
-          <p className="mt-4 text-lg text-gray-500">No results found.</p>
-        )
-      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePackageData } from "@/store/packageDataContext";
 import {
   ExclamationCircleIcon,
@@ -15,9 +15,17 @@ import {
   GET_SLSAS,
   GET_VULNS,
 } from "./knownQueries";
+import {
+  VulnResultsProvider,
+  useVulnResults,
+} from "@/store/vulnResultsContext";
+import VulnResults from "./vulnResults";
 
 const KnownInfo = () => {
   const router = useRouter();
+
+  const { vulnResults, setVulnResults } = useVulnResults();
+
   const { pkgID, packageName, pkgVersion } = usePackageData();
 
   const [sboms, setSboms] = useState([]);
@@ -109,6 +117,7 @@ const KnownInfo = () => {
 
   const fetchOccurrences = async () => {
     const { data } = await occurrenceRefetch({ pkgName: packageName });
+    console.log("occurences data", data);
     setHandleSLSAClicked(true);
     if (data?.IsOccurrence) {
       const allSLSAs = [];
@@ -146,19 +155,21 @@ const KnownInfo = () => {
     return slsaResults;
   };
 
+  // reset state
   const resetState = () => {
     setSboms([]);
     setVulns([]);
     setSLSAs([]);
+    setVulnResults([]);
     setHandleSbomClicked(false);
     setHandleVulnClicked(false);
     setHandleSLSAClicked(false);
-    // resetGraph(pkgID);
   };
-  // reset
-  useEffect(() => {
-    resetState();
-  }, [pkgID, packageName, pkgVersion]);
+
+  // // trigger for resetting
+  // useEffect(() => {
+  //   resetState();
+  // }, [pkgID, packageName, pkgVersion]);
 
   return (
     <div className="text-black">
@@ -282,8 +293,7 @@ const KnownInfo = () => {
                   <div>
                     <p className="break-all">
                       <span className="font-bold text-md mr-2">Hash:</span>{" "}
-                      {slsa.subject?.algorithm}
-                      {slsa.subject?.digest}
+                      {slsa.subject?.algorithm}:{slsa.subject?.digest}
                     </p>
                     <div className="flex flex-col space-y-1">
                       <p>
@@ -317,6 +327,7 @@ const KnownInfo = () => {
             </ul>
           ))}
       </div>
+      {vulnResults && <VulnResults results={vulnResults} />}
     </div>
   );
 };
