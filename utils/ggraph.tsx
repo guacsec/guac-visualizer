@@ -273,7 +273,7 @@ export function parseArtifact(n: Artifact): [GuacGraphData, Node | undefined] {
       data: {
         ...n,
         id: n.id,
-        label: (n.algorithm + ":" + n.digest).slice(0, 10),
+        label: n.algorithm + ":" + n.digest,
         type: "Artifact",
       },
     },
