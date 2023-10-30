@@ -20,7 +20,7 @@ export default function RootLayout({
         <body>
           <div className="flex flex-col h-screen">
             <Header />
-            <main className="bg-zinc-100 dark:bg-zinc-700 text-black dark:text-zinc-50">
+            <main className="font-mono bg-zinc-100 dark:bg-zinc-700 text-black dark:text-zinc-50">
               {children}
             </main>
             <Footer />
