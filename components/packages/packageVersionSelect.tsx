@@ -97,8 +97,6 @@ const PackageVersionSelect = ({
       setPkgType(pkgType);
       setPkgVersion(pkgVersion);
 
-      console.log("PACKAGE HERE", pkg);
-
       const graphData: GraphDataWithMetadata = { nodes: [], links: [] };
       const parsedNode = ParseNode(pkg);
 
