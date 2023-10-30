@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { useApolloClient } from "@apollo/client";
 import { CERTIFY_VULN_QUERY } from "./certifyVulnQuery";
@@ -17,6 +15,7 @@ const QueryCertifyVuln: React.FC = () => {
 
   // triggers a GraphQL query based on the user input, updates the results state, and navigates to a URL with its corresponding id
   const handleVulnSearch = async () => {
+    if (!vulnerabilityID) return;
     setSearched(true);
     const { data } = await client.query({
       query: CERTIFY_VULN_QUERY,
@@ -35,6 +34,7 @@ const QueryCertifyVuln: React.FC = () => {
       setResults([]);
       setVulnResults([]);
     }
+    setVulnerabilityID("");
   };
 
   return (
