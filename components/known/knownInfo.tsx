@@ -20,7 +20,6 @@ import { CertifyVuln } from "@/gql/__generated__/graphql";
 
 const KnownInfo = () => {
   const router = useRouter();
-
   const { vulnResults, setVulnResults } = useVulnResults();
 
   const { pkgID, packageName, pkgVersion } = usePackageData();
@@ -144,7 +143,7 @@ const KnownInfo = () => {
       return updatedSLSAs;
     });
     setSLSAIndex(index);
-    router.push(`/?path=${newSLSA[0].id}`);
+    router.push(`/?path=${newSLSA[0].id},${occurrences[index]?.id}`);
   };
 
   const handleToggleSLSA = (index) => {
@@ -172,6 +171,7 @@ const KnownInfo = () => {
     setSboms([]);
     setVulns([]);
     setSLSAs([]);
+    setToggleSLSA([]);
     setVulnResults([]);
     setHandleSbomClicked(false);
     setHandleVulnClicked(false);
@@ -199,9 +199,9 @@ const KnownInfo = () => {
   ) : null;
 
   // trigger for resetting
-  useEffect(() => {
-    resetState();
-  }, [pkgID, packageName, pkgVersion]);
+  // useEffect(() => {
+  //   resetState();
+  // }, [pkgID, packageName, pkgVersion]);
 
   return (
     <div className="text-black">
