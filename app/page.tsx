@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Graph from "@/components/graph/Graph";
-import { HighlightToggles } from "@/components/highlightToggles";
+// import { HighlightToggles } from "@/components/highlightToggles";
 import { useGraphData } from "@/hooks/useGraphData";
 import { usePackageData } from "@/hooks/usePackageData";
 import PackageSelector from "@/components/packages/packageSelector";
@@ -58,13 +58,13 @@ export default function Home() {
       <ApolloProvider client={client}>
         <VulnResultsProvider>
           <PackageDataProvider>
-            <main className="h-full w-screen md:w-auto flex flex-col  p-10">
+            <main className="h-full w-screen md:w-auto flex flex-col p-10">
               {packageLoading ? (
                 <div>Loading package types...</div>
               ) : packageError ? (
                 <div>Error loading package types!</div>
               ) : (
-                <div className="flex flex-col md:flex-row justify-center">
+                <div className="flex flex-col md:flex-row justify-center py-5">
                   <PackageSelector
                     packageTypes={packageTypes}
                     setGraphData={setGraphDataWithInitial}
@@ -76,7 +76,7 @@ export default function Home() {
                 </div>
               )}
 
-              <div className="flex flex-col max-w-fit justify-center items-center lg:items-start lg:flex-row m-10">
+              <div className="flex flex-col justify-center items-center lg:items-start lg:flex-row">
                 {/* TODO: Fix highlighter, until then keep it commented */}
                 {/* <div className="flex flex-col text-sm p-4 row-span-1 lg:col-span-1">
                 <p className="pb-5 pt-3 opacity-70">

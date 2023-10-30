@@ -8,7 +8,6 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
-import { HasSlsa } from "@/gql/__generated__/graphql";
 import {
   GET_OCCURRENCES_BY_VERSION,
   GET_SBOMS,
@@ -17,6 +16,7 @@ import {
 } from "./knownQueries";
 import { useVulnResults } from "@/store/vulnResultsContext";
 import VulnResults from "./vulnResults";
+import { CertifyVuln } from "@/gql/__generated__/graphql";
 
 const KnownInfo = () => {
   const router = useRouter();
@@ -28,10 +28,16 @@ const KnownInfo = () => {
   const [sboms, setSboms] = useState([]);
   const [vulns, setVulns] = useState([]);
   const [slsas, setSLSAs] = useState([]);
+  const [occurrences, setOccurrences] = useState([]);
+  const [toggleSLSA, setToggleSLSA] = useState([]);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [handleSbomClicked, setHandleSbomClicked] = useState(false);
   const [handleVulnClicked, setHandleVulnClicked] = useState(false);
-  const [handleSLSAClicked, setHandleSLSAClicked] = useState(false);
+  const [slsaIndex, setSLSAIndex] = useState(null);
+  const [handleOccurrencesClicked, setHandleOccurrencesClicked] =
+    useState(false);
 
   // VULN
   const {
@@ -45,21 +51,18 @@ const KnownInfo = () => {
   });
 
   const fetchVulns = async () => {
-    console.log("fetchVulns called");
-    console.log("pkg version here", pkgVersion);
     let pathWithIDs = "";
+    resetState();
     setHandleVulnClicked(true);
     if (pkgVersion !== "") {
       const { data } = await vulnsRefetch({ pkgVersion });
-      console.log(
-        "All vulnerability types:",
-        data?.CertifyVuln.map((v) => v?.vulnerability?.type)
-      );
       if (
         data?.CertifyVuln &&
         Array.isArray(data.CertifyVuln) &&
         data.CertifyVuln.length > 0 &&
-        data.CertifyVuln.some((vuln) => vuln.vulnerability.type !== "novuln")
+        data.CertifyVuln.some(
+          (vuln: CertifyVuln) => vuln.vulnerability.type !== "novuln"
+        )
       ) {
         setVulns(data.CertifyVuln);
         for (let vuln of data.CertifyVuln) {
@@ -90,53 +93,25 @@ const KnownInfo = () => {
   });
 
   const fetchSBOMs = async () => {
+    resetState();
     setHandleSbomClicked(true);
     if (packageName) {
       const { data } = await sbomRefetch({ name: packageName, pkgID });
       setSboms(data?.HasSBOM || []);
-
-      console.log(data?.HasSBOM);
       const sbomResultID = data?.HasSBOM[0]?.id;
 
       if (sbomResultID) {
         router.push(`/?path=${sbomResultID}`);
       }
-      console.log("Fetched all SBOMs");
     } else {
       return;
     }
   };
 
-  const {
-    loading: occurrenceLoading,
-    error: occurrenceError,
-    refetch: occurrenceRefetch,
-  } = useQuery(GET_OCCURRENCES_BY_VERSION, {
+  // OCCURENCES AND SLSA
+  const { refetch: occurrenceRefetch } = useQuery(GET_OCCURRENCES_BY_VERSION, {
     skip: true,
   });
-
-  let allSLSAIds: string[] = [];
-
-  const fetchOccurrences = async () => {
-    const { data } = await occurrenceRefetch({ pkgName: packageName });
-    console.log("occurences data", data);
-    setHandleSLSAClicked(true);
-    if (data?.IsOccurrence) {
-      const allSLSAs = [];
-      for (const item of data.IsOccurrence) {
-        const algorithm = item.artifact?.algorithm;
-        const digest = item.artifact?.digest;
-        if (algorithm && digest) {
-          const fetchedSLSAs = await fetchSLSAs(algorithm, digest);
-          allSLSAs.push(...fetchedSLSAs);
-        }
-        setSLSAs(allSLSAs);
-
-        const idString = allSLSAIds.join(",");
-        router.push(`/?path=${idString}`);
-      }
-    }
-  };
 
   const {
     loading: slsaLoading,
@@ -146,36 +121,97 @@ const KnownInfo = () => {
     skip: true,
   });
 
-  const fetchSLSAs = async (algorithm: string, digest: string) => {
+  const fetchOccurrences = async () => {
+    resetState();
+    setHandleOccurrencesClicked(true);
+    const { data } = await occurrenceRefetch({ pkgName: packageName });
+
+    if (data?.IsOccurrence) {
+      setOccurrences(data.IsOccurrence);
+    }
+  };
+
+  const fetchSLSAForArtifact = async (
+    algorithm: string,
+    digest: string,
+    index: number
+  ) => {
     const { data } = await slsaRefetch({ algorithm, digest });
-    const slsaResults = data?.HasSLSA || [];
-    slsaResults.forEach((slsa: HasSlsa) => {
-      if (slsa?.id) {
-        allSLSAIds.push(slsa.id);
-      }
+    const newSLSA = data?.HasSLSA || [];
+    setSLSAs((prevSLSAs) => {
+      const updatedSLSAs = { ...prevSLSAs };
+      updatedSLSAs[index] = newSLSA;
+      return updatedSLSAs;
     });
-    return slsaResults;
+    setSLSAIndex(index);
+    router.push(`/?path=${newSLSA[0].id}`);
+  };
+
+  const handleToggleSLSA = (index) => {
+    setToggleSLSA((prevToggle) => ({
+      ...prevToggle,
+      [index]: !prevToggle[index],
+    }));
+  };
+
+  const handleGetSLSA = async (
+    algorithm: string,
+    digest: string,
+    index: number
+  ) => {
+    if (toggleSLSA[index]) {
+      handleToggleSLSA(index);
+    } else {
+      await fetchSLSAForArtifact(algorithm, digest, index);
+      handleToggleSLSA(index);
+    }
   };
 
   // reset state
-  const resetState = () => {
+  function resetState() {
     setSboms([]);
     setVulns([]);
     setSLSAs([]);
     setVulnResults([]);
     setHandleSbomClicked(false);
     setHandleVulnClicked(false);
-    setHandleSLSAClicked(false);
-  };
+    setHandleOccurrencesClicked(false);
+  }
+
+  // For VULN loading and error
+  const VULNLoadingElement = vulnsLoading ? (
+    <div>Loading vulnerabilities...</div>
+  ) : null;
+  const VULNErrorElement = vulnsError ? (
+    <div>Error: {vulnsError.message}</div>
+  ) : null;
+
+  // For SBOMs loading and error
+  const SBOMLoadingElement = sbomLoading ? <div>Loading SBOMs...</div> : null;
+  const SBOMErrorElement = sbomError ? (
+    <div>Error: {sbomError.message}</div>
+  ) : null;
+
+  // For SLSA loading and error
+  const SLSALoadingElement = slsaLoading ? <div>Loading SLSAs...</div> : null;
+  const SLSAErrorElement = slsaError ? (
+    <div>Error: {slsaError.message}</div>
+  ) : null;
 
   // trigger for resetting
-  // useEffect(() => {
-  //   resetState();
-  // }, [pkgID, packageName, pkgVersion]);
+  useEffect(() => {
+    resetState();
+  }, [pkgID, packageName, pkgVersion]);
 
   return (
     <div className="text-black">
       <div className="flex items-center justify-center">
+        {VULNLoadingElement}
+        {VULNErrorElement}
+        {SBOMLoadingElement}
+        {SBOMErrorElement}
+        {SLSALoadingElement}
+        {SLSAErrorElement}
         <button
           disabled={!pkgID}
           type="button"
@@ -229,7 +265,7 @@ const KnownInfo = () => {
       <div className="m-10">
         {handleSbomClicked &&
           (sboms.length === 0 ? (
-            <h2>This package doesn't have an SBOM associated with it</h2>
+            <h2>Didn't find SBOMs</h2>
           ) : (
             <ul>
               {sboms.map((sbom) => (
@@ -252,9 +288,7 @@ const KnownInfo = () => {
       <div className="m-10">
         {handleVulnClicked &&
           (filteredVulns.length === 0 ? (
-            <h2>
-              This package doesn't have any vulnerabilities associated with it
-            </h2>
+            <h2>Didn't find vulns</h2>
           ) : (
             <ul>
               {filteredVulns.map((vuln, index) => (
@@ -285,56 +319,105 @@ const KnownInfo = () => {
           ))}
       </div>
       <div className="m-10">
-        {handleSLSAClicked &&
-          (slsas.length === 0 ? (
+        {handleOccurrencesClicked &&
+          (occurrences.length === 0 ? (
             <h2>No SLSA attestations found</h2>
           ) : (
-            <ul>
-              {slsas.map((slsa, index) => (
-                <li className="border border-b-slate-600 py-2" key={index}>
-                  <div>
-                    <p className="break-all">
-                      <span className="font-bold text-md mr-2">Hash:</span>{" "}
-                      {slsa.subject?.algorithm}:{slsa.subject?.digest}
-                    </p>
-                    <div className="flex flex-col space-y-1">
-                      <p>
-                        <span className="font-bold text-md mr-2">
-                          Build Type:{" "}
-                        </span>
-                        {slsa.slsa?.buildType}
+            <div>
+              <p className="font-semibold text-md m-2">Search by artifact</p>
+              <input
+                type="text"
+                placeholder="🔍 Enter hash here..."
+                className="p-2 mb-4 border-b border-gray-400/90 rounded"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <hr className="border-b border-gray-400/30 my-5 w-1/2" />
+              <ul className="space-y-4">
+                {occurrences
+                  .filter((occurrence) => {
+                    const hash = `${occurrence.artifact.algorithm}:${occurrence.artifact.digest}`;
+                    return hash.includes(searchTerm);
+                  })
+                  .map((occurrence, index) => (
+                    <div
+                      key={index}
+                      className="p-5 border rounded-lg shadow-lg"
+                    >
+                      <h3 className="text-md font-semibold text-gray-600 break-all">
+                        {occurrence.subject.namespaces[0].names[0].name}
+                      </h3>
+                      <p className="text-sm text-gray-600 break-all">
+                        {occurrence.artifact.algorithm}:
+                        {occurrence.artifact.digest}
                       </p>
-                      <p>
-                        <span className="font-bold text-md mr-2">
-                          Visualizer URL:{" "}
-                        </span>
-                        {`http:localhost:3000/?path=${slsa?.id},${slsa.slsa.builtFrom[0].id}`}
-                      </p>
-                      <p>
-                        <span className="font-bold text-md mr-2">
-                          Built By:{" "}
-                        </span>
-                        {slsa.slsa?.builtBy?.uri}
-                      </p>
-                      <p>
-                        <span className="font-bold text-md mr-2">Origin: </span>
-                        {slsa.slsa?.origin}
-                      </p>
-                      <p>
-                        <span className="font-bold text-md mr-2">
-                          SLSA Version:
-                        </span>{" "}
-                        {slsa.slsa?.slsaVersion}
-                      </p>
+                      <button
+                        className="px-4 py-2 mt-3 text-white bg-stone-500 rounded hover:bg-blue-400"
+                        onClick={() =>
+                          handleGetSLSA(
+                            occurrence.artifact.algorithm,
+                            occurrence.artifact.digest,
+                            index
+                          )
+                        }
+                      >
+                        {toggleSLSA[index] ? "Hide SLSA" : "Get SLSA"}
+                      </button>
+                      {toggleSLSA[index] &&
+                        slsaIndex === index &&
+                        slsas[index] && (
+                          <div className="mt-3">
+                            <p className="my-2">
+                              <span className="font-semibold">Build Type:</span>{" "}
+                              {slsas[index][0]?.slsa?.buildType}
+                            </p>
+                            <p className="my-2">
+                              <span className="font-semibold">Built By:</span>{" "}
+                              {slsas[index][0]?.slsa?.builtBy.uri}
+                            </p>
+                            <p className="my-2">
+                              <span className="font-semibold">
+                                Download location:
+                              </span>{" "}
+                              {slsas[index][0]?.slsa?.origin}
+                            </p>
+                            <p className="my-2">
+                              <span className="font-semibold">
+                                SLSA Version:
+                              </span>{" "}
+                              {slsas[index][0]?.slsa?.slsaVersion}
+                            </p>
+                            <div className="p-3 mt-2 bg-gray-100 rounded">
+                              <ul>
+                                <p className="font-semibold text-md py-2">
+                                  Predicate{" "}
+                                </p>
+                                {slsas[index][0]?.slsa?.slsaPredicate.map(
+                                  (predicate, i) => (
+                                    <li
+                                      key={i}
+                                      className="py-1 px-2 flex flex-col bg-blue-50 rounded text-sm"
+                                    >
+                                      <span className="font-semibold">
+                                        {predicate.key} :
+                                      </span>
+                                      <span className="">
+                                        {predicate.value}
+                                      </span>
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+                        )}
                     </div>
-                  </div>
-                  <br />
-                  <hr />
-                </li>
-              ))}
-            </ul>
+                  ))}
+              </ul>
+            </div>
           ))}
       </div>
+
       {vulnResults && <VulnResults results={vulnResults} />}
     </div>
   );
