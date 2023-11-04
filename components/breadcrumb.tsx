@@ -17,7 +17,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   }
 
   return (
-    <div className="flex mt-3" aria-label="Breadcrumb">
+    <div className="flex mt-3 py-5" aria-label="Breadcrumb">
       <ol
         role="list"
         className="flex flex-wrap space-x-2 rounded-xl bg-white px-6 shadow"

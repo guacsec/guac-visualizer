@@ -103,7 +103,7 @@ export default function Graph({
         ctx.fill();
         break;
       case "IsOccurrence":
-        ctx.fillStyle = applyRedFillAndOutline ? "red" : "NavajoWhite";
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "Goldenrod";
         ctx.beginPath();
         ctx.fillRect(node.x - side / 2, node.y - side / 2, side, side);
         ctx.arc(node.x, node.y, 6, 0, 2 * Math.PI, false);
@@ -112,11 +112,11 @@ export default function Graph({
         ctx.fill();
         break;
       case "HasSlsa":
-        ctx.fillStyle = applyRedFillAndOutline ? "red" : "PaleTurquoise";
+        ctx.fillStyle = applyRedFillAndOutline ? "red" : "DarkTurquoise";
         ctx.beginPath();
         ctx.arc(node.x, node.y, 6, 0, 2 * Math.PI, false);
-        ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
-        ctx.shadowBlur = 3;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.1)";
+        ctx.shadowBlur = 2;
         ctx.fill();
         break;
       case "Builder":
@@ -207,7 +207,7 @@ export default function Graph({
         ctx.fill();
         break;
       case "Artifact":
-        ctx.fillStyle = applyRedFillAndOutline ? "red" : "yellow";
+        ctx.fillStyle = "Coral";
         ctx.beginPath();
         ctx.arc(node.x, node.y, shapeSize / 2, 0, 2 * Math.PI);
         ctx.stroke();
