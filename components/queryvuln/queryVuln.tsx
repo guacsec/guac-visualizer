@@ -53,7 +53,7 @@ const QueryCertifyVuln: React.FC = () => {
     <div className="container mx-auto p-4">
       <h1 className="py-3 text-lg font-semibold">Query vulnerability</h1>
       <input
-        className="border rounded p-2 mb-4"
+        className="border rounded p-2 mb-4 dark:text-black"
         value={vulnerabilityID}
         onChange={(e) => setVulnerabilityID(e.target.value)}
         placeholder="Enter vuln ID here..."
