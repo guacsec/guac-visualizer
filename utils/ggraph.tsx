@@ -825,8 +825,8 @@ export function parseIsDependency(
       ...edges,
       {
         data: {
-          source: n.id,
-          target: t.data.id,
+          source: t.data.id,
+          target: n.id,
           label: "IsDependency_subject",
         },
       },
