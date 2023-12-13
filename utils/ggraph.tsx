@@ -662,7 +662,7 @@ export function parseHasSourceAt(
   if (t != undefined) {
     edges = [
       ...edges,
-      { data: { source: n.id, target: t.data.id, label: "subject" } },
+      { data: { source: t.data.id, target: n.id, label: "subject" } },
     ];
   }
 
@@ -825,8 +825,8 @@ export function parseIsDependency(
       ...edges,
       {
         data: {
-          source: n.id,
-          target: t.data.id,
+          source: t.data.id,
+          target: n.id,
           label: "IsDependency_subject",
         },
       },
