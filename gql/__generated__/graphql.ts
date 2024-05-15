@@ -39,6 +39,35 @@ export type Artifact = {
 };
 
 /**
+ * ArtifactConnection returns the paginated results for artifact.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the ArtifactEdge which contains the current cursor
+ * and the artifact node itself
+ */
+export type ArtifactConnection = {
+  __typename?: 'ArtifactConnection';
+  edges: Array<ArtifactEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * ArtifactEdge contains the cursor for the resulting node and
+ * the artifact node itself.
+ */
+export type ArtifactEdge = {
+  __typename?: 'ArtifactEdge';
+  cursor: Scalars['ID'];
+  node: Artifact;
+};
+
+/**
  * ArtifactInputSpec specifies an artifact for mutations.
  *
  * The checksum fields are canonicalized to be lowercase.
@@ -70,6 +99,35 @@ export type Builder = {
   uri: Scalars['String'];
 };
 
+/**
+ * BuilderConnection returns the paginated results for builder.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the BuilderEdge which contains the current cursor
+ * and the Builder node itself
+ */
+export type BuilderConnection = {
+  __typename?: 'BuilderConnection';
+  edges: Array<BuilderEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * BuilderEdge contains the cursor for the resulting node and
+ * the Builder node itself.
+ */
+export type BuilderEdge = {
+  __typename?: 'BuilderEdge';
+  cursor: Scalars['ID'];
+  node: Builder;
+};
+
 /** BuilderInputSpec specifies a builder for mutations. */
 export type BuilderInputSpec = {
   uri: Scalars['String'];
@@ -96,12 +154,48 @@ export type BuilderSpec = {
  */
 export type CertifyBad = {
   __typename?: 'CertifyBad';
+  /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
+  /** The justification for the subject being certified bad */
   justification: Scalars['String'];
+  /** Timestamp when the certification was created (in RFC 3339 format) */
   knownSince: Scalars['Time'];
+  /** Document from which this attestation is generated from */
   origin: Scalars['String'];
+  /** The package, source or artifact that is attested */
   subject: PackageSourceOrArtifact;
+};
+
+/**
+ * CertifyBadConnection returns the paginated results for CertifyBad.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the CertifyBadEdge which contains the current cursor
+ * and the CertifyBad node itself
+ */
+export type CertifyBadConnection = {
+  __typename?: 'CertifyBadConnection';
+  edges: Array<CertifyBadEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * CertifyBadEdge contains the cursor for the resulting node and
+ * the CertifyBad node itself.
+ */
+export type CertifyBadEdge = {
+  __typename?: 'CertifyBadEdge';
+  cursor: Scalars['ID'];
+  node: CertifyBad;
 };
 
 /**
@@ -110,6 +204,7 @@ export type CertifyBad = {
  */
 export type CertifyBadInputSpec = {
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   justification: Scalars['String'];
   knownSince: Scalars['Time'];
   origin: Scalars['String'];
@@ -131,6 +226,7 @@ export type CertifyBadInputSpec = {
  */
 export type CertifyBadSpec = {
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   justification?: InputMaybe<Scalars['String']>;
   knownSince?: InputMaybe<Scalars['Time']>;
@@ -153,17 +249,54 @@ export type CertifyBadSpec = {
  */
 export type CertifyGood = {
   __typename?: 'CertifyGood';
+  /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
+  /** The justification for the subject being certified good */
   justification: Scalars['String'];
+  /** Timestamp when the certification was created (in RFC 3339 format) */
   knownSince: Scalars['Time'];
+  /** Document from which this attestation is generated from */
   origin: Scalars['String'];
+  /** The package, source or artifact that is attested */
   subject: PackageSourceOrArtifact;
+};
+
+/**
+ * CertifyGoodConnection returns the paginated results for CertifyGood.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the CertifyGoodEdge which contains the current cursor
+ * and the CertifyGood node itself
+ */
+export type CertifyGoodConnection = {
+  __typename?: 'CertifyGoodConnection';
+  edges: Array<CertifyGoodEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * CertifyGoodEdge contains the cursor for the resulting node and
+ * the CertifyGood node itself.
+ */
+export type CertifyGoodEdge = {
+  __typename?: 'CertifyGoodEdge';
+  cursor: Scalars['ID'];
+  node: CertifyGood;
 };
 
 /** CertifyGoodInputSpec represents the mutation input to ingest a CertifyGood evidence. */
 export type CertifyGoodInputSpec = {
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   justification: Scalars['String'];
   knownSince: Scalars['Time'];
   origin: Scalars['String'];
@@ -185,6 +318,7 @@ export type CertifyGoodInputSpec = {
  */
 export type CertifyGoodSpec = {
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   justification?: InputMaybe<Scalars['String']>;
   knownSince?: InputMaybe<Scalars['Time']>;
@@ -222,6 +356,8 @@ export type CertifyLegal = {
   discoveredLicense: Scalars['String'];
   /** A list of license objects found in the discovered license expression */
   discoveredLicenses: Array<License>;
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
   /** Extra justification for the certification */
   justification: Scalars['String'];
@@ -234,6 +370,35 @@ export type CertifyLegal = {
 };
 
 /**
+ * CertifyLegalConnection returns the paginated results for CertifyLegal.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the CertifyLegalEdge which contains the current cursor
+ * and the CertifyLegal node itself
+ */
+export type CertifyLegalConnection = {
+  __typename?: 'CertifyLegalConnection';
+  edges: Array<CertifyLegalEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * CertifyLegalEdge contains the cursor for the resulting node and
+ * the CertifyLegal node itself.
+ */
+export type CertifyLegalEdge = {
+  __typename?: 'CertifyLegalEdge';
+  cursor: Scalars['ID'];
+  node: CertifyLegal;
+};
+
+/**
  * CertifyLegalInputSpec represents the input for certifying legal information in
  * mutations.
  */
@@ -242,6 +407,7 @@ export type CertifyLegalInputSpec = {
   collector: Scalars['String'];
   declaredLicense: Scalars['String'];
   discoveredLicense: Scalars['String'];
+  documentRef: Scalars['String'];
   justification: Scalars['String'];
   origin: Scalars['String'];
   timeScanned: Scalars['Time'];
@@ -261,6 +427,7 @@ export type CertifyLegalSpec = {
   declaredLicenses?: InputMaybe<Array<LicenseSpec>>;
   discoveredLicense?: InputMaybe<Scalars['String']>;
   discoveredLicenses?: InputMaybe<Array<LicenseSpec>>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   justification?: InputMaybe<Scalars['String']>;
   origin?: InputMaybe<Scalars['String']>;
@@ -281,11 +448,41 @@ export type CertifyScorecard = {
   source: Source;
 };
 
+/**
+ * CertifyScorecardConnection returns the paginated results for CertifyScorecard.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the CertifyScorecardEdge which contains the current cursor
+ * and the CertifyScorecard node itself
+ */
+export type CertifyScorecardConnection = {
+  __typename?: 'CertifyScorecardConnection';
+  edges: Array<CertifyScorecardEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * CertifyScorecardEdge contains the cursor for the resulting node and
+ * the CertifyScorecard node itself.
+ */
+export type CertifyScorecardEdge = {
+  __typename?: 'CertifyScorecardEdge';
+  cursor: Scalars['ID'];
+  node: CertifyScorecard;
+};
+
 /** CertifyScorecardSpec allows filtering the list of Scorecards to return. */
 export type CertifyScorecardSpec = {
   aggregateScore?: InputMaybe<Scalars['Float']>;
   checks?: InputMaybe<Array<ScorecardCheckSpec>>;
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   origin?: InputMaybe<Scalars['String']>;
   scorecardCommit?: InputMaybe<Scalars['String']>;
@@ -302,6 +499,8 @@ export type CertifyVexStatement = {
   __typename?: 'CertifyVEXStatement';
   /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
   /** Timestamp (exact time in RFC 3339 format) for the VEX statement */
   knownSince: Scalars['Time'];
@@ -331,6 +530,7 @@ export type CertifyVexStatement = {
  */
 export type CertifyVexStatementSpec = {
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   knownSince?: InputMaybe<Scalars['Time']>;
   origin?: InputMaybe<Scalars['String']>;
@@ -361,6 +561,35 @@ export type CertifyVuln = {
 };
 
 /**
+ * CertifyVulnConnection returns the paginated results for CertifyVuln.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the CertifyVulnEdge which contains the current cursor
+ * and the CertifyVuln node itself
+ */
+export type CertifyVulnConnection = {
+  __typename?: 'CertifyVulnConnection';
+  edges: Array<CertifyVulnEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * CertifyVulnEdge contains the cursor for the resulting node and
+ * the CertifyVuln node itself.
+ */
+export type CertifyVulnEdge = {
+  __typename?: 'CertifyVulnEdge';
+  cursor: Scalars['ID'];
+  node: CertifyVuln;
+};
+
+/**
  * CertifyVulnSpec allows filtering the list of vulnerability certifications to
  * return in a query.
  *
@@ -374,6 +603,7 @@ export type CertifyVulnSpec = {
   collector?: InputMaybe<Scalars['String']>;
   dbUri?: InputMaybe<Scalars['String']>;
   dbVersion?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   origin?: InputMaybe<Scalars['String']>;
   package?: InputMaybe<PkgSpec>;
@@ -408,7 +638,8 @@ export enum DependencyType {
  *
  * Each member of the enum is formed by merging two Node names with _. Each name
  * is converted from CamelCase to CAPITALS_WITH_UNDERSCORES. Only valid edges
- * (pairs from Node to Node) are included.
+ * (pairs from Node to Node) are included. Edges are defined in both directions,
+ * which means nodes can be traversed from either direction.
  *
  * The only exception to the above rule is for links out of HasSLSA. The names are
  * HAS_SLSA_SUBJECT, HAS_SLSA_BUILT_BY, and HAS_SLSA_MATERIALS. This is because
@@ -445,6 +676,9 @@ export enum Edge {
   HasMetadataPackage = 'HAS_METADATA_PACKAGE',
   HasMetadataSource = 'HAS_METADATA_SOURCE',
   HasSbomArtifact = 'HAS_SBOM_ARTIFACT',
+  HasSbomIncludedDependencies = 'HAS_SBOM_INCLUDED_DEPENDENCIES',
+  HasSbomIncludedOccurrences = 'HAS_SBOM_INCLUDED_OCCURRENCES',
+  HasSbomIncludedSoftware = 'HAS_SBOM_INCLUDED_SOFTWARE',
   HasSbomPackage = 'HAS_SBOM_PACKAGE',
   HasSlsaBuiltBy = 'HAS_SLSA_BUILT_BY',
   HasSlsaMaterials = 'HAS_SLSA_MATERIALS',
@@ -466,8 +700,14 @@ export enum Edge {
   PackageHasSourceAt = 'PACKAGE_HAS_SOURCE_AT',
   PackageIsDependency = 'PACKAGE_IS_DEPENDENCY',
   PackageIsOccurrence = 'PACKAGE_IS_OCCURRENCE',
+  PackageNamespacePackageName = 'PACKAGE_NAMESPACE_PACKAGE_NAME',
+  PackageNamespacePackageType = 'PACKAGE_NAMESPACE_PACKAGE_TYPE',
+  PackageNamePackageNamespace = 'PACKAGE_NAME_PACKAGE_NAMESPACE',
+  PackageNamePackageVersion = 'PACKAGE_NAME_PACKAGE_VERSION',
   PackagePkgEqual = 'PACKAGE_PKG_EQUAL',
   PackagePointOfContact = 'PACKAGE_POINT_OF_CONTACT',
+  PackageTypePackageNamespace = 'PACKAGE_TYPE_PACKAGE_NAMESPACE',
+  PackageVersionPackageName = 'PACKAGE_VERSION_PACKAGE_NAME',
   PkgEqualPackage = 'PKG_EQUAL_PACKAGE',
   PointOfContactArtifact = 'POINT_OF_CONTACT_ARTIFACT',
   PointOfContactPackage = 'POINT_OF_CONTACT_PACKAGE',
@@ -479,14 +719,44 @@ export enum Edge {
   SourceHasMetadata = 'SOURCE_HAS_METADATA',
   SourceHasSourceAt = 'SOURCE_HAS_SOURCE_AT',
   SourceIsOccurrence = 'SOURCE_IS_OCCURRENCE',
+  SourceNamespaceSourceName = 'SOURCE_NAMESPACE_SOURCE_NAME',
+  SourceNamespaceSourceType = 'SOURCE_NAMESPACE_SOURCE_TYPE',
+  SourceNameSourceNamespace = 'SOURCE_NAME_SOURCE_NAMESPACE',
   SourcePointOfContact = 'SOURCE_POINT_OF_CONTACT',
+  SourceTypeSourceNamespace = 'SOURCE_TYPE_SOURCE_NAMESPACE',
   VulnerabilityCertifyVexStatement = 'VULNERABILITY_CERTIFY_VEX_STATEMENT',
   VulnerabilityCertifyVuln = 'VULNERABILITY_CERTIFY_VULN',
+  VulnerabilityIdVulnerabilityType = 'VULNERABILITY_ID_VULNERABILITY_TYPE',
+  VulnerabilityTypeVulnerabilityId = 'VULNERABILITY_TYPE_VULNERABILITY_ID',
   VulnerabilityVulnEqual = 'VULNERABILITY_VULN_EQUAL',
   VulnerabilityVulnMetadata = 'VULNERABILITY_VULN_METADATA',
   VulnEqualVulnerability = 'VULN_EQUAL_VULNERABILITY',
   VulnMetadataVulnerability = 'VULN_METADATA_VULNERABILITY'
 }
+
+export enum FilterOperation {
+  Contains = 'CONTAINS',
+  Startswith = 'STARTSWITH'
+}
+
+/**
+ * FindSoftwareConnection returns the paginated results for FindSoftware.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the SoftwareEdge which contains the current cursor
+ * and the PackageSourceOrArtifact node itself
+ */
+export type FindSoftwareConnection = {
+  __typename?: 'FindSoftwareConnection';
+  edges: Array<SoftwareEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
 
 /**
  * HasMetadata is an attestation that a package, source, or artifact has a certain
@@ -506,19 +776,58 @@ export enum Edge {
  */
 export type HasMetadata = {
   __typename?: 'HasMetadata';
+  /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
+  /** The justification for the metadata */
   justification: Scalars['String'];
+  /** Key in the key value pair */
   key: Scalars['String'];
+  /** Document from which this attestation is generated from */
   origin: Scalars['String'];
+  /** The package, source or artifact that is attested */
   subject: PackageSourceOrArtifact;
+  /** Timestamp when the certification was created (in RFC 3339 format) */
   timestamp: Scalars['Time'];
+  /** Value in the key value pair */
   value: Scalars['String'];
+};
+
+/**
+ * HasMetadataConnection returns the paginated results for HasMetadata.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the HasMetadataEdge which contains the current cursor
+ * and the HasMetadata node itself
+ */
+export type HasMetadataConnection = {
+  __typename?: 'HasMetadataConnection';
+  edges: Array<HasMetadataEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * HasMetadataEdge contains the cursor for the resulting node and
+ * the HasMetadata node itself.
+ */
+export type HasMetadataEdge = {
+  __typename?: 'HasMetadataEdge';
+  cursor: Scalars['ID'];
+  node: HasMetadata;
 };
 
 /** HasMetadataInputSpec represents the mutation input to ingest a CertifyGood evidence. */
 export type HasMetadataInputSpec = {
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   justification: Scalars['String'];
   key: Scalars['String'];
   origin: Scalars['String'];
@@ -541,6 +850,7 @@ export type HasMetadataInputSpec = {
  */
 export type HasMetadataSpec = {
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   justification?: InputMaybe<Scalars['String']>;
   key?: InputMaybe<Scalars['String']>;
@@ -558,9 +868,17 @@ export type HasSbom = {
   collector: Scalars['String'];
   /** Digest of SBOM */
   digest: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   /** Location from which the SBOM can be downloaded */
   downloadLocation: Scalars['String'];
   id: Scalars['ID'];
+  /** Included dependencies */
+  includedDependencies: Array<IsDependency>;
+  /** Included occurrences */
+  includedOccurrences: Array<IsOccurrence>;
+  /** Included packages and artifacts */
+  includedSoftware: Array<PackageOrArtifact>;
   /** Timestamp for SBOM creation */
   knownSince: Scalars['Time'];
   /** Document from which this attestation is generated from */
@@ -571,11 +889,48 @@ export type HasSbom = {
   uri: Scalars['String'];
 };
 
-/** HasSBOMInputSpec is the same as HasSBOM but for mutation input. */
+/**
+ * HasSBOMConnection returns the paginated results for HasSBOM.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the HasSBOMEdge which contains the current cursor
+ * and the HasSBOM node itself
+ */
+export type HasSbomConnection = {
+  __typename?: 'HasSBOMConnection';
+  edges: Array<HasSbomEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * HasSBOMEdge contains the cursor for the resulting node and
+ * the HasSBOMEdge node itself.
+ */
+export type HasSbomEdge = {
+  __typename?: 'HasSBOMEdge';
+  cursor: Scalars['ID'];
+  node: HasSbom;
+};
+
+export type HasSbomIncludesInputSpec = {
+  artifacts: Array<Scalars['ID']>;
+  dependencies: Array<Scalars['ID']>;
+  occurrences: Array<Scalars['ID']>;
+  packages: Array<Scalars['ID']>;
+};
+
+/** HasSBOMInputSpec is similar to HasSBOM but for mutation input. */
 export type HasSbomInputSpec = {
   algorithm: Scalars['String'];
   collector: Scalars['String'];
   digest: Scalars['String'];
+  documentRef: Scalars['String'];
   downloadLocation: Scalars['String'];
   knownSince: Scalars['Time'];
   origin: Scalars['String'];
@@ -594,8 +949,12 @@ export type HasSbomSpec = {
   algorithm?: InputMaybe<Scalars['String']>;
   collector?: InputMaybe<Scalars['String']>;
   digest?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   downloadLocation?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
+  includedDependencies?: InputMaybe<Array<IsDependencySpec>>;
+  includedOccurrences?: InputMaybe<Array<IsOccurrenceSpec>>;
+  includedSoftware?: InputMaybe<Array<PackageOrArtifactSpec>>;
   knownSince?: InputMaybe<Scalars['Time']>;
   origin?: InputMaybe<Scalars['String']>;
   subject?: InputMaybe<PackageOrArtifactSpec>;
@@ -612,12 +971,42 @@ export type HasSlsa = {
   subject: Artifact;
 };
 
+/**
+ * HasSLSAConnection returns the paginated results for HasSLSA.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the HasSLSAEdge which contains the current cursor
+ * and the HasSLSA node itself
+ */
+export type HasSlsaConnection = {
+  __typename?: 'HasSLSAConnection';
+  edges: Array<HasSlsaEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * HasSLSAEdge contains the cursor for the resulting node and
+ * the HasSLSA node itself.
+ */
+export type HasSlsaEdge = {
+  __typename?: 'HasSLSAEdge';
+  cursor: Scalars['ID'];
+  node: HasSlsa;
+};
+
 /** HasSLSASpec allows filtering the list of HasSLSA to return. */
 export type HasSlsaSpec = {
   buildType?: InputMaybe<Scalars['String']>;
   builtBy?: InputMaybe<BuilderSpec>;
   builtFrom?: InputMaybe<Array<ArtifactSpec>>;
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   finishedOn?: InputMaybe<Scalars['Time']>;
   id?: InputMaybe<Scalars['ID']>;
   origin?: InputMaybe<Scalars['String']>;
@@ -632,6 +1021,8 @@ export type HasSourceAt = {
   __typename?: 'HasSourceAt';
   /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
   /** Justification for the attested relationship */
   justification: Scalars['String'];
@@ -645,9 +1036,39 @@ export type HasSourceAt = {
   source: Source;
 };
 
+/**
+ * HasSourceAtConnection returns the paginated results for HasSourceAt.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the HasSourceAtEdge which contains the current cursor
+ * and the HasSourceAt node itself
+ */
+export type HasSourceAtConnection = {
+  __typename?: 'HasSourceAtConnection';
+  edges: Array<HasSourceAtEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * HasSourceAtEdge contains the cursor for the resulting node and
+ * the HasSourceAt node itself.
+ */
+export type HasSourceAtEdge = {
+  __typename?: 'HasSourceAtEdge';
+  cursor: Scalars['ID'];
+  node: HasSourceAt;
+};
+
 /** HasSourceAtInputSpec is the same as HasSourceAt but for mutation input. */
 export type HasSourceAtInputSpec = {
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   justification: Scalars['String'];
   knownSince: Scalars['Time'];
   origin: Scalars['String'];
@@ -656,6 +1077,7 @@ export type HasSourceAtInputSpec = {
 /** HasSourceAtSpec allows filtering the list of HasSourceAt to return. */
 export type HasSourceAtSpec = {
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   justification?: InputMaybe<Scalars['String']>;
   knownSince?: InputMaybe<Scalars['Time']>;
@@ -664,13 +1086,15 @@ export type HasSourceAtSpec = {
   source?: InputMaybe<SourceSpec>;
 };
 
-/** HashEqual is an attestation that a set of artifacts are identical. */
+/** HashEqual is an attestation that two artifacts are identical. */
 export type HashEqual = {
   __typename?: 'HashEqual';
-  /** Collection of artifacts that are similar */
+  /** Two artifacts that are similar */
   artifacts: Array<Artifact>;
   /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
   /** Justification for the claim that the artifacts are similar */
   justification: Scalars['String'];
@@ -678,9 +1102,39 @@ export type HashEqual = {
   origin: Scalars['String'];
 };
 
+/**
+ * HashEqualConnection returns the paginated results for HashEqual.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the HashEqualEdge which contains the current cursor
+ * and the HashEqual node itself
+ */
+export type HashEqualConnection = {
+  __typename?: 'HashEqualConnection';
+  edges: Array<HashEqualEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * HashEqualEdge contains the cursor for the resulting node and
+ * the HashEqual node itself.
+ */
+export type HashEqualEdge = {
+  __typename?: 'HashEqualEdge';
+  cursor: Scalars['ID'];
+  node: HashEqual;
+};
+
 /** HashEqualInputSpec represents the input to certify that packages are similar. */
 export type HashEqualInputSpec = {
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   justification: Scalars['String'];
   origin: Scalars['String'];
 };
@@ -695,9 +1149,88 @@ export type HashEqualInputSpec = {
 export type HashEqualSpec = {
   artifacts?: InputMaybe<Array<InputMaybe<ArtifactSpec>>>;
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   justification?: InputMaybe<Scalars['String']>;
   origin?: InputMaybe<Scalars['String']>;
+};
+
+/**
+ * IDorArtifactInput allows for specifying either the artifact ID or the ArtifactInputSpec.
+ *
+ * Either the ID or the ArtifactInputSpec must be specified. Both cannot be nil.
+ *
+ * If the ID is specified, the ArtifactInputSpec is not used.
+ */
+export type IDorArtifactInput = {
+  artifactID?: InputMaybe<Scalars['ID']>;
+  artifactInput?: InputMaybe<ArtifactInputSpec>;
+};
+
+/**
+ * IDorBuilderInput allows for specifying either the builder ID or the BuilderInputSpec.
+ *
+ * Either the ID or the BuilderInputSpec must be specified. Both cannot be nil.
+ *
+ * If the ID is specified, the BuilderInputSpec is not used.
+ */
+export type IDorBuilderInput = {
+  builderID?: InputMaybe<Scalars['ID']>;
+  builderInput?: InputMaybe<BuilderInputSpec>;
+};
+
+/**
+ * IDorLicenseInput allows for specifying either the license ID or the LicenseInputSpec.
+ *
+ * Either the ID or the LicenseInputSpec must be specified. Both cannot be nil.
+ *
+ * If the ID is specified, the LicenseInputSpec is not used.
+ */
+export type IDorLicenseInput = {
+  licenseID?: InputMaybe<Scalars['ID']>;
+  licenseInput?: InputMaybe<LicenseInputSpec>;
+};
+
+/**
+ * IDorPkgInput allows for specifying either the package IDs or the PkgInputSpec.
+ *
+ * Either the IDs or the PkgInputSpec must be specified. Both cannot be nil.
+ *
+ * If the IDs are specified, the PkgInputSpec is not used.
+ */
+export type IDorPkgInput = {
+  packageInput?: InputMaybe<PkgInputSpec>;
+  packageNameID?: InputMaybe<Scalars['ID']>;
+  packageNamespaceID?: InputMaybe<Scalars['ID']>;
+  packageTypeID?: InputMaybe<Scalars['ID']>;
+  packageVersionID?: InputMaybe<Scalars['ID']>;
+};
+
+/**
+ * IDorSourceInput allows for specifying either the source IDs or the SourceInputSpec.
+ *
+ * Either the IDs or the SourceInputSpec must be specified. Both cannot be nil.
+ *
+ * If the IDs are specified, the SourceInputSpec is not used.
+ */
+export type IDorSourceInput = {
+  sourceInput?: InputMaybe<SourceInputSpec>;
+  sourceNameID?: InputMaybe<Scalars['ID']>;
+  sourceNamespaceID?: InputMaybe<Scalars['ID']>;
+  sourceTypeID?: InputMaybe<Scalars['ID']>;
+};
+
+/**
+ * IDorVulnerabilityInput allows for specifying either the vulnerability IDs or the VulnerabilityInputSpec.
+ *
+ * Either the IDs or the VulnerabilityInputSpec must be specified. Both cannot be nil.
+ *
+ * If the IDs are specified, the VulnerabilityInputSpec is not used.
+ */
+export type IDorVulnerabilityInput = {
+  vulnerabilityInput?: InputMaybe<VulnerabilityInputSpec>;
+  vulnerabilityNodeID?: InputMaybe<Scalars['ID']>;
+  vulnerabilityTypeID?: InputMaybe<Scalars['ID']>;
 };
 
 /** IsDependency is an attestation to record that a package depends on another.  */
@@ -709,6 +1242,8 @@ export type IsDependency = {
   dependencyPackage: Package;
   /** Type of dependency */
   dependencyType: DependencyType;
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
   /** Justification for the attested relationship */
   justification: Scalars['String'];
@@ -720,10 +1255,40 @@ export type IsDependency = {
   versionRange: Scalars['String'];
 };
 
+/**
+ * IsDependencyConnection returns the paginated results for IsDependency.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the IsDependencyEdge which contains the current cursor
+ * and the IsDependency node itself
+ */
+export type IsDependencyConnection = {
+  __typename?: 'IsDependencyConnection';
+  edges: Array<IsDependencyEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * IsDependencyEdge contains the cursor for the resulting node and
+ * the IsDependency node itself.
+ */
+export type IsDependencyEdge = {
+  __typename?: 'IsDependencyEdge';
+  cursor: Scalars['ID'];
+  node: IsDependency;
+};
+
 /** IsDependencyInputSpec is the input to record a new dependency. */
 export type IsDependencyInputSpec = {
   collector: Scalars['String'];
   dependencyType: DependencyType;
+  documentRef: Scalars['String'];
   justification: Scalars['String'];
   origin: Scalars['String'];
   /** versionRange should be specified for depedentPackages that point to PackageName */
@@ -742,6 +1307,7 @@ export type IsDependencySpec = {
   collector?: InputMaybe<Scalars['String']>;
   dependencyPackage?: InputMaybe<PkgSpec>;
   dependencyType?: InputMaybe<DependencyType>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   justification?: InputMaybe<Scalars['String']>;
   origin?: InputMaybe<Scalars['String']>;
@@ -760,6 +1326,8 @@ export type IsOccurrence = {
   artifact: Artifact;
   /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
   /** Justification for the attested relationship */
   justification: Scalars['String'];
@@ -769,9 +1337,39 @@ export type IsOccurrence = {
   subject: PackageOrSource;
 };
 
+/**
+ * IsOccurrenceConnection returns the paginated results for IsOccurrence.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the IsOccurrenceEdge which contains the current cursor
+ * and the IsOccurrence node itself
+ */
+export type IsOccurrenceConnection = {
+  __typename?: 'IsOccurrenceConnection';
+  edges: Array<IsOccurrenceEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * IsOccurrenceEdge contains the cursor for the resulting node and
+ * the IsOccurrence node itself.
+ */
+export type IsOccurrenceEdge = {
+  __typename?: 'IsOccurrenceEdge';
+  cursor: Scalars['ID'];
+  node: IsOccurrence;
+};
+
 /** IsOccurrenceInputSpec represents the input to record an artifact's origin. */
 export type IsOccurrenceInputSpec = {
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   justification: Scalars['String'];
   origin: Scalars['String'];
 };
@@ -783,6 +1381,7 @@ export type IsOccurrenceInputSpec = {
 export type IsOccurrenceSpec = {
   artifact?: InputMaybe<ArtifactSpec>;
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   justification?: InputMaybe<Scalars['String']>;
   origin?: InputMaybe<Scalars['String']>;
@@ -825,6 +1424,35 @@ export type License = {
 };
 
 /**
+ * LicenseConnection returns the paginated results for License.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the LicenseEdge which contains the current cursor
+ * and the License node itself
+ */
+export type LicenseConnection = {
+  __typename?: 'LicenseConnection';
+  edges: Array<LicenseEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * LicenseEdge contains the cursor for the resulting node and
+ * the License node itself.
+ */
+export type LicenseEdge = {
+  __typename?: 'LicenseEdge';
+  cursor: Scalars['ID'];
+  node: License;
+};
+
+/**
  * LicenseInputSpec specifies an license for mutations. One of inline or
  * listVersion should be empty or missing.
  */
@@ -849,13 +1477,13 @@ export type MatchFlags = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  /** Ingests a new artifact and returns it. The returned ID can be empty string. */
+  /** Ingests a new artifact and returns it. */
   ingestArtifact: Scalars['ID'];
-  /** Bulk ingests new artifacts and returns a list of them. The returned array of IDs can be a an array of empty string. */
+  /** Bulk ingests new artifacts and returns a list of them. The returned array of IDs must be in the same order as the inputs. */
   ingestArtifacts: Array<Scalars['ID']>;
-  /** Ingests a new builder and returns it. The returned ID can be empty string. */
+  /** Ingests a new builder and returns it. */
   ingestBuilder: Scalars['ID'];
-  /** Bulk ingests new builders and returns a list of them. The returned array of IDs can be a an array of empty string. */
+  /** Bulk ingests new builders and returns a list of them. The returned array of IDs must be in the same order as the inputs. */
   ingestBuilders: Array<Scalars['ID']>;
   /** Adds bulk metadata about a package, source or artifact. The returned array of IDs can be a an array of empty string. */
   ingestBulkHasMetadata: Array<Scalars['ID']>;
@@ -877,9 +1505,9 @@ export type Mutation = {
   ingestCertifyVuln: Scalars['ID'];
   /** Bulk add certifications that a package has been scanned for vulnerabilities. The returned array of IDs can be a an array of empty string. */
   ingestCertifyVulns: Array<Scalars['ID']>;
-  /** Bulk adds a dependency between two packages. The returned array of IDs can be a an array of empty string. */
+  /** Bulk adds a dependency between two packages. The returned array of IDs cannot be an empty string as its used by hasSBOM. */
   ingestDependencies: Array<Scalars['ID']>;
-  /** Adds a dependency between two packages. The returned ID can be empty string. */
+  /** Adds a dependency between two packages. The returned ID cannot be empty string as its used by hasSBOM. */
   ingestDependency: Scalars['ID'];
   /** Adds metadata about a package, source or artifact. The returned ID can be empty string. */
   ingestHasMetadata: Scalars['ID'];
@@ -897,16 +1525,16 @@ export type Mutation = {
   ingestHashEquals: Array<Scalars['ID']>;
   /** Ingests a new license and returns it. */
   ingestLicense: Scalars['ID'];
-  /** Bulk ingests new licenses and returns a list of them. */
+  /** Bulk ingests new licenses and returns a list of them. The returned array of IDs must be in the same order as the inputs. */
   ingestLicenses: Array<Scalars['ID']>;
-  /** Ingest that an artifact is produced from a package or source. The returned ID can be empty string. */
+  /** Ingest that an artifact is produced from a package or source. The returned ID cannot be empty string as its used by hasSBOM. */
   ingestOccurrence: Scalars['ID'];
-  /** Bulk ingest that an artifact is produced from a package or source. The returned array of IDs can be a an array of empty string. */
+  /** Bulk ingest that an artifact is produced from a package or source. The returned array of IDs cannot be an empty string as its used by hasSBOM */
   ingestOccurrences: Array<Scalars['ID']>;
-  /** Ingests a new package and returns the corresponding package trie path. The returned ID can be empty string. */
-  ingestPackage: Scalars['ID'];
-  /** Bulk ingests packages and returns the list of corresponding package trie path. The returned array of IDs can be a an array of empty string. */
-  ingestPackages: Array<Scalars['ID']>;
+  /** Ingests a new package and returns a corresponding package hierarchy containing only the IDs. */
+  ingestPackage: PackageIDs;
+  /** Bulk ingests packages and returns the list of corresponding package hierarchies containing only the IDs. The returned array of IDs must be in the same order as the inputs. */
+  ingestPackages: Array<PackageIDs>;
   /** Adds a certification that two packages are similar. The returned ID can be empty string. */
   ingestPkgEqual: Scalars['ID'];
   /** Bulk ingest mapping between packages. The returned array of IDs can be a an array of empty string. */
@@ -923,10 +1551,10 @@ export type Mutation = {
   ingestScorecard: Scalars['ID'];
   /** Adds bulk certifications that a source repository has a Scorecard. The returned array of IDs can be a an array of empty string. */
   ingestScorecards: Array<Scalars['ID']>;
-  /** Ingests a new source and returns the corresponding source trie path. The returned ID can be empty string. */
-  ingestSource: Scalars['ID'];
-  /** Bulk ingests sources and returns the list of corresponding source trie path. The returned array of IDs can be a an array of empty string. */
-  ingestSources: Array<Scalars['ID']>;
+  /** Ingests a new source and returns the corresponding source trie path. */
+  ingestSource: SourceIDs;
+  /** Bulk ingests sources and returns the list of corresponding source trie path. The returned array of IDs must be in the same order as the inputs. */
+  ingestSources: Array<SourceIDs>;
   /** Adds a VEX certification for a package. The returned ID can be empty string. */
   ingestVEXStatement: Scalars['ID'];
   /** Bulk add VEX certifications for a package and vulnerability. The returned array of IDs can be a an array of empty string. */
@@ -935,32 +1563,32 @@ export type Mutation = {
   ingestVulnEqual: Scalars['ID'];
   /** Bulk ingest mapping between vulnerabilities. The returned array of IDs can be a an array of empty string. */
   ingestVulnEquals: Array<Scalars['ID']>;
-  /** Bulk ingests vulnerabilities and returns the list of corresponding vulnerability trie path. The returned array of IDs can be a an array of empty string. */
-  ingestVulnerabilities: Array<Scalars['ID']>;
-  /** Ingests a new vulnerability and returns the corresponding vulnerability trie path. The returned ID can be empty string. */
-  ingestVulnerability: Scalars['ID'];
+  /** Bulk ingests vulnerabilities and returns the list of corresponding vulnerability trie path. The returned array of IDs must be in the same order as the inputs */
+  ingestVulnerabilities: Array<VulnerabilityIDs>;
+  /** Ingests a new vulnerability and returns the corresponding vulnerability trie path. */
+  ingestVulnerability: VulnerabilityIDs;
   /** Adds metadata about a vulnerability. The returned ID can be empty string. */
   ingestVulnerabilityMetadata: Scalars['ID'];
 };
 
 
 export type MutationIngestArtifactArgs = {
-  artifact?: InputMaybe<ArtifactInputSpec>;
+  artifact?: InputMaybe<IDorArtifactInput>;
 };
 
 
 export type MutationIngestArtifactsArgs = {
-  artifacts: Array<ArtifactInputSpec>;
+  artifacts: Array<IDorArtifactInput>;
 };
 
 
 export type MutationIngestBuilderArgs = {
-  builder?: InputMaybe<BuilderInputSpec>;
+  builder?: InputMaybe<IDorBuilderInput>;
 };
 
 
 export type MutationIngestBuildersArgs = {
-  builders: Array<BuilderInputSpec>;
+  builders: Array<IDorBuilderInput>;
 };
 
 
@@ -972,7 +1600,7 @@ export type MutationIngestBulkHasMetadataArgs = {
 
 
 export type MutationIngestBulkVulnerabilityMetadataArgs = {
-  vulnerabilities: Array<VulnerabilityInputSpec>;
+  vulnerabilities: Array<IDorVulnerabilityInput>;
   vulnerabilityMetadataList: Array<VulnerabilityMetadataInputSpec>;
 };
 
@@ -1007,47 +1635,47 @@ export type MutationIngestCertifyGoodsArgs = {
 
 export type MutationIngestCertifyLegalArgs = {
   certifyLegal: CertifyLegalInputSpec;
-  declaredLicenses: Array<LicenseInputSpec>;
-  discoveredLicenses: Array<LicenseInputSpec>;
+  declaredLicenses: Array<IDorLicenseInput>;
+  discoveredLicenses: Array<IDorLicenseInput>;
   subject: PackageOrSourceInput;
 };
 
 
 export type MutationIngestCertifyLegalsArgs = {
   certifyLegals: Array<CertifyLegalInputSpec>;
-  declaredLicensesList: Array<Array<LicenseInputSpec>>;
-  discoveredLicensesList: Array<Array<LicenseInputSpec>>;
+  declaredLicensesList: Array<Array<IDorLicenseInput>>;
+  discoveredLicensesList: Array<Array<IDorLicenseInput>>;
   subjects: PackageOrSourceInputs;
 };
 
 
 export type MutationIngestCertifyVulnArgs = {
   certifyVuln: ScanMetadataInput;
-  pkg: PkgInputSpec;
-  vulnerability: VulnerabilityInputSpec;
+  pkg: IDorPkgInput;
+  vulnerability: IDorVulnerabilityInput;
 };
 
 
 export type MutationIngestCertifyVulnsArgs = {
   certifyVulns: Array<ScanMetadataInput>;
-  pkgs: Array<PkgInputSpec>;
-  vulnerabilities: Array<VulnerabilityInputSpec>;
+  pkgs: Array<IDorPkgInput>;
+  vulnerabilities: Array<IDorVulnerabilityInput>;
 };
 
 
 export type MutationIngestDependenciesArgs = {
   depPkgMatchType: MatchFlags;
-  depPkgs: Array<PkgInputSpec>;
+  depPkgs: Array<IDorPkgInput>;
   dependencies: Array<IsDependencyInputSpec>;
-  pkgs: Array<PkgInputSpec>;
+  pkgs: Array<IDorPkgInput>;
 };
 
 
 export type MutationIngestDependencyArgs = {
-  depPkg: PkgInputSpec;
+  depPkg: IDorPkgInput;
   depPkgMatchType: MatchFlags;
   dependency: IsDependencyInputSpec;
-  pkg: PkgInputSpec;
+  pkg: IDorPkgInput;
 };
 
 
@@ -1060,91 +1688,93 @@ export type MutationIngestHasMetadataArgs = {
 
 export type MutationIngestHasSbomArgs = {
   hasSBOM: HasSbomInputSpec;
+  includes: HasSbomIncludesInputSpec;
   subject: PackageOrArtifactInput;
 };
 
 
 export type MutationIngestHasSboMsArgs = {
   hasSBOMs: Array<HasSbomInputSpec>;
+  includes: Array<HasSbomIncludesInputSpec>;
   subjects: PackageOrArtifactInputs;
 };
 
 
 export type MutationIngestHasSourceAtArgs = {
   hasSourceAt: HasSourceAtInputSpec;
-  pkg: PkgInputSpec;
+  pkg: IDorPkgInput;
   pkgMatchType: MatchFlags;
-  source: SourceInputSpec;
+  source: IDorSourceInput;
 };
 
 
 export type MutationIngestHasSourceAtsArgs = {
   hasSourceAts: Array<HasSourceAtInputSpec>;
   pkgMatchType: MatchFlags;
-  pkgs: Array<PkgInputSpec>;
-  sources: Array<SourceInputSpec>;
+  pkgs: Array<IDorPkgInput>;
+  sources: Array<IDorSourceInput>;
 };
 
 
 export type MutationIngestHashEqualArgs = {
-  artifact: ArtifactInputSpec;
+  artifact: IDorArtifactInput;
   hashEqual: HashEqualInputSpec;
-  otherArtifact: ArtifactInputSpec;
+  otherArtifact: IDorArtifactInput;
 };
 
 
 export type MutationIngestHashEqualsArgs = {
-  artifacts: Array<ArtifactInputSpec>;
+  artifacts: Array<IDorArtifactInput>;
   hashEquals: Array<HashEqualInputSpec>;
-  otherArtifacts: Array<ArtifactInputSpec>;
+  otherArtifacts: Array<IDorArtifactInput>;
 };
 
 
 export type MutationIngestLicenseArgs = {
-  license?: InputMaybe<LicenseInputSpec>;
+  license?: InputMaybe<IDorLicenseInput>;
 };
 
 
 export type MutationIngestLicensesArgs = {
-  licenses: Array<LicenseInputSpec>;
+  licenses: Array<IDorLicenseInput>;
 };
 
 
 export type MutationIngestOccurrenceArgs = {
-  artifact: ArtifactInputSpec;
+  artifact: IDorArtifactInput;
   occurrence: IsOccurrenceInputSpec;
   subject: PackageOrSourceInput;
 };
 
 
 export type MutationIngestOccurrencesArgs = {
-  artifacts: Array<ArtifactInputSpec>;
+  artifacts: Array<IDorArtifactInput>;
   occurrences: Array<IsOccurrenceInputSpec>;
   subjects: PackageOrSourceInputs;
 };
 
 
 export type MutationIngestPackageArgs = {
-  pkg: PkgInputSpec;
+  pkg: IDorPkgInput;
 };
 
 
 export type MutationIngestPackagesArgs = {
-  pkgs: Array<PkgInputSpec>;
+  pkgs: Array<IDorPkgInput>;
 };
 
 
 export type MutationIngestPkgEqualArgs = {
-  otherPackage: PkgInputSpec;
-  pkg: PkgInputSpec;
+  otherPackage: IDorPkgInput;
+  pkg: IDorPkgInput;
   pkgEqual: PkgEqualInputSpec;
 };
 
 
 export type MutationIngestPkgEqualsArgs = {
-  otherPackages: Array<PkgInputSpec>;
+  otherPackages: Array<IDorPkgInput>;
   pkgEquals: Array<PkgEqualInputSpec>;
-  pkgs: Array<PkgInputSpec>;
+  pkgs: Array<IDorPkgInput>;
 };
 
 
@@ -1163,84 +1793,113 @@ export type MutationIngestPointOfContactsArgs = {
 
 
 export type MutationIngestSlsaArgs = {
-  builtBy: BuilderInputSpec;
-  builtFrom: Array<ArtifactInputSpec>;
+  builtBy: IDorBuilderInput;
+  builtFrom: Array<IDorArtifactInput>;
   slsa: SlsaInputSpec;
-  subject: ArtifactInputSpec;
+  subject: IDorArtifactInput;
 };
 
 
 export type MutationIngestSlsAsArgs = {
-  builtByList: Array<BuilderInputSpec>;
-  builtFromList: Array<Array<ArtifactInputSpec>>;
+  builtByList: Array<IDorBuilderInput>;
+  builtFromList: Array<Array<IDorArtifactInput>>;
   slsaList: Array<SlsaInputSpec>;
-  subjects: Array<ArtifactInputSpec>;
+  subjects: Array<IDorArtifactInput>;
 };
 
 
 export type MutationIngestScorecardArgs = {
   scorecard: ScorecardInputSpec;
-  source: SourceInputSpec;
+  source: IDorSourceInput;
 };
 
 
 export type MutationIngestScorecardsArgs = {
   scorecards: Array<ScorecardInputSpec>;
-  sources: Array<SourceInputSpec>;
+  sources: Array<IDorSourceInput>;
 };
 
 
 export type MutationIngestSourceArgs = {
-  source: SourceInputSpec;
+  source: IDorSourceInput;
 };
 
 
 export type MutationIngestSourcesArgs = {
-  sources: Array<SourceInputSpec>;
+  sources: Array<IDorSourceInput>;
 };
 
 
 export type MutationIngestVexStatementArgs = {
   subject: PackageOrArtifactInput;
   vexStatement: VexStatementInputSpec;
-  vulnerability: VulnerabilityInputSpec;
+  vulnerability: IDorVulnerabilityInput;
 };
 
 
 export type MutationIngestVexStatementsArgs = {
   subjects: PackageOrArtifactInputs;
   vexStatements: Array<VexStatementInputSpec>;
-  vulnerabilities: Array<VulnerabilityInputSpec>;
+  vulnerabilities: Array<IDorVulnerabilityInput>;
 };
 
 
 export type MutationIngestVulnEqualArgs = {
-  otherVulnerability: VulnerabilityInputSpec;
+  otherVulnerability: IDorVulnerabilityInput;
   vulnEqual: VulnEqualInputSpec;
-  vulnerability: VulnerabilityInputSpec;
+  vulnerability: IDorVulnerabilityInput;
 };
 
 
 export type MutationIngestVulnEqualsArgs = {
-  otherVulnerabilities: Array<VulnerabilityInputSpec>;
+  otherVulnerabilities: Array<IDorVulnerabilityInput>;
   vulnEquals: Array<VulnEqualInputSpec>;
-  vulnerabilities: Array<VulnerabilityInputSpec>;
+  vulnerabilities: Array<IDorVulnerabilityInput>;
 };
 
 
 export type MutationIngestVulnerabilitiesArgs = {
-  vulns: Array<VulnerabilityInputSpec>;
+  vulns: Array<IDorVulnerabilityInput>;
 };
 
 
 export type MutationIngestVulnerabilityArgs = {
-  vuln: VulnerabilityInputSpec;
+  vuln: IDorVulnerabilityInput;
 };
 
 
 export type MutationIngestVulnerabilityMetadataArgs = {
-  vulnerability: VulnerabilityInputSpec;
+  vulnerability: IDorVulnerabilityInput;
   vulnerabilityMetadata: VulnerabilityMetadataInputSpec;
+};
+
+/**
+ * NeighborConnection returns the paginated results for Neighbor.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the NeighborEdge which contains the current cursor
+ * and the node itself
+ */
+export type NeighborConnection = {
+  __typename?: 'NeighborConnection';
+  edges: Array<NeighborEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * NeighborEdge contains the cursor for the resulting node and
+ * the node itself.
+ */
+export type NeighborEdge = {
+  __typename?: 'NeighborEdge';
+  cursor: Scalars['ID'];
+  node: Node;
 };
 
 /**
@@ -1273,6 +1932,44 @@ export type Package = {
   id: Scalars['ID'];
   namespaces: Array<PackageNamespace>;
   type: Scalars['String'];
+};
+
+/**
+ * PackageConnection returns the paginated results for Package.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the PackageEdge which contains the current cursor
+ * and the Package node itself
+ */
+export type PackageConnection = {
+  __typename?: 'PackageConnection';
+  edges: Array<PackageEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * PackageEdge contains the cursor for the resulting node and
+ * the Package node itself.
+ */
+export type PackageEdge = {
+  __typename?: 'PackageEdge';
+  cursor: Scalars['ID'];
+  node: Package;
+};
+
+/** The IDs of the ingested package */
+export type PackageIDs = {
+  __typename?: 'PackageIDs';
+  packageNameID: Scalars['ID'];
+  packageNamespaceID: Scalars['ID'];
+  packageTypeID: Scalars['ID'];
+  packageVersionID: Scalars['ID'];
 };
 
 /**
@@ -1319,8 +2016,8 @@ export type PackageOrArtifact = Artifact | Package;
  * Exactly one of the value must be set to non-nil.
  */
 export type PackageOrArtifactInput = {
-  artifact?: InputMaybe<ArtifactInputSpec>;
-  package?: InputMaybe<PkgInputSpec>;
+  artifact?: InputMaybe<IDorArtifactInput>;
+  package?: InputMaybe<IDorPkgInput>;
 };
 
 /**
@@ -1328,8 +2025,8 @@ export type PackageOrArtifactInput = {
  * Exactly one list must be specified.
  */
 export type PackageOrArtifactInputs = {
-  artifacts?: InputMaybe<Array<ArtifactInputSpec>>;
-  packages?: InputMaybe<Array<PkgInputSpec>>;
+  artifacts?: InputMaybe<Array<IDorArtifactInput>>;
+  packages?: InputMaybe<Array<IDorPkgInput>>;
 };
 
 /**
@@ -1352,8 +2049,8 @@ export type PackageOrSource = Package | Source;
  * Exactly one field must be specified.
  */
 export type PackageOrSourceInput = {
-  package?: InputMaybe<PkgInputSpec>;
-  source?: InputMaybe<SourceInputSpec>;
+  package?: InputMaybe<IDorPkgInput>;
+  source?: InputMaybe<IDorSourceInput>;
 };
 
 /**
@@ -1361,8 +2058,8 @@ export type PackageOrSourceInput = {
  * Exactly one list must be specified.
  */
 export type PackageOrSourceInputs = {
-  packages?: InputMaybe<Array<PkgInputSpec>>;
-  sources?: InputMaybe<Array<SourceInputSpec>>;
+  packages?: InputMaybe<Array<IDorPkgInput>>;
+  sources?: InputMaybe<Array<IDorSourceInput>>;
 };
 
 /**
@@ -1422,9 +2119,9 @@ export type PackageSourceOrArtifact = Artifact | Package | Source;
  * Exactly one of the value must be set to non-nil.
  */
 export type PackageSourceOrArtifactInput = {
-  artifact?: InputMaybe<ArtifactInputSpec>;
-  package?: InputMaybe<PkgInputSpec>;
-  source?: InputMaybe<SourceInputSpec>;
+  artifact?: InputMaybe<IDorArtifactInput>;
+  package?: InputMaybe<IDorPkgInput>;
+  source?: InputMaybe<IDorSourceInput>;
 };
 
 /**
@@ -1434,9 +2131,9 @@ export type PackageSourceOrArtifactInput = {
  * Exactly one list must be specified.
  */
 export type PackageSourceOrArtifactInputs = {
-  artifacts?: InputMaybe<Array<ArtifactInputSpec>>;
-  packages?: InputMaybe<Array<PkgInputSpec>>;
-  sources?: InputMaybe<Array<SourceInputSpec>>;
+  artifacts?: InputMaybe<Array<IDorArtifactInput>>;
+  packages?: InputMaybe<Array<IDorPkgInput>>;
+  sources?: InputMaybe<Array<IDorSourceInput>>;
 };
 
 /**
@@ -1475,28 +2172,79 @@ export type PackageSourceOrArtifactSpec = {
 export type PackageVersion = {
   __typename?: 'PackageVersion';
   id: Scalars['ID'];
+  purl: Scalars['String'];
   qualifiers: Array<PackageQualifier>;
   subpath: Scalars['String'];
   version: Scalars['String'];
 };
 
-/** PkgEqual is an attestation that a set of packages are similar. */
+/**
+ * PageInfo serves the client information about the paginated query results.
+ *
+ * hasNextPage is true when there are results to be returned.
+ *
+ * hasPreviousPage is true when there is a previous page to return to.
+ *
+ * startCursor is the ID where the query started from.
+ *
+ * endCursor is where the query ended.
+ */
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['ID']>;
+  hasNextPage: Scalars['Boolean'];
+  startCursor?: Maybe<Scalars['ID']>;
+};
+
+/** PkgEqual is an attestation that two packages are similar. */
 export type PkgEqual = {
   __typename?: 'PkgEqual';
   /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
   /** Justification for the claim that the packages are similar */
   justification: Scalars['String'];
   /** Document from which this attestation is generated from */
   origin: Scalars['String'];
-  /** Collection of packages that are similar */
+  /** Two packages that are similar */
   packages: Array<Package>;
+};
+
+/**
+ * PkgEqualConnection returns the paginated results for PkgEqual.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the PkgEqualEdge which contains the current cursor
+ * and the PkgEqual node itself
+ */
+export type PkgEqualConnection = {
+  __typename?: 'PkgEqualConnection';
+  edges: Array<PkgEqualEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * PkgEqualEdge contains the cursor for the resulting node and
+ * the PkgEqual node itself.
+ */
+export type PkgEqualEdge = {
+  __typename?: 'PkgEqualEdge';
+  cursor: Scalars['ID'];
+  node: PkgEqual;
 };
 
 /** PkgEqualInputSpec represents the input to certify that packages are similar. */
 export type PkgEqualInputSpec = {
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   justification: Scalars['String'];
   origin: Scalars['String'];
 };
@@ -1510,6 +2258,7 @@ export type PkgEqualInputSpec = {
  */
 export type PkgEqualSpec = {
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   justification?: InputMaybe<Scalars['String']>;
   origin?: InputMaybe<Scalars['String']>;
@@ -1546,6 +2295,9 @@ export enum PkgMatchType {
  * Each field matches a qualifier from pURL. Use null to match on all values at
  * that level. For example, to get all packages in GUAC backend, use a PkgSpec
  * where every field is null.
+ *
+ * The id field can be used to match on a specific node in the trie to match packageTypeID,
+ * packageNamespaceID, packageNameID, or packageVersionID.
  *
  * Empty string at a field means matching with the empty string. If passing in
  * qualifiers, all of the values in the list must match. Since we want to return
@@ -1590,19 +2342,58 @@ export type PkgSpec = {
  */
 export type PointOfContact = {
   __typename?: 'PointOfContact';
+  /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
+  /** Email for the POC */
   email: Scalars['String'];
   id: Scalars['ID'];
+  /** Generic info for the POC */
   info: Scalars['String'];
+  /** The justification for the POC attestation */
   justification: Scalars['String'];
+  /** Document from which this attestation is generated from */
   origin: Scalars['String'];
+  /** Timestamp when the certification for POC was created (in RFC 3339 format) */
   since: Scalars['Time'];
+  /** The package, source or artifact that is attested */
   subject: PackageSourceOrArtifact;
+};
+
+/**
+ * PointOfContactConnection returns the paginated results for PointOfContact.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the PointOfContactEdge which contains the current cursor
+ * and the PointOfContact node itself
+ */
+export type PointOfContactConnection = {
+  __typename?: 'PointOfContactConnection';
+  edges: Array<PointOfContactEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * PointOfContactEdge contains the cursor for the resulting node and
+ * the PointOfContact node itself.
+ */
+export type PointOfContactEdge = {
+  __typename?: 'PointOfContactEdge';
+  cursor: Scalars['ID'];
+  node: PointOfContact;
 };
 
 /** PointOfContactInputSpec represents the mutation input to ingest a PointOfContact evidence. */
 export type PointOfContactInputSpec = {
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   email: Scalars['String'];
   info: Scalars['String'];
   justification: Scalars['String'];
@@ -1625,6 +2416,7 @@ export type PointOfContactInputSpec = {
  */
 export type PointOfContactSpec = {
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   info?: InputMaybe<Scalars['String']>;
@@ -1638,36 +2430,68 @@ export type Query = {
   __typename?: 'Query';
   /** Returns all CertifyBad attestations matching a filter. */
   CertifyBad: Array<CertifyBad>;
+  /** Returns a paginated results via CertifyBadConnection */
+  CertifyBadList?: Maybe<CertifyBadConnection>;
   /** Returns all CertifyGood attestations matching a filter. */
   CertifyGood: Array<CertifyGood>;
+  /** Returns a paginated results via CertifyGoodConnection */
+  CertifyGoodList?: Maybe<CertifyGoodConnection>;
   /** Returns all legal certifications matching the input filter. */
   CertifyLegal: Array<CertifyLegal>;
+  /** Returns a paginated results via CertifyLegalConnection */
+  CertifyLegalList?: Maybe<CertifyLegalConnection>;
   /** Returns all VEX certifications matching the input filter. */
   CertifyVEXStatement: Array<CertifyVexStatement>;
+  /** Returns a paginated results via CertifyVexConnection */
+  CertifyVEXStatementList?: Maybe<VexConnection>;
   /** Returns all vulnerability certifications matching the input filter. */
   CertifyVuln: Array<CertifyVuln>;
+  /** Returns a paginated results via CertifyVulnConnection */
+  CertifyVulnList?: Maybe<CertifyVulnConnection>;
   /** Returns all HasMetdata attestations matching a filter. */
   HasMetadata: Array<HasMetadata>;
+  /** Returns a paginated results via HasMetadataConnection */
+  HasMetadataList?: Maybe<HasMetadataConnection>;
   /** Returns all SBOM certifications. */
   HasSBOM: Array<HasSbom>;
+  /** Returns a paginated results via HasSBOMConnection */
+  HasSBOMList?: Maybe<HasSbomConnection>;
   /** Returns all SLSA attestations matching the filter. */
   HasSLSA: Array<HasSlsa>;
+  /** Returns a paginated results via HasSLSAConnection */
+  HasSLSAList?: Maybe<HasSlsaConnection>;
   /** Returns all source mappings that match the filter. */
   HasSourceAt: Array<HasSourceAt>;
+  /** Returns a paginated results via HasSourceAtConnection */
+  HasSourceAtList?: Maybe<HasSourceAtConnection>;
   /** Returns all artifact equality statements matching a filter. */
   HashEqual: Array<HashEqual>;
+  /** Returns a paginated results via HashEqualConnection */
+  HashEqualList?: Maybe<HashEqualConnection>;
   /** Returns all package dependencies that match the filter. */
   IsDependency: Array<IsDependency>;
+  /** Returns a paginated results via IsDependencyConnection */
+  IsDependencyList?: Maybe<IsDependencyConnection>;
   /** Returns all artifacts-source/package mappings that match a filter. */
   IsOccurrence: Array<IsOccurrence>;
+  /** Returns a paginated results via IsOccurrenceConnection */
+  IsOccurrenceList?: Maybe<IsOccurrenceConnection>;
   /** Returns all package equality statements matching a filter. */
   PkgEqual: Array<PkgEqual>;
+  /** Returns a paginated results via PkgEqualConnection */
+  PkgEqualList?: Maybe<PkgEqualConnection>;
   /** Returns all PointOfContact attestations matching a filter. */
   PointOfContact: Array<PointOfContact>;
+  /** Returns a paginated results via PointOfContactConnection */
+  PointOfContactList?: Maybe<PointOfContactConnection>;
   /** Returns all artifacts matching a filter. */
   artifacts: Array<Artifact>;
+  /** Returns a paginated results via ArtifactConnection */
+  artifactsList?: Maybe<ArtifactConnection>;
   /** Returns all builders matching a filter. */
   builders: Array<Builder>;
+  /** Returns a paginated results via BuilderConnection */
+  buildersList?: Maybe<BuilderConnection>;
   /**
    * findSoftware takes in a searchText string and looks for software
    * that may be relevant for the input text. This can be seen as fuzzy search
@@ -1688,6 +2512,10 @@ export type Query = {
    * implement this API.
    */
   findSoftware: Array<PackageSourceOrArtifact>;
+  /** Returns a paginated results via CertifyBadConnection */
+  findSoftwareList?: Maybe<FindSoftwareConnection>;
+  /** Returns a paginated results via LicenseConnection */
+  licenseList?: Maybe<LicenseConnection>;
   /** Returns all licenses matching a filter. */
   licenses: Array<License>;
   /**
@@ -1699,6 +2527,8 @@ export type Query = {
    * contain the corresponding GUAC evidence trees (GUAC verbs).
    */
   neighbors: Array<Node>;
+  /** Returns a paginated results via NeighborConnection */
+  neighborsList?: Maybe<NeighborConnection>;
   /**
    * node returns a single node, regardless of type.
    *
@@ -1713,6 +2543,8 @@ export type Query = {
   nodes: Array<Node>;
   /** Returns all packages matching a filter. */
   packages: Array<Package>;
+  /** Returns a paginated results via PackageConnection */
+  packagesList?: Maybe<PackageConnection>;
   /**
    * path query returns a path between subject and target, of a maximum length.
    *
@@ -1725,14 +2557,24 @@ export type Query = {
   path: Array<Node>;
   /** Returns all Scorecard certifications matching the filter. */
   scorecards: Array<CertifyScorecard>;
+  /** Returns a paginated results via CertifyScorecardConnection */
+  scorecardsList?: Maybe<CertifyScorecardConnection>;
   /** Returns all sources matching a filter. */
   sources: Array<Source>;
+  /** Returns a paginated results via SourceConnection */
+  sourcesList?: Maybe<SourceConnection>;
   /** Returns all equal vulnerability mappings that match a filter. */
   vulnEqual: Array<VulnEqual>;
+  /** Returns a paginated results via VulnEqualConnection */
+  vulnEqualList?: Maybe<VulnEqualConnection>;
   /** Returns all vulnerabilities matching a filter. */
   vulnerabilities: Array<Vulnerability>;
+  /** Returns a paginated results via VulnerabilityConnection */
+  vulnerabilityList?: Maybe<VulnerabilityConnection>;
   /** Returns all vulnerabilityMetadata attestations matching a filter. */
   vulnerabilityMetadata: Array<VulnerabilityMetadata>;
+  /** Returns a paginated results via VulnerabilityMetadataConnection */
+  vulnerabilityMetadataList?: Maybe<VulnerabilityMetadataConnection>;
 };
 
 
@@ -1741,8 +2583,22 @@ export type QueryCertifyBadArgs = {
 };
 
 
+export type QueryCertifyBadListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  certifyBadSpec: CertifyBadSpec;
+  first?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryCertifyGoodArgs = {
   certifyGoodSpec: CertifyGoodSpec;
+};
+
+
+export type QueryCertifyGoodListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  certifyGoodSpec: CertifyGoodSpec;
+  first?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1751,8 +2607,22 @@ export type QueryCertifyLegalArgs = {
 };
 
 
+export type QueryCertifyLegalListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  certifyLegalSpec: CertifyLegalSpec;
+  first?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryCertifyVexStatementArgs = {
   certifyVEXStatementSpec: CertifyVexStatementSpec;
+};
+
+
+export type QueryCertifyVexStatementListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  certifyVEXStatementSpec: CertifyVexStatementSpec;
+  first?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1761,7 +2631,21 @@ export type QueryCertifyVulnArgs = {
 };
 
 
+export type QueryCertifyVulnListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  certifyVulnSpec: CertifyVulnSpec;
+  first?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryHasMetadataArgs = {
+  hasMetadataSpec: HasMetadataSpec;
+};
+
+
+export type QueryHasMetadataListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
   hasMetadataSpec: HasMetadataSpec;
 };
 
@@ -1771,7 +2655,21 @@ export type QueryHasSbomArgs = {
 };
 
 
+export type QueryHasSbomListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  hasSBOMSpec: HasSbomSpec;
+};
+
+
 export type QueryHasSlsaArgs = {
+  hasSLSASpec: HasSlsaSpec;
+};
+
+
+export type QueryHasSlsaListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
   hasSLSASpec: HasSlsaSpec;
 };
 
@@ -1781,7 +2679,21 @@ export type QueryHasSourceAtArgs = {
 };
 
 
+export type QueryHasSourceAtListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  hasSourceAtSpec: HasSourceAtSpec;
+};
+
+
 export type QueryHashEqualArgs = {
+  hashEqualSpec: HashEqualSpec;
+};
+
+
+export type QueryHashEqualListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
   hashEqualSpec: HashEqualSpec;
 };
 
@@ -1791,7 +2703,21 @@ export type QueryIsDependencyArgs = {
 };
 
 
+export type QueryIsDependencyListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  isDependencySpec: IsDependencySpec;
+};
+
+
 export type QueryIsOccurrenceArgs = {
+  isOccurrenceSpec: IsOccurrenceSpec;
+};
+
+
+export type QueryIsOccurrenceListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
   isOccurrenceSpec: IsOccurrenceSpec;
 };
 
@@ -1801,7 +2727,21 @@ export type QueryPkgEqualArgs = {
 };
 
 
+export type QueryPkgEqualListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  pkgEqualSpec: PkgEqualSpec;
+};
+
+
 export type QueryPointOfContactArgs = {
+  pointOfContactSpec: PointOfContactSpec;
+};
+
+
+export type QueryPointOfContactListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
   pointOfContactSpec: PointOfContactSpec;
 };
 
@@ -1811,13 +2751,41 @@ export type QueryArtifactsArgs = {
 };
 
 
+export type QueryArtifactsListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  artifactSpec: ArtifactSpec;
+  first?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryBuildersArgs = {
   builderSpec: BuilderSpec;
 };
 
 
+export type QueryBuildersListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  builderSpec: BuilderSpec;
+  first?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryFindSoftwareArgs = {
   searchText: Scalars['String'];
+};
+
+
+export type QueryFindSoftwareListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  searchText: Scalars['String'];
+};
+
+
+export type QueryLicenseListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  licenseSpec: LicenseSpec;
 };
 
 
@@ -1827,6 +2795,14 @@ export type QueryLicensesArgs = {
 
 
 export type QueryNeighborsArgs = {
+  node: Scalars['ID'];
+  usingOnly: Array<Edge>;
+};
+
+
+export type QueryNeighborsListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
   node: Scalars['ID'];
   usingOnly: Array<Edge>;
 };
@@ -1847,6 +2823,13 @@ export type QueryPackagesArgs = {
 };
 
 
+export type QueryPackagesListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  pkgSpec: PkgSpec;
+};
+
+
 export type QueryPathArgs = {
   maxPathLength: Scalars['Int'];
   subject: Scalars['ID'];
@@ -1860,7 +2843,21 @@ export type QueryScorecardsArgs = {
 };
 
 
+export type QueryScorecardsListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  scorecardSpec: CertifyScorecardSpec;
+};
+
+
 export type QuerySourcesArgs = {
+  sourceSpec: SourceSpec;
+};
+
+
+export type QuerySourcesListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
   sourceSpec: SourceSpec;
 };
 
@@ -1870,12 +2867,33 @@ export type QueryVulnEqualArgs = {
 };
 
 
+export type QueryVulnEqualListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  vulnEqualSpec: VulnEqualSpec;
+};
+
+
 export type QueryVulnerabilitiesArgs = {
   vulnSpec: VulnerabilitySpec;
 };
 
 
+export type QueryVulnerabilityListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  vulnSpec: VulnerabilitySpec;
+};
+
+
 export type QueryVulnerabilityMetadataArgs = {
+  vulnerabilityMetadataSpec: VulnerabilityMetadataSpec;
+};
+
+
+export type QueryVulnerabilityMetadataListArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
   vulnerabilityMetadataSpec: VulnerabilityMetadataSpec;
 };
 
@@ -1899,6 +2917,8 @@ export type Slsa = {
   builtFrom: Array<Artifact>;
   /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   /** Timestamp (RFC3339Nano format) of build end time */
   finishedOn?: Maybe<Scalars['Time']>;
   /** Document from which this attestation is generated from */
@@ -1915,6 +2935,7 @@ export type Slsa = {
 export type SlsaInputSpec = {
   buildType: Scalars['String'];
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   finishedOn?: InputMaybe<Scalars['Time']>;
   origin: Scalars['String'];
   slsaPredicate: Array<SlsaPredicateInputSpec>;
@@ -1980,6 +3001,8 @@ export type ScanMetadata = {
   dbUri: Scalars['String'];
   /** Version of the vulnerability database used by the scanner */
   dbVersion: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   /** Document from which this attestation is generated from */
   origin: Scalars['String'];
   /** URI of the scanner */
@@ -1998,6 +3021,7 @@ export type ScanMetadataInput = {
   collector: Scalars['String'];
   dbUri: Scalars['String'];
   dbVersion: Scalars['String'];
+  documentRef: Scalars['String'];
   origin: Scalars['String'];
   scannerUri: Scalars['String'];
   scannerVersion: Scalars['String'];
@@ -2019,6 +3043,8 @@ export type Scorecard = {
   checks: Array<ScorecardCheck>;
   /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   /** Document from which this attestation is generated from */
   origin: Scalars['String'];
   /** Commit of the Scorecards repository at the time of scanning the source */
@@ -2068,10 +3094,21 @@ export type ScorecardInputSpec = {
   aggregateScore: Scalars['Float'];
   checks: Array<ScorecardCheckInputSpec>;
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   origin: Scalars['String'];
   scorecardCommit: Scalars['String'];
   scorecardVersion: Scalars['String'];
   timeScanned: Scalars['Time'];
+};
+
+/**
+ * SoftwareEdge contains the cursor for the resulting node and
+ * the PackageSourceOrArtifact node itself.
+ */
+export type SoftwareEdge = {
+  __typename?: 'SoftwareEdge';
+  cursor: Scalars['ID'];
+  node: PackageSourceOrArtifact;
 };
 
 /**
@@ -2092,6 +3129,43 @@ export type Source = {
   id: Scalars['ID'];
   namespaces: Array<SourceNamespace>;
   type: Scalars['String'];
+};
+
+/**
+ * SourceConnection returns the paginated results for Source.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the SourceEdge which contains the current cursor
+ * and the Source node itself
+ */
+export type SourceConnection = {
+  __typename?: 'SourceConnection';
+  edges: Array<SourceEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * SourceEdge contains the cursor for the resulting node and
+ * the Source node itself.
+ */
+export type SourceEdge = {
+  __typename?: 'SourceEdge';
+  cursor: Scalars['ID'];
+  node: Source;
+};
+
+/** The IDs of the ingested source */
+export type SourceIDs = {
+  __typename?: 'SourceIDs';
+  sourceNameID: Scalars['ID'];
+  sourceNamespaceID: Scalars['ID'];
+  sourceTypeID: Scalars['ID'];
 };
 
 /**
@@ -2161,6 +3235,35 @@ export type SourceSpec = {
   type?: InputMaybe<Scalars['String']>;
 };
 
+/**
+ * VEXConnection returns the paginated results for CertifyVEXStatement.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the VEXEdge which contains the current cursor
+ * and the CertifyVEXStatement node itself
+ */
+export type VexConnection = {
+  __typename?: 'VEXConnection';
+  edges: Array<VexEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * VEXEdge contains the cursor for the resulting node and
+ * the CertifyVEXStatement node itself.
+ */
+export type VexEdge = {
+  __typename?: 'VEXEdge';
+  cursor: Scalars['ID'];
+  node: CertifyVexStatement;
+};
+
 /** Records the justification included in the VEX statement. */
 export enum VexJustification {
   ComponentNotPresent = 'COMPONENT_NOT_PRESENT',
@@ -2174,6 +3277,7 @@ export enum VexJustification {
 /** VexStatementInputSpec represents the input to ingest VEX statements. */
 export type VexStatementInputSpec = {
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   knownSince: Scalars['Time'];
   origin: Scalars['String'];
   statement: Scalars['String'];
@@ -2199,18 +3303,50 @@ export type VulnEqual = {
   __typename?: 'VulnEqual';
   /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
   /** Justification for the attested relationship */
   justification: Scalars['String'];
   /** Document from which this attestation is generated from */
   origin: Scalars['String'];
-  /** Collection of vulnerabilities that are similar */
+  /** Two vulnerabilities that are similar */
   vulnerabilities: Array<Vulnerability>;
+};
+
+/**
+ * VulnEqualConnection returns the paginated results for VulnEqual.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the VulnEqualEdge which contains the current cursor
+ * and the VulnEqual node itself
+ */
+export type VulnEqualConnection = {
+  __typename?: 'VulnEqualConnection';
+  edges: Array<VulnEqualEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * VulnEqualEdge contains the cursor for the resulting node and
+ * the VulnEqual node itself.
+ */
+export type VulnEqualEdge = {
+  __typename?: 'VulnEqualEdge';
+  cursor: Scalars['ID'];
+  node: VulnEqual;
 };
 
 /** VulnEqualInputSpec represents the input to link vulnerabilities to each other. */
 export type VulnEqualInputSpec = {
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   justification: Scalars['String'];
   origin: Scalars['String'];
 };
@@ -2221,6 +3357,7 @@ export type VulnEqualInputSpec = {
  */
 export type VulnEqualSpec = {
   collector?: InputMaybe<Scalars['String']>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   justification?: InputMaybe<Scalars['String']>;
   origin?: InputMaybe<Scalars['String']>;
@@ -2263,6 +3400,35 @@ export type Vulnerability = {
 };
 
 /**
+ * VulnerabilityConnection returns the paginated results for Vulnerability.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the VulnerabilityEdge which contains the current cursor
+ * and the Vulnerability node itself
+ */
+export type VulnerabilityConnection = {
+  __typename?: 'VulnerabilityConnection';
+  edges: Array<VulnerabilityEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * VulnerabilityEdge contains the cursor for the resulting node and
+ * the Vulnerability node itself.
+ */
+export type VulnerabilityEdge = {
+  __typename?: 'VulnerabilityEdge';
+  cursor: Scalars['ID'];
+  node: Vulnerability;
+};
+
+/**
  * VulnerabilityID is a specific vulnerability ID associated with the type of the vulnerability.
  *
  * This will be enforced to be all lowercase.
@@ -2273,6 +3439,13 @@ export type VulnerabilityId = {
   __typename?: 'VulnerabilityID';
   id: Scalars['ID'];
   vulnerabilityID: Scalars['String'];
+};
+
+/** The IDs of the ingested vulnerability */
+export type VulnerabilityIDs = {
+  __typename?: 'VulnerabilityIDs';
+  vulnerabilityNodeID: Scalars['ID'];
+  vulnerabilityTypeID: Scalars['ID'];
 };
 
 /**
@@ -2311,18 +3484,56 @@ export type VulnerabilityInputSpec = {
  */
 export type VulnerabilityMetadata = {
   __typename?: 'VulnerabilityMetadata';
+  /** GUAC collector for the document */
   collector: Scalars['String'];
+  /** Reference location of the document in the persistent blob store (if that is configured) */
+  documentRef: Scalars['String'];
   id: Scalars['ID'];
+  /** Document from which this attestation is generated from */
   origin: Scalars['String'];
+  /** The specific score type for the score value */
   scoreType: VulnerabilityScoreType;
+  /** The score value based on the score type */
   scoreValue: Scalars['Float'];
+  /** Timestamp when the certification was created (in RFC 3339 format) */
   timestamp: Scalars['Time'];
+  /** The subject vulnerability that the metadata applies to */
   vulnerability: Vulnerability;
+};
+
+/**
+ * VulnerabilityMetadataConnection returns the paginated results for VulnerabilityMetadata.
+ *
+ * totalCount is the total number of results returned.
+ *
+ * pageInfo provides information to the client if there is
+ * a next page of results and the starting and
+ * ending cursor for the current set.
+ *
+ * edges contains the VulnerabilityMetadataEdge which contains the current cursor
+ * and the VulnerabilityMetadata node itself
+ */
+export type VulnerabilityMetadataConnection = {
+  __typename?: 'VulnerabilityMetadataConnection';
+  edges: Array<VulnerabilityMetadataEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+/**
+ * VulnerabilityMetadataEdge contains the cursor for the resulting node and
+ * the VulnerabilityMetadata node itself.
+ */
+export type VulnerabilityMetadataEdge = {
+  __typename?: 'VulnerabilityMetadataEdge';
+  cursor: Scalars['ID'];
+  node: VulnerabilityMetadata;
 };
 
 /** VulnerabilityMetadataInputSpec represents the mutation input to ingest a vulnerability metadata. */
 export type VulnerabilityMetadataInputSpec = {
   collector: Scalars['String'];
+  documentRef: Scalars['String'];
   origin: Scalars['String'];
   scoreType: VulnerabilityScoreType;
   scoreValue: Scalars['Float'];
@@ -2341,6 +3552,7 @@ export type VulnerabilityMetadataInputSpec = {
 export type VulnerabilityMetadataSpec = {
   collector?: InputMaybe<Scalars['String']>;
   comparator?: InputMaybe<Comparator>;
+  documentRef?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   origin?: InputMaybe<Scalars['String']>;
   scoreType?: InputMaybe<VulnerabilityScoreType>;
@@ -2382,14 +3594,14 @@ export type VulnerabilitySpec = {
 };
 
 export type IngestArtifactMutationVariables = Exact<{
-  artifact: ArtifactInputSpec;
+  artifact: IDorArtifactInput;
 }>;
 
 
 export type IngestArtifactMutation = { __typename?: 'Mutation', ingestArtifact: string };
 
 export type IngestArtifactsMutationVariables = Exact<{
-  artifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
+  artifacts: Array<IDorArtifactInput> | IDorArtifactInput;
 }>;
 
 
@@ -2406,68 +3618,68 @@ export type ArtifactsQuery = { __typename?: 'Query', artifacts: Array<(
   )> };
 
 export type IngestBuilderMutationVariables = Exact<{
-  builder: BuilderInputSpec;
+  builder: IDorBuilderInput;
 }>;
 
 
 export type IngestBuilderMutation = { __typename?: 'Mutation', ingestBuilder: string };
 
 export type IngestBuildersMutationVariables = Exact<{
-  builders: Array<BuilderInputSpec> | BuilderInputSpec;
+  builders: Array<IDorBuilderInput> | IDorBuilderInput;
 }>;
 
 
 export type IngestBuildersMutation = { __typename?: 'Mutation', ingestBuilders: Array<string> };
 
-export type CertifyBadPkgMutationVariables = Exact<{
-  pkg: PkgInputSpec;
+export type IngestCertifyBadPkgMutationVariables = Exact<{
+  pkg: IDorPkgInput;
   pkgMatchType: MatchFlags;
   certifyBad: CertifyBadInputSpec;
 }>;
 
 
-export type CertifyBadPkgMutation = { __typename?: 'Mutation', ingestCertifyBad: string };
+export type IngestCertifyBadPkgMutation = { __typename?: 'Mutation', ingestCertifyBad: string };
 
-export type CertifyBadSrcMutationVariables = Exact<{
-  source: SourceInputSpec;
+export type IngestCertifyBadSrcMutationVariables = Exact<{
+  source: IDorSourceInput;
   certifyBad: CertifyBadInputSpec;
 }>;
 
 
-export type CertifyBadSrcMutation = { __typename?: 'Mutation', ingestCertifyBad: string };
+export type IngestCertifyBadSrcMutation = { __typename?: 'Mutation', ingestCertifyBad: string };
 
-export type CertifyBadArtifactMutationVariables = Exact<{
-  artifact: ArtifactInputSpec;
+export type IngestCertifyBadArtifactMutationVariables = Exact<{
+  artifact: IDorArtifactInput;
   certifyBad: CertifyBadInputSpec;
 }>;
 
 
-export type CertifyBadArtifactMutation = { __typename?: 'Mutation', ingestCertifyBad: string };
+export type IngestCertifyBadArtifactMutation = { __typename?: 'Mutation', ingestCertifyBad: string };
 
-export type CertifyBadPkgsMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
+export type IngestCertifyBadPkgsMutationVariables = Exact<{
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
   pkgMatchType: MatchFlags;
   certifyBads: Array<CertifyBadInputSpec> | CertifyBadInputSpec;
 }>;
 
 
-export type CertifyBadPkgsMutation = { __typename?: 'Mutation', ingestCertifyBads: Array<string> };
+export type IngestCertifyBadPkgsMutation = { __typename?: 'Mutation', ingestCertifyBads: Array<string> };
 
-export type CertifyBadSrcsMutationVariables = Exact<{
-  sources: Array<SourceInputSpec> | SourceInputSpec;
+export type IngestCertifyBadSrcsMutationVariables = Exact<{
+  sources: Array<IDorSourceInput> | IDorSourceInput;
   certifyBads: Array<CertifyBadInputSpec> | CertifyBadInputSpec;
 }>;
 
 
-export type CertifyBadSrcsMutation = { __typename?: 'Mutation', ingestCertifyBads: Array<string> };
+export type IngestCertifyBadSrcsMutation = { __typename?: 'Mutation', ingestCertifyBads: Array<string> };
 
-export type CertifyBadArtifactsMutationVariables = Exact<{
-  artifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
+export type IngestCertifyBadArtifactsMutationVariables = Exact<{
+  artifacts: Array<IDorArtifactInput> | IDorArtifactInput;
   certifyBads: Array<CertifyBadInputSpec> | CertifyBadInputSpec;
 }>;
 
 
-export type CertifyBadArtifactsMutation = { __typename?: 'Mutation', ingestCertifyBads: Array<string> };
+export type IngestCertifyBadArtifactsMutation = { __typename?: 'Mutation', ingestCertifyBads: Array<string> };
 
 export type CertifyBadsQueryVariables = Exact<{
   filter: CertifyBadSpec;
@@ -2479,95 +3691,95 @@ export type CertifyBadsQuery = { __typename?: 'Query', CertifyBad: Array<(
     & { ' $fragmentRefs'?: { 'AllCertifyBadFragment': AllCertifyBadFragment } }
   )> };
 
-export type CertifyGoodPkgMutationVariables = Exact<{
-  pkg: PkgInputSpec;
+export type IngestCertifyGoodPkgMutationVariables = Exact<{
+  pkg: IDorPkgInput;
   pkgMatchType: MatchFlags;
   certifyGood: CertifyGoodInputSpec;
 }>;
 
 
-export type CertifyGoodPkgMutation = { __typename?: 'Mutation', ingestCertifyGood: string };
+export type IngestCertifyGoodPkgMutation = { __typename?: 'Mutation', ingestCertifyGood: string };
 
-export type CertifyGoodSrcMutationVariables = Exact<{
-  source: SourceInputSpec;
+export type IngestCertifyGoodSrcMutationVariables = Exact<{
+  source: IDorSourceInput;
   certifyGood: CertifyGoodInputSpec;
 }>;
 
 
-export type CertifyGoodSrcMutation = { __typename?: 'Mutation', ingestCertifyGood: string };
+export type IngestCertifyGoodSrcMutation = { __typename?: 'Mutation', ingestCertifyGood: string };
 
-export type CertifyGoodArtifactMutationVariables = Exact<{
-  artifact: ArtifactInputSpec;
+export type IngestCertifyGoodArtifactMutationVariables = Exact<{
+  artifact: IDorArtifactInput;
   certifyGood: CertifyGoodInputSpec;
 }>;
 
 
-export type CertifyGoodArtifactMutation = { __typename?: 'Mutation', ingestCertifyGood: string };
+export type IngestCertifyGoodArtifactMutation = { __typename?: 'Mutation', ingestCertifyGood: string };
 
-export type CertifyGoodPkgsMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
+export type IngestCertifyGoodPkgsMutationVariables = Exact<{
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
   pkgMatchType: MatchFlags;
   certifyGoods: Array<CertifyGoodInputSpec> | CertifyGoodInputSpec;
 }>;
 
 
-export type CertifyGoodPkgsMutation = { __typename?: 'Mutation', ingestCertifyGoods: Array<string> };
+export type IngestCertifyGoodPkgsMutation = { __typename?: 'Mutation', ingestCertifyGoods: Array<string> };
 
-export type CertifyGoodSrcsMutationVariables = Exact<{
-  sources: Array<SourceInputSpec> | SourceInputSpec;
+export type IngestCertifyGoodSrcsMutationVariables = Exact<{
+  sources: Array<IDorSourceInput> | IDorSourceInput;
   certifyGoods: Array<CertifyGoodInputSpec> | CertifyGoodInputSpec;
 }>;
 
 
-export type CertifyGoodSrcsMutation = { __typename?: 'Mutation', ingestCertifyGoods: Array<string> };
+export type IngestCertifyGoodSrcsMutation = { __typename?: 'Mutation', ingestCertifyGoods: Array<string> };
 
-export type CertifyGoodArtifactsMutationVariables = Exact<{
-  artifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
+export type IngestCertifyGoodArtifactsMutationVariables = Exact<{
+  artifacts: Array<IDorArtifactInput> | IDorArtifactInput;
   certifyGoods: Array<CertifyGoodInputSpec> | CertifyGoodInputSpec;
 }>;
 
 
-export type CertifyGoodArtifactsMutation = { __typename?: 'Mutation', ingestCertifyGoods: Array<string> };
+export type IngestCertifyGoodArtifactsMutation = { __typename?: 'Mutation', ingestCertifyGoods: Array<string> };
 
-export type CertifyLegalPkgMutationVariables = Exact<{
-  pkg: PkgInputSpec;
-  declaredLicenses: Array<LicenseInputSpec> | LicenseInputSpec;
-  discoveredLicenses: Array<LicenseInputSpec> | LicenseInputSpec;
+export type IngestCertifyLegalPkgMutationVariables = Exact<{
+  pkg: IDorPkgInput;
+  declaredLicenses: Array<IDorLicenseInput> | IDorLicenseInput;
+  discoveredLicenses: Array<IDorLicenseInput> | IDorLicenseInput;
   legal: CertifyLegalInputSpec;
 }>;
 
 
-export type CertifyLegalPkgMutation = { __typename?: 'Mutation', ingestCertifyLegal: string };
+export type IngestCertifyLegalPkgMutation = { __typename?: 'Mutation', ingestCertifyLegal: string };
 
-export type CertifyLegalPkgsMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
-  declaredLicensesList: Array<Array<LicenseInputSpec> | LicenseInputSpec> | Array<LicenseInputSpec> | LicenseInputSpec;
-  discoveredLicensesList: Array<Array<LicenseInputSpec> | LicenseInputSpec> | Array<LicenseInputSpec> | LicenseInputSpec;
+export type IngestCertifyLegalPkgsMutationVariables = Exact<{
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
+  declaredLicensesList: Array<Array<IDorLicenseInput> | IDorLicenseInput> | Array<IDorLicenseInput> | IDorLicenseInput;
+  discoveredLicensesList: Array<Array<IDorLicenseInput> | IDorLicenseInput> | Array<IDorLicenseInput> | IDorLicenseInput;
   legals: Array<CertifyLegalInputSpec> | CertifyLegalInputSpec;
 }>;
 
 
-export type CertifyLegalPkgsMutation = { __typename?: 'Mutation', ingestCertifyLegals: Array<string> };
+export type IngestCertifyLegalPkgsMutation = { __typename?: 'Mutation', ingestCertifyLegals: Array<string> };
 
-export type CertifyLegalSrcMutationVariables = Exact<{
-  src: SourceInputSpec;
-  declaredLicenses: Array<LicenseInputSpec> | LicenseInputSpec;
-  discoveredLicenses: Array<LicenseInputSpec> | LicenseInputSpec;
+export type IngestCertifyLegalSrcMutationVariables = Exact<{
+  src: IDorSourceInput;
+  declaredLicenses: Array<IDorLicenseInput> | IDorLicenseInput;
+  discoveredLicenses: Array<IDorLicenseInput> | IDorLicenseInput;
   legal: CertifyLegalInputSpec;
 }>;
 
 
-export type CertifyLegalSrcMutation = { __typename?: 'Mutation', ingestCertifyLegal: string };
+export type IngestCertifyLegalSrcMutation = { __typename?: 'Mutation', ingestCertifyLegal: string };
 
-export type CertifyLegalSrcsMutationVariables = Exact<{
-  srcs: Array<SourceInputSpec> | SourceInputSpec;
-  declaredLicensesList: Array<Array<LicenseInputSpec> | LicenseInputSpec> | Array<LicenseInputSpec> | LicenseInputSpec;
-  discoveredLicensesList: Array<Array<LicenseInputSpec> | LicenseInputSpec> | Array<LicenseInputSpec> | LicenseInputSpec;
+export type IngestCertifyLegalSrcsMutationVariables = Exact<{
+  srcs: Array<IDorSourceInput> | IDorSourceInput;
+  declaredLicensesList: Array<Array<IDorLicenseInput> | IDorLicenseInput> | Array<IDorLicenseInput> | IDorLicenseInput;
+  discoveredLicensesList: Array<Array<IDorLicenseInput> | IDorLicenseInput> | Array<IDorLicenseInput> | IDorLicenseInput;
   legals: Array<CertifyLegalInputSpec> | CertifyLegalInputSpec;
 }>;
 
 
-export type CertifyLegalSrcsMutation = { __typename?: 'Mutation', ingestCertifyLegals: Array<string> };
+export type IngestCertifyLegalSrcsMutation = { __typename?: 'Mutation', ingestCertifyLegals: Array<string> };
 
 export type CertifyLegalsQueryVariables = Exact<{
   filter: CertifyLegalSpec;
@@ -2579,201 +3791,235 @@ export type CertifyLegalsQuery = { __typename?: 'Query', CertifyLegal: Array<(
     & { ' $fragmentRefs'?: { 'AllCertifyLegalTreeFragment': AllCertifyLegalTreeFragment } }
   )> };
 
-export type CertifyScorecardMutationVariables = Exact<{
-  source: SourceInputSpec;
+export type IngestCertifyScorecardMutationVariables = Exact<{
+  source: IDorSourceInput;
   scorecard: ScorecardInputSpec;
 }>;
 
 
-export type CertifyScorecardMutation = { __typename?: 'Mutation', ingestScorecard: string };
+export type IngestCertifyScorecardMutation = { __typename?: 'Mutation', ingestScorecard: string };
 
-export type CertifyScorecardsMutationVariables = Exact<{
-  sources: Array<SourceInputSpec> | SourceInputSpec;
+export type IngestCertifyScorecardsMutationVariables = Exact<{
+  sources: Array<IDorSourceInput> | IDorSourceInput;
   scorecards: Array<ScorecardInputSpec> | ScorecardInputSpec;
 }>;
 
 
-export type CertifyScorecardsMutation = { __typename?: 'Mutation', ingestScorecards: Array<string> };
+export type IngestCertifyScorecardsMutation = { __typename?: 'Mutation', ingestScorecards: Array<string> };
 
-export type CertifyVexPkgMutationVariables = Exact<{
-  pkg: PkgInputSpec;
-  vulnerability: VulnerabilityInputSpec;
+export type ScorecardsQueryVariables = Exact<{
+  filter: CertifyScorecardSpec;
+}>;
+
+
+export type ScorecardsQuery = { __typename?: 'Query', scorecards: Array<(
+    { __typename?: 'CertifyScorecard' }
+    & { ' $fragmentRefs'?: { 'AllCertifyScorecardFragment': AllCertifyScorecardFragment } }
+  )> };
+
+export type IngestCertifyVexPkgMutationVariables = Exact<{
+  pkg: IDorPkgInput;
+  vulnerability: IDorVulnerabilityInput;
   vexStatement: VexStatementInputSpec;
 }>;
 
 
-export type CertifyVexPkgMutation = { __typename?: 'Mutation', ingestVEXStatement: string };
+export type IngestCertifyVexPkgMutation = { __typename?: 'Mutation', ingestVEXStatement: string };
 
-export type CertifyVexArtifactMutationVariables = Exact<{
-  artifact: ArtifactInputSpec;
-  vulnerability: VulnerabilityInputSpec;
+export type IngestCertifyVexArtifactMutationVariables = Exact<{
+  artifact: IDorArtifactInput;
+  vulnerability: IDorVulnerabilityInput;
   vexStatement: VexStatementInputSpec;
 }>;
 
 
-export type CertifyVexArtifactMutation = { __typename?: 'Mutation', ingestVEXStatement: string };
+export type IngestCertifyVexArtifactMutation = { __typename?: 'Mutation', ingestVEXStatement: string };
 
-export type CertifyVexPkgsMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
-  vulnerabilities: Array<VulnerabilityInputSpec> | VulnerabilityInputSpec;
+export type IngestCertifyVexPkgsMutationVariables = Exact<{
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
+  vulnerabilities: Array<IDorVulnerabilityInput> | IDorVulnerabilityInput;
   vexStatements: Array<VexStatementInputSpec> | VexStatementInputSpec;
 }>;
 
 
-export type CertifyVexPkgsMutation = { __typename?: 'Mutation', ingestVEXStatements: Array<string> };
+export type IngestCertifyVexPkgsMutation = { __typename?: 'Mutation', ingestVEXStatements: Array<string> };
 
-export type CertifyVexArtifactsMutationVariables = Exact<{
-  artifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
-  vulnerabilities: Array<VulnerabilityInputSpec> | VulnerabilityInputSpec;
+export type IngestCertifyVexArtifactsMutationVariables = Exact<{
+  artifacts: Array<IDorArtifactInput> | IDorArtifactInput;
+  vulnerabilities: Array<IDorVulnerabilityInput> | IDorVulnerabilityInput;
   vexStatements: Array<VexStatementInputSpec> | VexStatementInputSpec;
 }>;
 
 
-export type CertifyVexArtifactsMutation = { __typename?: 'Mutation', ingestVEXStatements: Array<string> };
+export type IngestCertifyVexArtifactsMutation = { __typename?: 'Mutation', ingestVEXStatements: Array<string> };
 
-export type CertifyVulnPkgMutationVariables = Exact<{
-  pkg: PkgInputSpec;
-  vulnerability: VulnerabilityInputSpec;
+export type IngestCertifyVulnPkgMutationVariables = Exact<{
+  pkg: IDorPkgInput;
+  vulnerability: IDorVulnerabilityInput;
   certifyVuln: ScanMetadataInput;
 }>;
 
 
-export type CertifyVulnPkgMutation = { __typename?: 'Mutation', ingestCertifyVuln: string };
+export type IngestCertifyVulnPkgMutation = { __typename?: 'Mutation', ingestCertifyVuln: string };
 
-export type CertifyVulnPkgsMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
-  vulnerabilities: Array<VulnerabilityInputSpec> | VulnerabilityInputSpec;
+export type IngestCertifyVulnPkgsMutationVariables = Exact<{
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
+  vulnerabilities: Array<IDorVulnerabilityInput> | IDorVulnerabilityInput;
   certifyVulns: Array<ScanMetadataInput> | ScanMetadataInput;
 }>;
 
 
-export type CertifyVulnPkgsMutation = { __typename?: 'Mutation', ingestCertifyVulns: Array<string> };
+export type IngestCertifyVulnPkgsMutation = { __typename?: 'Mutation', ingestCertifyVulns: Array<string> };
 
-export type PointOfContactPkgMutationVariables = Exact<{
-  pkg: PkgInputSpec;
+export type IngestPointOfContactPkgMutationVariables = Exact<{
+  pkg: IDorPkgInput;
   pkgMatchType: MatchFlags;
   pointOfContact: PointOfContactInputSpec;
 }>;
 
 
-export type PointOfContactPkgMutation = { __typename?: 'Mutation', ingestPointOfContact: string };
+export type IngestPointOfContactPkgMutation = { __typename?: 'Mutation', ingestPointOfContact: string };
 
-export type PointOfContactSrcMutationVariables = Exact<{
-  source: SourceInputSpec;
+export type IngestPointOfContactSrcMutationVariables = Exact<{
+  source: IDorSourceInput;
   pointOfContact: PointOfContactInputSpec;
 }>;
 
 
-export type PointOfContactSrcMutation = { __typename?: 'Mutation', ingestPointOfContact: string };
+export type IngestPointOfContactSrcMutation = { __typename?: 'Mutation', ingestPointOfContact: string };
 
-export type PointOfContactArtifactMutationVariables = Exact<{
-  artifact: ArtifactInputSpec;
+export type IngestPointOfContactArtifactMutationVariables = Exact<{
+  artifact: IDorArtifactInput;
   pointOfContact: PointOfContactInputSpec;
 }>;
 
 
-export type PointOfContactArtifactMutation = { __typename?: 'Mutation', ingestPointOfContact: string };
+export type IngestPointOfContactArtifactMutation = { __typename?: 'Mutation', ingestPointOfContact: string };
 
-export type PointOfContactPkgsMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
+export type IngestPointOfContactPkgsMutationVariables = Exact<{
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
   pkgMatchType: MatchFlags;
   pointOfContacts: Array<PointOfContactInputSpec> | PointOfContactInputSpec;
 }>;
 
 
-export type PointOfContactPkgsMutation = { __typename?: 'Mutation', ingestPointOfContacts: Array<string> };
+export type IngestPointOfContactPkgsMutation = { __typename?: 'Mutation', ingestPointOfContacts: Array<string> };
 
-export type PointOfContactSrcsMutationVariables = Exact<{
-  sources: Array<SourceInputSpec> | SourceInputSpec;
+export type IngestPointOfContactSrcsMutationVariables = Exact<{
+  sources: Array<IDorSourceInput> | IDorSourceInput;
   pointOfContacts: Array<PointOfContactInputSpec> | PointOfContactInputSpec;
 }>;
 
 
-export type PointOfContactSrcsMutation = { __typename?: 'Mutation', ingestPointOfContacts: Array<string> };
+export type IngestPointOfContactSrcsMutation = { __typename?: 'Mutation', ingestPointOfContacts: Array<string> };
 
-export type PointOfContactArtifactsMutationVariables = Exact<{
-  artifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
+export type IngestPointOfContactArtifactsMutationVariables = Exact<{
+  artifacts: Array<IDorArtifactInput> | IDorArtifactInput;
   pointOfContacts: Array<PointOfContactInputSpec> | PointOfContactInputSpec;
 }>;
 
 
-export type PointOfContactArtifactsMutation = { __typename?: 'Mutation', ingestPointOfContacts: Array<string> };
+export type IngestPointOfContactArtifactsMutation = { __typename?: 'Mutation', ingestPointOfContacts: Array<string> };
 
-export type HasSbomPkgMutationVariables = Exact<{
-  pkg: PkgInputSpec;
+export type IngestHasSbomPkgMutationVariables = Exact<{
+  pkg: IDorPkgInput;
   hasSBOM: HasSbomInputSpec;
+  includes: HasSbomIncludesInputSpec;
 }>;
 
 
-export type HasSbomPkgMutation = { __typename?: 'Mutation', ingestHasSBOM: string };
+export type IngestHasSbomPkgMutation = { __typename?: 'Mutation', ingestHasSBOM: string };
 
-export type HasSbomArtifactMutationVariables = Exact<{
-  artifact: ArtifactInputSpec;
+export type IngestHasSbomArtifactMutationVariables = Exact<{
+  artifact: IDorArtifactInput;
   hasSBOM: HasSbomInputSpec;
+  includes: HasSbomIncludesInputSpec;
 }>;
 
 
-export type HasSbomArtifactMutation = { __typename?: 'Mutation', ingestHasSBOM: string };
+export type IngestHasSbomArtifactMutation = { __typename?: 'Mutation', ingestHasSBOM: string };
 
-export type HasSbomPkgsMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
+export type IngestHasSbomPkgsMutationVariables = Exact<{
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
   hasSBOMs: Array<HasSbomInputSpec> | HasSbomInputSpec;
+  includes: Array<HasSbomIncludesInputSpec> | HasSbomIncludesInputSpec;
 }>;
 
 
-export type HasSbomPkgsMutation = { __typename?: 'Mutation', ingestHasSBOMs: Array<string> };
+export type IngestHasSbomPkgsMutation = { __typename?: 'Mutation', ingestHasSBOMs: Array<string> };
 
-export type HasSbomArtifactsMutationVariables = Exact<{
-  artifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
+export type IngestHasSbomArtifactsMutationVariables = Exact<{
+  artifacts: Array<IDorArtifactInput> | IDorArtifactInput;
   hasSBOMs: Array<HasSbomInputSpec> | HasSbomInputSpec;
+  includes: Array<HasSbomIncludesInputSpec> | HasSbomIncludesInputSpec;
 }>;
 
 
-export type HasSbomArtifactsMutation = { __typename?: 'Mutation', ingestHasSBOMs: Array<string> };
+export type IngestHasSbomArtifactsMutation = { __typename?: 'Mutation', ingestHasSBOMs: Array<string> };
 
-export type SlsaForArtifactMutationVariables = Exact<{
-  artifact: ArtifactInputSpec;
-  materials: Array<ArtifactInputSpec> | ArtifactInputSpec;
-  builder: BuilderInputSpec;
+export type HasSboMsQueryVariables = Exact<{
+  filter: HasSbomSpec;
+}>;
+
+
+export type HasSboMsQuery = { __typename?: 'Query', HasSBOM: Array<(
+    { __typename?: 'HasSBOM' }
+    & { ' $fragmentRefs'?: { 'AllHasSbomTreeFragment': AllHasSbomTreeFragment } }
+  )> };
+
+export type IngestSlsaForArtifactMutationVariables = Exact<{
+  artifact: IDorArtifactInput;
+  materials: Array<IDorArtifactInput> | IDorArtifactInput;
+  builder: IDorBuilderInput;
   slsa: SlsaInputSpec;
 }>;
 
 
-export type SlsaForArtifactMutation = { __typename?: 'Mutation', ingestSLSA: string };
+export type IngestSlsaForArtifactMutation = { __typename?: 'Mutation', ingestSLSA: string };
 
-export type SlsaForArtifactsMutationVariables = Exact<{
-  artifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
-  materialsList: Array<Array<ArtifactInputSpec> | ArtifactInputSpec> | Array<ArtifactInputSpec> | ArtifactInputSpec;
-  builders: Array<BuilderInputSpec> | BuilderInputSpec;
+export type IngestSlsaForArtifactsMutationVariables = Exact<{
+  artifacts: Array<IDorArtifactInput> | IDorArtifactInput;
+  materialsList: Array<Array<IDorArtifactInput> | IDorArtifactInput> | Array<IDorArtifactInput> | IDorArtifactInput;
+  builders: Array<IDorBuilderInput> | IDorBuilderInput;
   slsaList: Array<SlsaInputSpec> | SlsaInputSpec;
 }>;
 
 
-export type SlsaForArtifactsMutation = { __typename?: 'Mutation', ingestSLSAs: Array<string> };
+export type IngestSlsaForArtifactsMutation = { __typename?: 'Mutation', ingestSLSAs: Array<string> };
 
 export type IngestHasSourceAtMutationVariables = Exact<{
-  pkg: PkgInputSpec;
+  pkg: IDorPkgInput;
   pkgMatchType: MatchFlags;
-  source: SourceInputSpec;
+  source: IDorSourceInput;
   hasSourceAt: HasSourceAtInputSpec;
 }>;
 
 
 export type IngestHasSourceAtMutation = { __typename?: 'Mutation', ingestHasSourceAt: string };
 
-export type IngestHasSourceAtsMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
+export type IngestHasSourcesAtMutationVariables = Exact<{
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
   pkgMatchType: MatchFlags;
-  sources: Array<SourceInputSpec> | SourceInputSpec;
+  sources: Array<IDorSourceInput> | IDorSourceInput;
   hasSourceAts: Array<HasSourceAtInputSpec> | HasSourceAtInputSpec;
 }>;
 
 
-export type IngestHasSourceAtsMutation = { __typename?: 'Mutation', ingestHasSourceAts: Array<string> };
+export type IngestHasSourcesAtMutation = { __typename?: 'Mutation', ingestHasSourceAts: Array<string> };
+
+export type HashEqualsQueryVariables = Exact<{
+  filter: HashEqualSpec;
+}>;
+
+
+export type HashEqualsQuery = { __typename?: 'Query', HashEqual: Array<(
+    { __typename?: 'HashEqual' }
+    & { ' $fragmentRefs'?: { 'AllHashEqualTreeFragment': AllHashEqualTreeFragment } }
+  )> };
 
 export type IngestHashEqualMutationVariables = Exact<{
-  artifact: ArtifactInputSpec;
-  otherArtifact: ArtifactInputSpec;
+  artifact: IDorArtifactInput;
+  otherArtifact: IDorArtifactInput;
   hashEqual: HashEqualInputSpec;
 }>;
 
@@ -2781,79 +4027,99 @@ export type IngestHashEqualMutationVariables = Exact<{
 export type IngestHashEqualMutation = { __typename?: 'Mutation', ingestHashEqual: string };
 
 export type IngestHashEqualsMutationVariables = Exact<{
-  artifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
-  otherArtifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
+  artifacts: Array<IDorArtifactInput> | IDorArtifactInput;
+  otherArtifacts: Array<IDorArtifactInput> | IDorArtifactInput;
   hashEquals: Array<HashEqualInputSpec> | HashEqualInputSpec;
 }>;
 
 
 export type IngestHashEqualsMutation = { __typename?: 'Mutation', ingestHashEquals: Array<string> };
 
-export type IsDependencyMutationVariables = Exact<{
-  pkg: PkgInputSpec;
-  depPkg: PkgInputSpec;
+export type IngestIsDependencyMutationVariables = Exact<{
+  pkg: IDorPkgInput;
+  depPkg: IDorPkgInput;
   depPkgMatchType: MatchFlags;
   dependency: IsDependencyInputSpec;
 }>;
 
 
-export type IsDependencyMutation = { __typename?: 'Mutation', ingestDependency: string };
+export type IngestIsDependencyMutation = { __typename?: 'Mutation', ingestDependency: string };
 
-export type IsDependenciesMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
-  depPkgs: Array<PkgInputSpec> | PkgInputSpec;
+export type IngestIsDependenciesMutationVariables = Exact<{
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
+  depPkgs: Array<IDorPkgInput> | IDorPkgInput;
   depPkgMatchType: MatchFlags;
   dependencies: Array<IsDependencyInputSpec> | IsDependencyInputSpec;
 }>;
 
 
-export type IsDependenciesMutation = { __typename?: 'Mutation', ingestDependencies: Array<string> };
+export type IngestIsDependenciesMutation = { __typename?: 'Mutation', ingestDependencies: Array<string> };
 
-export type IsOccurrencePkgMutationVariables = Exact<{
-  pkg: PkgInputSpec;
-  artifact: ArtifactInputSpec;
+export type DependenciesQueryVariables = Exact<{
+  filter: IsDependencySpec;
+}>;
+
+
+export type DependenciesQuery = { __typename?: 'Query', IsDependency: Array<(
+    { __typename?: 'IsDependency' }
+    & { ' $fragmentRefs'?: { 'AllIsDependencyTreeFragment': AllIsDependencyTreeFragment } }
+  )> };
+
+export type IsOccurrencesQueryVariables = Exact<{
+  filter: IsOccurrenceSpec;
+}>;
+
+
+export type IsOccurrencesQuery = { __typename?: 'Query', IsOccurrence: Array<(
+    { __typename?: 'IsOccurrence' }
+    & { ' $fragmentRefs'?: { 'AllIsOccurrencesTreeFragment': AllIsOccurrencesTreeFragment } }
+  )> };
+
+export type IngestIsOccurrencePkgMutationVariables = Exact<{
+  pkg: IDorPkgInput;
+  artifact: IDorArtifactInput;
   occurrence: IsOccurrenceInputSpec;
 }>;
 
 
-export type IsOccurrencePkgMutation = { __typename?: 'Mutation', ingestOccurrence: string };
+export type IngestIsOccurrencePkgMutation = { __typename?: 'Mutation', ingestOccurrence: string };
 
-export type IsOccurrenceSrcMutationVariables = Exact<{
-  source: SourceInputSpec;
-  artifact: ArtifactInputSpec;
+export type IngestIsOccurrenceSrcMutationVariables = Exact<{
+  source: IDorSourceInput;
+  artifact: IDorArtifactInput;
   occurrence: IsOccurrenceInputSpec;
 }>;
 
 
-export type IsOccurrenceSrcMutation = { __typename?: 'Mutation', ingestOccurrence: string };
+export type IngestIsOccurrenceSrcMutation = { __typename?: 'Mutation', ingestOccurrence: string };
 
-export type IsOccurrencesPkgMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
-  artifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
+export type IngestIsOccurrencesPkgMutationVariables = Exact<{
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
+  artifacts: Array<IDorArtifactInput> | IDorArtifactInput;
   occurrences: Array<IsOccurrenceInputSpec> | IsOccurrenceInputSpec;
 }>;
 
 
-export type IsOccurrencesPkgMutation = { __typename?: 'Mutation', ingestOccurrences: Array<string> };
+export type IngestIsOccurrencesPkgMutation = { __typename?: 'Mutation', ingestOccurrences: Array<string> };
 
-export type IsOccurrencesSrcMutationVariables = Exact<{
-  sources: Array<SourceInputSpec> | SourceInputSpec;
-  artifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
+export type IngestIsOccurrencesSrcMutationVariables = Exact<{
+  sources: Array<IDorSourceInput> | IDorSourceInput;
+  artifacts: Array<IDorArtifactInput> | IDorArtifactInput;
   occurrences: Array<IsOccurrenceInputSpec> | IsOccurrenceInputSpec;
 }>;
 
 
-export type IsOccurrencesSrcMutation = { __typename?: 'Mutation', ingestOccurrences: Array<string> };
+export type IngestIsOccurrencesSrcMutation = { __typename?: 'Mutation', ingestOccurrences: Array<string> };
 
 export type IngestLicenseMutationVariables = Exact<{
-  license: LicenseInputSpec;
+  license: IDorLicenseInput;
 }>;
 
 
 export type IngestLicenseMutation = { __typename?: 'Mutation', ingestLicense: string };
 
 export type IngestLicensesMutationVariables = Exact<{
-  licenses: Array<LicenseInputSpec> | LicenseInputSpec;
+  licenses: Array<IDorLicenseInput> | IDorLicenseInput;
 }>;
 
 
@@ -2869,69 +4135,69 @@ export type LicensesQuery = { __typename?: 'Query', licenses: Array<(
     & { ' $fragmentRefs'?: { 'AllLicenseTreeFragment': AllLicenseTreeFragment } }
   )> };
 
-export type HasMetadataPkgMutationVariables = Exact<{
-  pkg: PkgInputSpec;
+export type IngestHasMetadataPkgMutationVariables = Exact<{
+  pkg: IDorPkgInput;
   pkgMatchType: MatchFlags;
   hasMetadata: HasMetadataInputSpec;
 }>;
 
 
-export type HasMetadataPkgMutation = { __typename?: 'Mutation', ingestHasMetadata: string };
+export type IngestHasMetadataPkgMutation = { __typename?: 'Mutation', ingestHasMetadata: string };
 
-export type HasMetadataSrcMutationVariables = Exact<{
-  source: SourceInputSpec;
+export type IngestHasMetadataSrcMutationVariables = Exact<{
+  source: IDorSourceInput;
   hasMetadata: HasMetadataInputSpec;
 }>;
 
 
-export type HasMetadataSrcMutation = { __typename?: 'Mutation', ingestHasMetadata: string };
+export type IngestHasMetadataSrcMutation = { __typename?: 'Mutation', ingestHasMetadata: string };
 
-export type HasMetadataArtifactMutationVariables = Exact<{
-  artifact: ArtifactInputSpec;
+export type IngestHasMetadataArtifactMutationVariables = Exact<{
+  artifact: IDorArtifactInput;
   hasMetadata: HasMetadataInputSpec;
 }>;
 
 
-export type HasMetadataArtifactMutation = { __typename?: 'Mutation', ingestHasMetadata: string };
+export type IngestHasMetadataArtifactMutation = { __typename?: 'Mutation', ingestHasMetadata: string };
 
-export type HasMetadataPkgsMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
+export type IngestHasMetadataPkgsMutationVariables = Exact<{
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
   pkgMatchType: MatchFlags;
   hasMetadataList: Array<HasMetadataInputSpec> | HasMetadataInputSpec;
 }>;
 
 
-export type HasMetadataPkgsMutation = { __typename?: 'Mutation', ingestBulkHasMetadata: Array<string> };
+export type IngestHasMetadataPkgsMutation = { __typename?: 'Mutation', ingestBulkHasMetadata: Array<string> };
 
-export type HasMetadataSrcsMutationVariables = Exact<{
-  sources: Array<SourceInputSpec> | SourceInputSpec;
+export type IngestHasMetadataSrcsMutationVariables = Exact<{
+  sources: Array<IDorSourceInput> | IDorSourceInput;
   hasMetadataList: Array<HasMetadataInputSpec> | HasMetadataInputSpec;
 }>;
 
 
-export type HasMetadataSrcsMutation = { __typename?: 'Mutation', ingestBulkHasMetadata: Array<string> };
+export type IngestHasMetadataSrcsMutation = { __typename?: 'Mutation', ingestBulkHasMetadata: Array<string> };
 
-export type HasMetadataArtifactsMutationVariables = Exact<{
-  artifacts: Array<ArtifactInputSpec> | ArtifactInputSpec;
+export type IngestHasMetadataArtifactsMutationVariables = Exact<{
+  artifacts: Array<IDorArtifactInput> | IDorArtifactInput;
   hasMetadataList: Array<HasMetadataInputSpec> | HasMetadataInputSpec;
 }>;
 
 
-export type HasMetadataArtifactsMutation = { __typename?: 'Mutation', ingestBulkHasMetadata: Array<string> };
+export type IngestHasMetadataArtifactsMutation = { __typename?: 'Mutation', ingestBulkHasMetadata: Array<string> };
 
 export type IngestPackageMutationVariables = Exact<{
-  pkg: PkgInputSpec;
+  pkg: IDorPkgInput;
 }>;
 
 
-export type IngestPackageMutation = { __typename?: 'Mutation', ingestPackage: string };
+export type IngestPackageMutation = { __typename?: 'Mutation', ingestPackage: { __typename?: 'PackageIDs', packageTypeID: string, packageNamespaceID: string, packageNameID: string, packageVersionID: string } };
 
 export type IngestPackagesMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
 }>;
 
 
-export type IngestPackagesMutation = { __typename?: 'Mutation', ingestPackages: Array<string> };
+export type IngestPackagesMutation = { __typename?: 'Mutation', ingestPackages: Array<{ __typename?: 'PackageIDs', packageTypeID: string, packageNamespaceID: string, packageNameID: string, packageVersionID: string }> };
 
 export type PackagesQueryVariables = Exact<{
   filter: PkgSpec;
@@ -3280,8 +4546,8 @@ export type NodesQuery = { __typename?: 'Query', nodes: Array<(
   )> };
 
 export type IngestPkgEqualMutationVariables = Exact<{
-  pkg: PkgInputSpec;
-  otherPackage: PkgInputSpec;
+  pkg: IDorPkgInput;
+  otherPackage: IDorPkgInput;
   pkgEqual: PkgEqualInputSpec;
 }>;
 
@@ -3289,8 +4555,8 @@ export type IngestPkgEqualMutationVariables = Exact<{
 export type IngestPkgEqualMutation = { __typename?: 'Mutation', ingestPkgEqual: string };
 
 export type IngestPkgEqualsMutationVariables = Exact<{
-  pkgs: Array<PkgInputSpec> | PkgInputSpec;
-  otherPackages: Array<PkgInputSpec> | PkgInputSpec;
+  pkgs: Array<IDorPkgInput> | IDorPkgInput;
+  otherPackages: Array<IDorPkgInput> | IDorPkgInput;
   pkgEquals: Array<PkgEqualInputSpec> | PkgEqualInputSpec;
 }>;
 
@@ -3314,18 +4580,18 @@ export type FindSoftwareQuery = { __typename?: 'Query', findSoftware: Array<(
   )> };
 
 export type IngestSourceMutationVariables = Exact<{
-  source: SourceInputSpec;
+  source: IDorSourceInput;
 }>;
 
 
-export type IngestSourceMutation = { __typename?: 'Mutation', ingestSource: string };
+export type IngestSourceMutation = { __typename?: 'Mutation', ingestSource: { __typename?: 'SourceIDs', sourceTypeID: string, sourceNamespaceID: string, sourceNameID: string } };
 
 export type IngestSourcesMutationVariables = Exact<{
-  sources: Array<SourceInputSpec> | SourceInputSpec;
+  sources: Array<IDorSourceInput> | IDorSourceInput;
 }>;
 
 
-export type IngestSourcesMutation = { __typename?: 'Mutation', ingestSources: Array<string> };
+export type IngestSourcesMutation = { __typename?: 'Mutation', ingestSources: Array<{ __typename?: 'SourceIDs', sourceTypeID: string, sourceNamespaceID: string, sourceNameID: string }> };
 
 export type SourcesQueryVariables = Exact<{
   filter: SourceSpec;
@@ -3430,7 +4696,19 @@ export type AllHasSbomTreeFragment = { __typename?: 'HasSBOM', id: string, uri: 
   ) | (
     { __typename: 'Package' }
     & { ' $fragmentRefs'?: { 'AllPkgTreeFragment': AllPkgTreeFragment } }
-  ) } & { ' $fragmentName'?: 'AllHasSbomTreeFragment' };
+  ), includedSoftware: Array<(
+    { __typename: 'Artifact' }
+    & { ' $fragmentRefs'?: { 'AllArtifactTreeFragment': AllArtifactTreeFragment } }
+  ) | (
+    { __typename: 'Package' }
+    & { ' $fragmentRefs'?: { 'AllPkgTreeFragment': AllPkgTreeFragment } }
+  )>, includedDependencies: Array<(
+    { __typename?: 'IsDependency' }
+    & { ' $fragmentRefs'?: { 'AllIsDependencyTreeFragment': AllIsDependencyTreeFragment } }
+  )>, includedOccurrences: Array<(
+    { __typename?: 'IsOccurrence' }
+    & { ' $fragmentRefs'?: { 'AllIsOccurrencesTreeFragment': AllIsOccurrencesTreeFragment } }
+  )> } & { ' $fragmentName'?: 'AllHasSbomTreeFragment' };
 
 export type AllHasSourceAtFragment = { __typename?: 'HasSourceAt', id: string, justification: string, knownSince: any, origin: string, collector: string, package: (
     { __typename?: 'Package' }
@@ -3492,8 +4770,8 @@ export type AllPointOfContactFragment = { __typename?: 'PointOfContact', id: str
   ) } & { ' $fragmentName'?: 'AllPointOfContactFragment' };
 
 export type IngestVulnEqualMutationVariables = Exact<{
-  vulnerability: VulnerabilityInputSpec;
-  otherVulnerability: VulnerabilityInputSpec;
+  vulnerability: IDorVulnerabilityInput;
+  otherVulnerability: IDorVulnerabilityInput;
   vulnEqual: VulnEqualInputSpec;
 }>;
 
@@ -3501,43 +4779,43 @@ export type IngestVulnEqualMutationVariables = Exact<{
 export type IngestVulnEqualMutation = { __typename?: 'Mutation', ingestVulnEqual: string };
 
 export type IngestVulnEqualsMutationVariables = Exact<{
-  vulnerabilities: Array<VulnerabilityInputSpec> | VulnerabilityInputSpec;
-  otherVulnerabilities: Array<VulnerabilityInputSpec> | VulnerabilityInputSpec;
+  vulnerabilities: Array<IDorVulnerabilityInput> | IDorVulnerabilityInput;
+  otherVulnerabilities: Array<IDorVulnerabilityInput> | IDorVulnerabilityInput;
   vulnEquals: Array<VulnEqualInputSpec> | VulnEqualInputSpec;
 }>;
 
 
 export type IngestVulnEqualsMutation = { __typename?: 'Mutation', ingestVulnEquals: Array<string> };
 
-export type VulnHasMetadataMutationVariables = Exact<{
-  vulnerability: VulnerabilityInputSpec;
+export type IngestVulnHasMetadataMutationVariables = Exact<{
+  vulnerability: IDorVulnerabilityInput;
   vulnMetadata: VulnerabilityMetadataInputSpec;
 }>;
 
 
-export type VulnHasMetadataMutation = { __typename?: 'Mutation', ingestVulnerabilityMetadata: string };
+export type IngestVulnHasMetadataMutation = { __typename?: 'Mutation', ingestVulnerabilityMetadata: string };
 
-export type BulkVulnHasMetadataMutationVariables = Exact<{
-  vulnerabilities: Array<VulnerabilityInputSpec> | VulnerabilityInputSpec;
+export type IngestBulkVulnHasMetadataMutationVariables = Exact<{
+  vulnerabilities: Array<IDorVulnerabilityInput> | IDorVulnerabilityInput;
   vulnerabilityMetadataList: Array<VulnerabilityMetadataInputSpec> | VulnerabilityMetadataInputSpec;
 }>;
 
 
-export type BulkVulnHasMetadataMutation = { __typename?: 'Mutation', ingestBulkVulnerabilityMetadata: Array<string> };
+export type IngestBulkVulnHasMetadataMutation = { __typename?: 'Mutation', ingestBulkVulnerabilityMetadata: Array<string> };
 
 export type IngestVulnerabilityMutationVariables = Exact<{
-  vuln: VulnerabilityInputSpec;
+  vuln: IDorVulnerabilityInput;
 }>;
 
 
-export type IngestVulnerabilityMutation = { __typename?: 'Mutation', ingestVulnerability: string };
+export type IngestVulnerabilityMutation = { __typename?: 'Mutation', ingestVulnerability: { __typename?: 'VulnerabilityIDs', vulnerabilityTypeID: string, vulnerabilityNodeID: string } };
 
 export type IngestVulnerabilitiesMutationVariables = Exact<{
-  vulns: Array<VulnerabilityInputSpec> | VulnerabilityInputSpec;
+  vulns: Array<IDorVulnerabilityInput> | IDorVulnerabilityInput;
 }>;
 
 
-export type IngestVulnerabilitiesMutation = { __typename?: 'Mutation', ingestVulnerabilities: Array<string> };
+export type IngestVulnerabilitiesMutation = { __typename?: 'Mutation', ingestVulnerabilities: Array<{ __typename?: 'VulnerabilityIDs', vulnerabilityTypeID: string, vulnerabilityNodeID: string }> };
 
 export type VulnerabilitiesQueryVariables = Exact<{
   filter: VulnerabilitySpec;
@@ -3553,17 +4831,17 @@ export const AllBuilderTreeFragmentDoc = {"kind":"Document","definitions":[{"kin
 export const AllVulnMetadataTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnMetadataTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"scoreType"}},{"kind":"Field","name":{"kind":"Name","value":"scoreValue"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<AllVulnMetadataTreeFragment, unknown>;
 export const AllSourceTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}}]} as unknown as DocumentNode<AllSourceTreeFragment, unknown>;
 export const AllCertifyScorecardFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyScorecard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateScore"}},{"kind":"Field","name":{"kind":"Name","value":"checks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"check"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecardVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scorecardCommit"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}}]} as unknown as DocumentNode<AllCertifyScorecardFragment, unknown>;
-export const AllPkgTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}}]} as unknown as DocumentNode<AllPkgTreeFragment, unknown>;
 export const AllArtifactTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}}]} as unknown as DocumentNode<AllArtifactTreeFragment, unknown>;
-export const AllIsOccurrencesTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}}]} as unknown as DocumentNode<AllIsOccurrencesTreeFragment, unknown>;
-export const AllIsDependencyTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}}]} as unknown as DocumentNode<AllIsDependencyTreeFragment, unknown>;
 export const AllSlsaTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSLSATree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsa"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"builtFrom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"builtBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"buildType"}},{"kind":"Field","name":{"kind":"Name","value":"slsaPredicate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsaVersion"}},{"kind":"Field","name":{"kind":"Name","value":"startedOn"}},{"kind":"Field","name":{"kind":"Name","value":"finishedOn"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}}]} as unknown as DocumentNode<AllSlsaTreeFragment, unknown>;
+export const AllPkgTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}}]} as unknown as DocumentNode<AllPkgTreeFragment, unknown>;
 export const AllLicenseTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}}]} as unknown as DocumentNode<AllLicenseTreeFragment, unknown>;
 export const AllCertifyLegalTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyLegalTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attribution"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}}]} as unknown as DocumentNode<AllCertifyLegalTreeFragment, unknown>;
 export const AllCertifyBadFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyBad"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}}]} as unknown as DocumentNode<AllCertifyBadFragment, unknown>;
 export const AllCertifyGoodFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyGood"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}}]} as unknown as DocumentNode<AllCertifyGoodFragment, unknown>;
 export const AllHashEqualTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHashEqualTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"artifacts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}}]} as unknown as DocumentNode<AllHashEqualTreeFragment, unknown>;
-export const AllHasSbomTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSBOMTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}},{"kind":"Field","name":{"kind":"Name","value":"downloadLocation"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}}]} as unknown as DocumentNode<AllHasSbomTreeFragment, unknown>;
+export const AllIsDependencyTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}}]} as unknown as DocumentNode<AllIsDependencyTreeFragment, unknown>;
+export const AllIsOccurrencesTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}}]} as unknown as DocumentNode<AllIsOccurrencesTreeFragment, unknown>;
+export const AllHasSbomTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSBOMTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}},{"kind":"Field","name":{"kind":"Name","value":"downloadLocation"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"includedSoftware"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedDependencies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedOccurrences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<AllHasSbomTreeFragment, unknown>;
 export const AllHasSourceAtFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSourceAt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}}]} as unknown as DocumentNode<AllHasSourceAtFragment, unknown>;
 export const AllVulnerabilityTreeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}}]} as unknown as DocumentNode<AllVulnerabilityTreeFragment, unknown>;
 export const AllCertifyVulnFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVuln"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dbUri"}},{"kind":"Field","name":{"kind":"Name","value":"dbVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scannerUri"}},{"kind":"Field","name":{"kind":"Name","value":"scannerVersion"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}}]} as unknown as DocumentNode<AllCertifyVulnFragment, unknown>;
@@ -3572,89 +4850,94 @@ export const AllVulnEqualFragmentDoc = {"kind":"Document","definitions":[{"kind"
 export const AllCertifyVexStatementFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVEXStatement"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"vexJustification"}},{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"statusNotes"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}}]} as unknown as DocumentNode<AllCertifyVexStatementFragment, unknown>;
 export const AllHasMetadataFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasMetadata"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}}]} as unknown as DocumentNode<AllHasMetadataFragment, unknown>;
 export const AllPointOfContactFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPointOfContact"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}}]} as unknown as DocumentNode<AllPointOfContactFragment, unknown>;
-export const IngestArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestArtifact"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}]}}]} as unknown as DocumentNode<IngestArtifactMutation, IngestArtifactMutationVariables>;
-export const IngestArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestArtifacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}]}}]} as unknown as DocumentNode<IngestArtifactsMutation, IngestArtifactsMutationVariables>;
+export const IngestArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestArtifact"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}]}}]} as unknown as DocumentNode<IngestArtifactMutation, IngestArtifactMutationVariables>;
+export const IngestArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestArtifacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}]}}]} as unknown as DocumentNode<IngestArtifactsMutation, IngestArtifactsMutationVariables>;
 export const ArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Artifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"artifacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"artifactSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}}]} as unknown as DocumentNode<ArtifactsQuery, ArtifactsQueryVariables>;
-export const IngestBuilderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestBuilder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"builder"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BuilderInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBuilder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"builder"},"value":{"kind":"Variable","name":{"kind":"Name","value":"builder"}}}]}]}}]} as unknown as DocumentNode<IngestBuilderMutation, IngestBuilderMutationVariables>;
-export const IngestBuildersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestBuilders"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"builders"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BuilderInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBuilders"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"builders"},"value":{"kind":"Variable","name":{"kind":"Name","value":"builders"}}}]}]}}]} as unknown as DocumentNode<IngestBuildersMutation, IngestBuildersMutationVariables>;
-export const CertifyBadPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyBadPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBad"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBad"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}}}]}]}}]} as unknown as DocumentNode<CertifyBadPkgMutation, CertifyBadPkgMutationVariables>;
-export const CertifyBadSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyBadSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBad"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBad"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}}}]}]}}]} as unknown as DocumentNode<CertifyBadSrcMutation, CertifyBadSrcMutationVariables>;
-export const CertifyBadArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyBadArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBad"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBad"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}}}]}]}}]} as unknown as DocumentNode<CertifyBadArtifactMutation, CertifyBadArtifactMutationVariables>;
-export const CertifyBadPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyBadPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBads"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}}}]}]}}]} as unknown as DocumentNode<CertifyBadPkgsMutation, CertifyBadPkgsMutationVariables>;
-export const CertifyBadSrcsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyBadSrcs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBads"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}}}]}]}}]} as unknown as DocumentNode<CertifyBadSrcsMutation, CertifyBadSrcsMutationVariables>;
-export const CertifyBadArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyBadArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBads"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}}}]}]}}]} as unknown as DocumentNode<CertifyBadArtifactsMutation, CertifyBadArtifactsMutationVariables>;
+export const IngestBuilderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestBuilder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"builder"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorBuilderInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBuilder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"builder"},"value":{"kind":"Variable","name":{"kind":"Name","value":"builder"}}}]}]}}]} as unknown as DocumentNode<IngestBuilderMutation, IngestBuilderMutationVariables>;
+export const IngestBuildersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestBuilders"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"builders"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorBuilderInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBuilders"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"builders"},"value":{"kind":"Variable","name":{"kind":"Name","value":"builders"}}}]}]}}]} as unknown as DocumentNode<IngestBuildersMutation, IngestBuildersMutationVariables>;
+export const IngestCertifyBadPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyBadPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBad"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBad"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyBadPkgMutation, IngestCertifyBadPkgMutationVariables>;
+export const IngestCertifyBadSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyBadSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBad"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBad"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyBadSrcMutation, IngestCertifyBadSrcMutationVariables>;
+export const IngestCertifyBadArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyBadArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBad"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBad"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBad"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyBadArtifactMutation, IngestCertifyBadArtifactMutationVariables>;
+export const IngestCertifyBadPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyBadPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBads"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyBadPkgsMutation, IngestCertifyBadPkgsMutationVariables>;
+export const IngestCertifyBadSrcsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyBadSrcs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBads"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyBadSrcsMutation, IngestCertifyBadSrcsMutationVariables>;
+export const IngestCertifyBadArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyBadArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyBads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyBads"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyBads"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyBadArtifactsMutation, IngestCertifyBadArtifactsMutationVariables>;
 export const CertifyBadsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CertifyBads"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBadSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"CertifyBad"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"certifyBadSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyBad"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyBad"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<CertifyBadsQuery, CertifyBadsQueryVariables>;
-export const CertifyGoodPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyGoodPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGood"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGood"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}}}]}]}}]} as unknown as DocumentNode<CertifyGoodPkgMutation, CertifyGoodPkgMutationVariables>;
-export const CertifyGoodSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyGoodSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGood"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGood"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}}}]}]}}]} as unknown as DocumentNode<CertifyGoodSrcMutation, CertifyGoodSrcMutationVariables>;
-export const CertifyGoodArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyGoodArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGood"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGood"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}}}]}]}}]} as unknown as DocumentNode<CertifyGoodArtifactMutation, CertifyGoodArtifactMutationVariables>;
-export const CertifyGoodPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyGoodPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGoods"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGoods"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}}}]}]}}]} as unknown as DocumentNode<CertifyGoodPkgsMutation, CertifyGoodPkgsMutationVariables>;
-export const CertifyGoodSrcsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyGoodSrcs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGoods"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGoods"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}}}]}]}}]} as unknown as DocumentNode<CertifyGoodSrcsMutation, CertifyGoodSrcsMutationVariables>;
-export const CertifyGoodArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyGoodArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGoods"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGoods"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}}}]}]}}]} as unknown as DocumentNode<CertifyGoodArtifactsMutation, CertifyGoodArtifactsMutationVariables>;
-export const CertifyLegalPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyLegalPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicenses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LicenseInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicenses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LicenseInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"legal"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegalInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyLegal"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"declaredLicenses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicenses"}}},{"kind":"Argument","name":{"kind":"Name","value":"discoveredLicenses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicenses"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyLegal"},"value":{"kind":"Variable","name":{"kind":"Name","value":"legal"}}}]}]}}]} as unknown as DocumentNode<CertifyLegalPkgMutation, CertifyLegalPkgMutationVariables>;
-export const CertifyLegalPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyLegalPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicensesList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LicenseInputSpec"}}}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicensesList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LicenseInputSpec"}}}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"legals"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegalInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyLegals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"declaredLicensesList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicensesList"}}},{"kind":"Argument","name":{"kind":"Name","value":"discoveredLicensesList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicensesList"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyLegals"},"value":{"kind":"Variable","name":{"kind":"Name","value":"legals"}}}]}]}}]} as unknown as DocumentNode<CertifyLegalPkgsMutation, CertifyLegalPkgsMutationVariables>;
-export const CertifyLegalSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyLegalSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"src"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicenses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LicenseInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicenses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LicenseInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"legal"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegalInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyLegal"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"src"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"declaredLicenses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicenses"}}},{"kind":"Argument","name":{"kind":"Name","value":"discoveredLicenses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicenses"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyLegal"},"value":{"kind":"Variable","name":{"kind":"Name","value":"legal"}}}]}]}}]} as unknown as DocumentNode<CertifyLegalSrcMutation, CertifyLegalSrcMutationVariables>;
-export const CertifyLegalSrcsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyLegalSrcs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"srcs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicensesList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LicenseInputSpec"}}}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicensesList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LicenseInputSpec"}}}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"legals"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegalInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyLegals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"srcs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"declaredLicensesList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicensesList"}}},{"kind":"Argument","name":{"kind":"Name","value":"discoveredLicensesList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicensesList"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyLegals"},"value":{"kind":"Variable","name":{"kind":"Name","value":"legals"}}}]}]}}]} as unknown as DocumentNode<CertifyLegalSrcsMutation, CertifyLegalSrcsMutationVariables>;
+export const IngestCertifyGoodPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyGoodPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGood"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGood"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyGoodPkgMutation, IngestCertifyGoodPkgMutationVariables>;
+export const IngestCertifyGoodSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyGoodSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGood"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGood"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyGoodSrcMutation, IngestCertifyGoodSrcMutationVariables>;
+export const IngestCertifyGoodArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyGoodArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGood"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGood"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGood"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyGoodArtifactMutation, IngestCertifyGoodArtifactMutationVariables>;
+export const IngestCertifyGoodPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyGoodPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGoods"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGoods"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyGoodPkgsMutation, IngestCertifyGoodPkgsMutationVariables>;
+export const IngestCertifyGoodSrcsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyGoodSrcs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGoods"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGoods"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyGoodSrcsMutation, IngestCertifyGoodSrcsMutationVariables>;
+export const IngestCertifyGoodArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyGoodArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGoodInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyGoods"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"certifyGoods"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyGoods"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyGoodArtifactsMutation, IngestCertifyGoodArtifactsMutationVariables>;
+export const IngestCertifyLegalPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyLegalPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicenses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorLicenseInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicenses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorLicenseInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"legal"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegalInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyLegal"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"declaredLicenses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicenses"}}},{"kind":"Argument","name":{"kind":"Name","value":"discoveredLicenses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicenses"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyLegal"},"value":{"kind":"Variable","name":{"kind":"Name","value":"legal"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyLegalPkgMutation, IngestCertifyLegalPkgMutationVariables>;
+export const IngestCertifyLegalPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyLegalPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicensesList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorLicenseInput"}}}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicensesList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorLicenseInput"}}}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"legals"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegalInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyLegals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"declaredLicensesList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicensesList"}}},{"kind":"Argument","name":{"kind":"Name","value":"discoveredLicensesList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicensesList"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyLegals"},"value":{"kind":"Variable","name":{"kind":"Name","value":"legals"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyLegalPkgsMutation, IngestCertifyLegalPkgsMutationVariables>;
+export const IngestCertifyLegalSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyLegalSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"src"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicenses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorLicenseInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicenses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorLicenseInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"legal"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegalInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyLegal"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"src"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"declaredLicenses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicenses"}}},{"kind":"Argument","name":{"kind":"Name","value":"discoveredLicenses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicenses"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyLegal"},"value":{"kind":"Variable","name":{"kind":"Name","value":"legal"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyLegalSrcMutation, IngestCertifyLegalSrcMutationVariables>;
+export const IngestCertifyLegalSrcsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyLegalSrcs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"srcs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicensesList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorLicenseInput"}}}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicensesList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorLicenseInput"}}}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"legals"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegalInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyLegals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"srcs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"declaredLicensesList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"declaredLicensesList"}}},{"kind":"Argument","name":{"kind":"Name","value":"discoveredLicensesList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"discoveredLicensesList"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyLegals"},"value":{"kind":"Variable","name":{"kind":"Name","value":"legals"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyLegalSrcsMutation, IngestCertifyLegalSrcsMutationVariables>;
 export const CertifyLegalsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CertifyLegals"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegalSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"CertifyLegal"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"certifyLegalSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyLegalTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyLegalTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attribution"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<CertifyLegalsQuery, CertifyLegalsQueryVariables>;
-export const CertifyScorecardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyScorecard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"scorecard"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ScorecardInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestScorecard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}},{"kind":"Argument","name":{"kind":"Name","value":"scorecard"},"value":{"kind":"Variable","name":{"kind":"Name","value":"scorecard"}}}]}]}}]} as unknown as DocumentNode<CertifyScorecardMutation, CertifyScorecardMutationVariables>;
-export const CertifyScorecardsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyScorecards"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"scorecards"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ScorecardInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestScorecards"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}},{"kind":"Argument","name":{"kind":"Name","value":"scorecards"},"value":{"kind":"Variable","name":{"kind":"Name","value":"scorecards"}}}]}]}}]} as unknown as DocumentNode<CertifyScorecardsMutation, CertifyScorecardsMutationVariables>;
-export const CertifyVexPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyVexPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vexStatement"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VexStatementInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVEXStatement"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"vexStatement"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vexStatement"}}}]}]}}]} as unknown as DocumentNode<CertifyVexPkgMutation, CertifyVexPkgMutationVariables>;
-export const CertifyVexArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyVexArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vexStatement"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VexStatementInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVEXStatement"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"vexStatement"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vexStatement"}}}]}]}}]} as unknown as DocumentNode<CertifyVexArtifactMutation, CertifyVexArtifactMutationVariables>;
-export const CertifyVexPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyVexPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vexStatements"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VexStatementInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVEXStatements"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"vexStatements"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vexStatements"}}}]}]}}]} as unknown as DocumentNode<CertifyVexPkgsMutation, CertifyVexPkgsMutationVariables>;
-export const CertifyVexArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyVexArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vexStatements"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VexStatementInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVEXStatements"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"vexStatements"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vexStatements"}}}]}]}}]} as unknown as DocumentNode<CertifyVexArtifactsMutation, CertifyVexArtifactsMutationVariables>;
-export const CertifyVulnPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyVulnPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyVuln"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ScanMetadataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyVuln"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyVuln"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyVuln"}}}]}]}}]} as unknown as DocumentNode<CertifyVulnPkgMutation, CertifyVulnPkgMutationVariables>;
-export const CertifyVulnPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CertifyVulnPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyVulns"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ScanMetadataInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyVulns"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyVulns"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyVulns"}}}]}]}}]} as unknown as DocumentNode<CertifyVulnPkgsMutation, CertifyVulnPkgsMutationVariables>;
-export const PointOfContactPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PointOfContactPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContact"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}}}]}]}}]} as unknown as DocumentNode<PointOfContactPkgMutation, PointOfContactPkgMutationVariables>;
-export const PointOfContactSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PointOfContactSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContact"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}}}]}]}}]} as unknown as DocumentNode<PointOfContactSrcMutation, PointOfContactSrcMutationVariables>;
-export const PointOfContactArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PointOfContactArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContact"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}}}]}]}}]} as unknown as DocumentNode<PointOfContactArtifactMutation, PointOfContactArtifactMutationVariables>;
-export const PointOfContactPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PointOfContactPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}}}]}]}}]} as unknown as DocumentNode<PointOfContactPkgsMutation, PointOfContactPkgsMutationVariables>;
-export const PointOfContactSrcsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PointOfContactSrcs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}}}]}]}}]} as unknown as DocumentNode<PointOfContactSrcsMutation, PointOfContactSrcsMutationVariables>;
-export const PointOfContactArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PointOfContactArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}}}]}]}}]} as unknown as DocumentNode<PointOfContactArtifactsMutation, PointOfContactArtifactsMutationVariables>;
-export const HasSbomPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"HasSBOMPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOM"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSBOM"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasSBOM"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOM"}}}]}]}}]} as unknown as DocumentNode<HasSbomPkgMutation, HasSbomPkgMutationVariables>;
-export const HasSbomArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"HasSBOMArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOM"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSBOM"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasSBOM"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOM"}}}]}]}}]} as unknown as DocumentNode<HasSbomArtifactMutation, HasSbomArtifactMutationVariables>;
-export const HasSbomPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"HasSBOMPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOMs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSBOMs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasSBOMs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOMs"}}}]}]}}]} as unknown as DocumentNode<HasSbomPkgsMutation, HasSbomPkgsMutationVariables>;
-export const HasSbomArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"HasSBOMArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOMs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSBOMs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasSBOMs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOMs"}}}]}]}}]} as unknown as DocumentNode<HasSbomArtifactsMutation, HasSbomArtifactsMutationVariables>;
-export const SlsaForArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SLSAForArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materials"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"builder"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BuilderInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slsa"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SLSAInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestSLSA"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}},{"kind":"Argument","name":{"kind":"Name","value":"builtFrom"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materials"}}},{"kind":"Argument","name":{"kind":"Name","value":"builtBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"builder"}}},{"kind":"Argument","name":{"kind":"Name","value":"slsa"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slsa"}}}]}]}}]} as unknown as DocumentNode<SlsaForArtifactMutation, SlsaForArtifactMutationVariables>;
-export const SlsaForArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SLSAForArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialsList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"builders"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BuilderInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slsaList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SLSAInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestSLSAs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}},{"kind":"Argument","name":{"kind":"Name","value":"builtFromList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialsList"}}},{"kind":"Argument","name":{"kind":"Name","value":"builtByList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"builders"}}},{"kind":"Argument","name":{"kind":"Name","value":"slsaList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slsaList"}}}]}]}}]} as unknown as DocumentNode<SlsaForArtifactsMutation, SlsaForArtifactsMutationVariables>;
-export const IngestHasSourceAtDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasSourceAt"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSourceAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAtInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSourceAt"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}},{"kind":"Argument","name":{"kind":"Name","value":"hasSourceAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSourceAt"}}}]}]}}]} as unknown as DocumentNode<IngestHasSourceAtMutation, IngestHasSourceAtMutationVariables>;
-export const IngestHasSourceAtsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasSourceAts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSourceAts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAtInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSourceAts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}},{"kind":"Argument","name":{"kind":"Name","value":"hasSourceAts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSourceAts"}}}]}]}}]} as unknown as DocumentNode<IngestHasSourceAtsMutation, IngestHasSourceAtsMutationVariables>;
-export const IngestHashEqualDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHashEqual"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherArtifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hashEqual"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqualInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHashEqual"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherArtifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherArtifact"}}},{"kind":"Argument","name":{"kind":"Name","value":"hashEqual"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hashEqual"}}}]}]}}]} as unknown as DocumentNode<IngestHashEqualMutation, IngestHashEqualMutationVariables>;
-export const IngestHashEqualsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHashEquals"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherArtifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hashEquals"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqualInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHashEquals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherArtifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherArtifacts"}}},{"kind":"Argument","name":{"kind":"Name","value":"hashEquals"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hashEquals"}}}]}]}}]} as unknown as DocumentNode<IngestHashEqualsMutation, IngestHashEqualsMutationVariables>;
-export const IsDependencyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IsDependency"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"depPkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"depPkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dependency"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependencyInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestDependency"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}},{"kind":"Argument","name":{"kind":"Name","value":"depPkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"depPkg"}}},{"kind":"Argument","name":{"kind":"Name","value":"depPkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"depPkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"dependency"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dependency"}}}]}]}}]} as unknown as DocumentNode<IsDependencyMutation, IsDependencyMutationVariables>;
-export const IsDependenciesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IsDependencies"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"depPkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"depPkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dependencies"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependencyInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestDependencies"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}},{"kind":"Argument","name":{"kind":"Name","value":"depPkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"depPkgs"}}},{"kind":"Argument","name":{"kind":"Name","value":"depPkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"depPkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"dependencies"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dependencies"}}}]}]}}]} as unknown as DocumentNode<IsDependenciesMutation, IsDependenciesMutationVariables>;
-export const IsOccurrencePkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IsOccurrencePkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"occurrence"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrenceInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestOccurrence"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}},{"kind":"Argument","name":{"kind":"Name","value":"occurrence"},"value":{"kind":"Variable","name":{"kind":"Name","value":"occurrence"}}}]}]}}]} as unknown as DocumentNode<IsOccurrencePkgMutation, IsOccurrencePkgMutationVariables>;
-export const IsOccurrenceSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IsOccurrenceSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"occurrence"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrenceInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestOccurrence"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}},{"kind":"Argument","name":{"kind":"Name","value":"occurrence"},"value":{"kind":"Variable","name":{"kind":"Name","value":"occurrence"}}}]}]}}]} as unknown as DocumentNode<IsOccurrenceSrcMutation, IsOccurrenceSrcMutationVariables>;
-export const IsOccurrencesPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IsOccurrencesPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"occurrences"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrenceInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestOccurrences"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}},{"kind":"Argument","name":{"kind":"Name","value":"occurrences"},"value":{"kind":"Variable","name":{"kind":"Name","value":"occurrences"}}}]}]}}]} as unknown as DocumentNode<IsOccurrencesPkgMutation, IsOccurrencesPkgMutationVariables>;
-export const IsOccurrencesSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IsOccurrencesSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"occurrences"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrenceInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestOccurrences"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}},{"kind":"Argument","name":{"kind":"Name","value":"occurrences"},"value":{"kind":"Variable","name":{"kind":"Name","value":"occurrences"}}}]}]}}]} as unknown as DocumentNode<IsOccurrencesSrcMutation, IsOccurrencesSrcMutationVariables>;
-export const IngestLicenseDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestLicense"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"license"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LicenseInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestLicense"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"license"},"value":{"kind":"Variable","name":{"kind":"Name","value":"license"}}}]}]}}]} as unknown as DocumentNode<IngestLicenseMutation, IngestLicenseMutationVariables>;
-export const IngestLicensesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestLicenses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"licenses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LicenseInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestLicenses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"licenses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"licenses"}}}]}]}}]} as unknown as DocumentNode<IngestLicensesMutation, IngestLicensesMutationVariables>;
+export const IngestCertifyScorecardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyScorecard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"scorecard"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ScorecardInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestScorecard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}},{"kind":"Argument","name":{"kind":"Name","value":"scorecard"},"value":{"kind":"Variable","name":{"kind":"Name","value":"scorecard"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyScorecardMutation, IngestCertifyScorecardMutationVariables>;
+export const IngestCertifyScorecardsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyScorecards"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"scorecards"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ScorecardInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestScorecards"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}},{"kind":"Argument","name":{"kind":"Name","value":"scorecards"},"value":{"kind":"Variable","name":{"kind":"Name","value":"scorecards"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyScorecardsMutation, IngestCertifyScorecardsMutationVariables>;
+export const ScorecardsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Scorecards"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecardSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"scorecards"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"scorecardSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyScorecard"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyScorecard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateScore"}},{"kind":"Field","name":{"kind":"Name","value":"checks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"check"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecardVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scorecardCommit"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}}]} as unknown as DocumentNode<ScorecardsQuery, ScorecardsQueryVariables>;
+export const IngestCertifyVexPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyVexPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vexStatement"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VexStatementInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVEXStatement"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"vexStatement"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vexStatement"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyVexPkgMutation, IngestCertifyVexPkgMutationVariables>;
+export const IngestCertifyVexArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyVexArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vexStatement"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VexStatementInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVEXStatement"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"vexStatement"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vexStatement"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyVexArtifactMutation, IngestCertifyVexArtifactMutationVariables>;
+export const IngestCertifyVexPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyVexPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vexStatements"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VexStatementInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVEXStatements"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"vexStatements"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vexStatements"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyVexPkgsMutation, IngestCertifyVexPkgsMutationVariables>;
+export const IngestCertifyVexArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyVexArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vexStatements"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VexStatementInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVEXStatements"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"vexStatements"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vexStatements"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyVexArtifactsMutation, IngestCertifyVexArtifactsMutationVariables>;
+export const IngestCertifyVulnPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyVulnPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyVuln"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ScanMetadataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyVuln"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyVuln"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyVuln"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyVulnPkgMutation, IngestCertifyVulnPkgMutationVariables>;
+export const IngestCertifyVulnPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestCertifyVulnPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"certifyVulns"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ScanMetadataInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestCertifyVulns"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"certifyVulns"},"value":{"kind":"Variable","name":{"kind":"Name","value":"certifyVulns"}}}]}]}}]} as unknown as DocumentNode<IngestCertifyVulnPkgsMutation, IngestCertifyVulnPkgsMutationVariables>;
+export const IngestPointOfContactPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPointOfContactPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContact"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}}}]}]}}]} as unknown as DocumentNode<IngestPointOfContactPkgMutation, IngestPointOfContactPkgMutationVariables>;
+export const IngestPointOfContactSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPointOfContactSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContact"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}}}]}]}}]} as unknown as DocumentNode<IngestPointOfContactSrcMutation, IngestPointOfContactSrcMutationVariables>;
+export const IngestPointOfContactArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPointOfContactArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContact"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContact"}}}]}]}}]} as unknown as DocumentNode<IngestPointOfContactArtifactMutation, IngestPointOfContactArtifactMutationVariables>;
+export const IngestPointOfContactPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPointOfContactPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}}}]}]}}]} as unknown as DocumentNode<IngestPointOfContactPkgsMutation, IngestPointOfContactPkgsMutationVariables>;
+export const IngestPointOfContactSrcsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPointOfContactSrcs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}}}]}]}}]} as unknown as DocumentNode<IngestPointOfContactSrcsMutation, IngestPointOfContactSrcsMutationVariables>;
+export const IngestPointOfContactArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPointOfContactArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContactInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPointOfContacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pointOfContacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pointOfContacts"}}}]}]}}]} as unknown as DocumentNode<IngestPointOfContactArtifactsMutation, IngestPointOfContactArtifactsMutationVariables>;
+export const IngestHasSbomPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasSBOMPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOM"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"includes"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMIncludesInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSBOM"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasSBOM"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOM"}}},{"kind":"Argument","name":{"kind":"Name","value":"includes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includes"}}}]}]}}]} as unknown as DocumentNode<IngestHasSbomPkgMutation, IngestHasSbomPkgMutationVariables>;
+export const IngestHasSbomArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasSBOMArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOM"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"includes"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMIncludesInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSBOM"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasSBOM"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOM"}}},{"kind":"Argument","name":{"kind":"Name","value":"includes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includes"}}}]}]}}]} as unknown as DocumentNode<IngestHasSbomArtifactMutation, IngestHasSbomArtifactMutationVariables>;
+export const IngestHasSbomPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasSBOMPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOMs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"includes"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMIncludesInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSBOMs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasSBOMs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOMs"}}},{"kind":"Argument","name":{"kind":"Name","value":"includes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includes"}}}]}]}}]} as unknown as DocumentNode<IngestHasSbomPkgsMutation, IngestHasSbomPkgsMutationVariables>;
+export const IngestHasSbomArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasSBOMArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOMs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"includes"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMIncludesInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSBOMs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasSBOMs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSBOMs"}}},{"kind":"Argument","name":{"kind":"Name","value":"includes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includes"}}}]}]}}]} as unknown as DocumentNode<IngestHasSbomArtifactsMutation, IngestHasSbomArtifactsMutationVariables>;
+export const HasSboMsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HasSBOMs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOMSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"HasSBOM"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"hasSBOMSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSBOMTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSBOMTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}},{"kind":"Field","name":{"kind":"Name","value":"downloadLocation"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"includedSoftware"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedDependencies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedOccurrences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}}]}}]} as unknown as DocumentNode<HasSboMsQuery, HasSboMsQueryVariables>;
+export const IngestSlsaForArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestSLSAForArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materials"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"builder"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorBuilderInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slsa"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SLSAInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestSLSA"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}},{"kind":"Argument","name":{"kind":"Name","value":"builtFrom"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materials"}}},{"kind":"Argument","name":{"kind":"Name","value":"builtBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"builder"}}},{"kind":"Argument","name":{"kind":"Name","value":"slsa"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slsa"}}}]}]}}]} as unknown as DocumentNode<IngestSlsaForArtifactMutation, IngestSlsaForArtifactMutationVariables>;
+export const IngestSlsaForArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestSLSAForArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"materialsList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"builders"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorBuilderInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slsaList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SLSAInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestSLSAs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}},{"kind":"Argument","name":{"kind":"Name","value":"builtFromList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"materialsList"}}},{"kind":"Argument","name":{"kind":"Name","value":"builtByList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"builders"}}},{"kind":"Argument","name":{"kind":"Name","value":"slsaList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slsaList"}}}]}]}}]} as unknown as DocumentNode<IngestSlsaForArtifactsMutation, IngestSlsaForArtifactsMutationVariables>;
+export const IngestHasSourceAtDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasSourceAt"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSourceAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAtInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSourceAt"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}},{"kind":"Argument","name":{"kind":"Name","value":"hasSourceAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSourceAt"}}}]}]}}]} as unknown as DocumentNode<IngestHasSourceAtMutation, IngestHasSourceAtMutationVariables>;
+export const IngestHasSourcesAtDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasSourcesAt"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasSourceAts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAtInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasSourceAts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}},{"kind":"Argument","name":{"kind":"Name","value":"hasSourceAts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasSourceAts"}}}]}]}}]} as unknown as DocumentNode<IngestHasSourcesAtMutation, IngestHasSourcesAtMutationVariables>;
+export const HashEqualsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HashEquals"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqualSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"HashEqual"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"hashEqualSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHashEqualTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHashEqualTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"artifacts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<HashEqualsQuery, HashEqualsQueryVariables>;
+export const IngestHashEqualDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHashEqual"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherArtifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hashEqual"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqualInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHashEqual"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherArtifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherArtifact"}}},{"kind":"Argument","name":{"kind":"Name","value":"hashEqual"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hashEqual"}}}]}]}}]} as unknown as DocumentNode<IngestHashEqualMutation, IngestHashEqualMutationVariables>;
+export const IngestHashEqualsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHashEquals"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherArtifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hashEquals"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqualInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHashEquals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherArtifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherArtifacts"}}},{"kind":"Argument","name":{"kind":"Name","value":"hashEquals"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hashEquals"}}}]}]}}]} as unknown as DocumentNode<IngestHashEqualsMutation, IngestHashEqualsMutationVariables>;
+export const IngestIsDependencyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestIsDependency"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"depPkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"depPkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dependency"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependencyInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestDependency"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}},{"kind":"Argument","name":{"kind":"Name","value":"depPkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"depPkg"}}},{"kind":"Argument","name":{"kind":"Name","value":"depPkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"depPkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"dependency"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dependency"}}}]}]}}]} as unknown as DocumentNode<IngestIsDependencyMutation, IngestIsDependencyMutationVariables>;
+export const IngestIsDependenciesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestIsDependencies"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"depPkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"depPkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dependencies"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependencyInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestDependencies"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}},{"kind":"Argument","name":{"kind":"Name","value":"depPkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"depPkgs"}}},{"kind":"Argument","name":{"kind":"Name","value":"depPkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"depPkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"dependencies"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dependencies"}}}]}]}}]} as unknown as DocumentNode<IngestIsDependenciesMutation, IngestIsDependenciesMutationVariables>;
+export const DependenciesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Dependencies"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependencySpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"IsDependency"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"isDependencySpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<DependenciesQuery, DependenciesQueryVariables>;
+export const IsOccurrencesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"IsOccurrences"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrenceSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"IsOccurrence"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"isOccurrenceSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<IsOccurrencesQuery, IsOccurrencesQueryVariables>;
+export const IngestIsOccurrencePkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestIsOccurrencePkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"occurrence"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrenceInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestOccurrence"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}},{"kind":"Argument","name":{"kind":"Name","value":"occurrence"},"value":{"kind":"Variable","name":{"kind":"Name","value":"occurrence"}}}]}]}}]} as unknown as DocumentNode<IngestIsOccurrencePkgMutation, IngestIsOccurrencePkgMutationVariables>;
+export const IngestIsOccurrenceSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestIsOccurrenceSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"occurrence"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrenceInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestOccurrence"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}},{"kind":"Argument","name":{"kind":"Name","value":"occurrence"},"value":{"kind":"Variable","name":{"kind":"Name","value":"occurrence"}}}]}]}}]} as unknown as DocumentNode<IngestIsOccurrenceSrcMutation, IngestIsOccurrenceSrcMutationVariables>;
+export const IngestIsOccurrencesPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestIsOccurrencesPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"occurrences"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrenceInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestOccurrences"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}},{"kind":"Argument","name":{"kind":"Name","value":"occurrences"},"value":{"kind":"Variable","name":{"kind":"Name","value":"occurrences"}}}]}]}}]} as unknown as DocumentNode<IngestIsOccurrencesPkgMutation, IngestIsOccurrencesPkgMutationVariables>;
+export const IngestIsOccurrencesSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestIsOccurrencesSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"occurrences"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrenceInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestOccurrences"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}},{"kind":"Argument","name":{"kind":"Name","value":"occurrences"},"value":{"kind":"Variable","name":{"kind":"Name","value":"occurrences"}}}]}]}}]} as unknown as DocumentNode<IngestIsOccurrencesSrcMutation, IngestIsOccurrencesSrcMutationVariables>;
+export const IngestLicenseDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestLicense"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"license"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorLicenseInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestLicense"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"license"},"value":{"kind":"Variable","name":{"kind":"Name","value":"license"}}}]}]}}]} as unknown as DocumentNode<IngestLicenseMutation, IngestLicenseMutationVariables>;
+export const IngestLicensesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestLicenses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"licenses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorLicenseInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestLicenses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"licenses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"licenses"}}}]}]}}]} as unknown as DocumentNode<IngestLicensesMutation, IngestLicensesMutationVariables>;
 export const LicensesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Licenses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LicenseSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"licenses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"licenseSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}}]} as unknown as DocumentNode<LicensesQuery, LicensesQueryVariables>;
-export const HasMetadataPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"HasMetadataPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadata"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}}}]}]}}]} as unknown as DocumentNode<HasMetadataPkgMutation, HasMetadataPkgMutationVariables>;
-export const HasMetadataSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"HasMetadataSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadata"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}}}]}]}}]} as unknown as DocumentNode<HasMetadataSrcMutation, HasMetadataSrcMutationVariables>;
-export const HasMetadataArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"HasMetadataArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadata"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}}}]}]}}]} as unknown as DocumentNode<HasMetadataArtifactMutation, HasMetadataArtifactMutationVariables>;
-export const HasMetadataPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"HasMetadataPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBulkHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadataList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}}}]}]}}]} as unknown as DocumentNode<HasMetadataPkgsMutation, HasMetadataPkgsMutationVariables>;
-export const HasMetadataSrcsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"HasMetadataSrcs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBulkHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadataList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}}}]}]}}]} as unknown as DocumentNode<HasMetadataSrcsMutation, HasMetadataSrcsMutationVariables>;
-export const HasMetadataArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"HasMetadataArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtifactInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBulkHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadataList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}}}]}]}}]} as unknown as DocumentNode<HasMetadataArtifactsMutation, HasMetadataArtifactsMutationVariables>;
-export const IngestPackageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPackage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPackage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}]}}]} as unknown as DocumentNode<IngestPackageMutation, IngestPackageMutationVariables>;
-export const IngestPackagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPackages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPackages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}]}}]} as unknown as DocumentNode<IngestPackagesMutation, IngestPackagesMutationVariables>;
+export const IngestHasMetadataPkgDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasMetadataPkg"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"package"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadata"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}}}]}]}}]} as unknown as DocumentNode<IngestHasMetadataPkgMutation, IngestHasMetadataPkgMutationVariables>;
+export const IngestHasMetadataSrcDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasMetadataSrc"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadata"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}}}]}]}}]} as unknown as DocumentNode<IngestHasMetadataSrcMutation, IngestHasMetadataSrcMutationVariables>;
+export const IngestHasMetadataArtifactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasMetadataArtifact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifact"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifact"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadata"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadata"}}}]}]}}]} as unknown as DocumentNode<IngestHasMetadataArtifactMutation, IngestHasMetadataArtifactMutationVariables>;
+export const IngestHasMetadataPkgsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasMetadataPkgs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MatchFlags"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBulkHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"packages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgMatchType"}}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadataList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}}}]}]}}]} as unknown as DocumentNode<IngestHasMetadataPkgsMutation, IngestHasMetadataPkgsMutationVariables>;
+export const IngestHasMetadataSrcsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasMetadataSrcs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBulkHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadataList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}}}]}]}}]} as unknown as DocumentNode<IngestHasMetadataSrcsMutation, IngestHasMetadataSrcsMutationVariables>;
+export const IngestHasMetadataArtifactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestHasMetadataArtifacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorArtifactInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadataInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBulkHasMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subjects"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"artifacts"},"value":{"kind":"Variable","name":{"kind":"Name","value":"artifacts"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"pkgMatchType"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pkg"},"value":{"kind":"EnumValue","value":"ALL_VERSIONS"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"hasMetadataList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasMetadataList"}}}]}]}}]} as unknown as DocumentNode<IngestHasMetadataArtifactsMutation, IngestHasMetadataArtifactsMutationVariables>;
+export const IngestPackageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPackage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPackage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"packageTypeID"}},{"kind":"Field","name":{"kind":"Name","value":"packageNamespaceID"}},{"kind":"Field","name":{"kind":"Name","value":"packageNameID"}},{"kind":"Field","name":{"kind":"Name","value":"packageVersionID"}}]}}]}}]} as unknown as DocumentNode<IngestPackageMutation, IngestPackageMutationVariables>;
+export const IngestPackagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPackages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPackages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"packageTypeID"}},{"kind":"Field","name":{"kind":"Name","value":"packageNamespaceID"}},{"kind":"Field","name":{"kind":"Name","value":"packageNameID"}},{"kind":"Field","name":{"kind":"Name","value":"packageVersionID"}}]}}]}}]} as unknown as DocumentNode<IngestPackagesMutation, IngestPackagesMutationVariables>;
 export const PackagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Packages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"packages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}}]} as unknown as DocumentNode<PackagesQuery, PackagesQueryVariables>;
 export const PackageTypesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PackageTypes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"packages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<PackageTypesQuery, PackageTypesQueryVariables>;
 export const PackageNamespacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PackageNamespaces"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"packages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}}]}}]}}]}}]} as unknown as DocumentNode<PackageNamespacesQuery, PackageNamespacesQueryVariables>;
 export const PackageNamesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PackageNames"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"packages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]} as unknown as DocumentNode<PackageNamesQuery, PackageNamesQueryVariables>;
 export const PackageVersionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PackageVersions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"packages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<PackageVersionsQuery, PackageVersionsQueryVariables>;
-export const PathDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Path"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"subject"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"target"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maxPathLength"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"usingOnly"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Edge"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"path"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"Variable","name":{"kind":"Name","value":"subject"}}},{"kind":"Argument","name":{"kind":"Name","value":"target"},"value":{"kind":"Variable","name":{"kind":"Name","value":"target"}}},{"kind":"Argument","name":{"kind":"Name","value":"maxPathLength"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maxPathLength"}}},{"kind":"Argument","name":{"kind":"Name","value":"usingOnly"},"value":{"kind":"Variable","name":{"kind":"Name","value":"usingOnly"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyScorecard"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSLSATree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyBad"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyGood"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHashEqualTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSBOMTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSourceAt"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPointOfContact"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVuln"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVEXStatement"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnMetadataTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasMetadata"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyLegalTree"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllBuilderTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyScorecard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateScore"}},{"kind":"Field","name":{"kind":"Name","value":"checks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"check"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecardVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scorecardCommit"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"packages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSLSATree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsa"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"builtFrom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"builtBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"buildType"}},{"kind":"Field","name":{"kind":"Name","value":"slsaPredicate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsaVersion"}},{"kind":"Field","name":{"kind":"Name","value":"startedOn"}},{"kind":"Field","name":{"kind":"Name","value":"finishedOn"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyBad"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyGood"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHashEqualTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"artifacts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSBOMTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}},{"kind":"Field","name":{"kind":"Name","value":"downloadLocation"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSourceAt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPointOfContact"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVuln"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dbUri"}},{"kind":"Field","name":{"kind":"Name","value":"dbVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scannerUri"}},{"kind":"Field","name":{"kind":"Name","value":"scannerVersion"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVEXStatement"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"vexJustification"}},{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"statusNotes"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnMetadataTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"scoreType"}},{"kind":"Field","name":{"kind":"Name","value":"scoreValue"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasMetadata"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyLegalTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attribution"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<PathQuery, PathQueryVariables>;
-export const NeighborsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Neighbors"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"node"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"usingOnly"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Edge"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"neighbors"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"node"},"value":{"kind":"Variable","name":{"kind":"Name","value":"node"}}},{"kind":"Argument","name":{"kind":"Name","value":"usingOnly"},"value":{"kind":"Variable","name":{"kind":"Name","value":"usingOnly"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyScorecard"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSLSATree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyBad"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyGood"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHashEqualTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSBOMTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSourceAt"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPointOfContact"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVuln"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVEXStatement"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnMetadataTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasMetadata"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyLegalTree"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllBuilderTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyScorecard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateScore"}},{"kind":"Field","name":{"kind":"Name","value":"checks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"check"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecardVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scorecardCommit"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"packages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSLSATree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsa"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"builtFrom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"builtBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"buildType"}},{"kind":"Field","name":{"kind":"Name","value":"slsaPredicate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsaVersion"}},{"kind":"Field","name":{"kind":"Name","value":"startedOn"}},{"kind":"Field","name":{"kind":"Name","value":"finishedOn"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyBad"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyGood"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHashEqualTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"artifacts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSBOMTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}},{"kind":"Field","name":{"kind":"Name","value":"downloadLocation"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSourceAt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPointOfContact"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVuln"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dbUri"}},{"kind":"Field","name":{"kind":"Name","value":"dbVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scannerUri"}},{"kind":"Field","name":{"kind":"Name","value":"scannerVersion"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVEXStatement"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"vexJustification"}},{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"statusNotes"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnMetadataTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"scoreType"}},{"kind":"Field","name":{"kind":"Name","value":"scoreValue"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasMetadata"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyLegalTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attribution"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<NeighborsQuery, NeighborsQueryVariables>;
-export const NodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Node"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"node"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"node"},"value":{"kind":"Variable","name":{"kind":"Name","value":"node"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyScorecard"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSLSATree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyBad"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyGood"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHashEqualTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSBOMTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSourceAt"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPointOfContact"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVuln"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVEXStatement"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnMetadataTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasMetadata"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyLegalTree"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllBuilderTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyScorecard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateScore"}},{"kind":"Field","name":{"kind":"Name","value":"checks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"check"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecardVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scorecardCommit"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"packages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSLSATree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsa"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"builtFrom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"builtBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"buildType"}},{"kind":"Field","name":{"kind":"Name","value":"slsaPredicate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsaVersion"}},{"kind":"Field","name":{"kind":"Name","value":"startedOn"}},{"kind":"Field","name":{"kind":"Name","value":"finishedOn"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyBad"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyGood"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHashEqualTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"artifacts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSBOMTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}},{"kind":"Field","name":{"kind":"Name","value":"downloadLocation"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSourceAt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPointOfContact"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVuln"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dbUri"}},{"kind":"Field","name":{"kind":"Name","value":"dbVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scannerUri"}},{"kind":"Field","name":{"kind":"Name","value":"scannerVersion"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVEXStatement"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"vexJustification"}},{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"statusNotes"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnMetadataTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"scoreType"}},{"kind":"Field","name":{"kind":"Name","value":"scoreValue"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasMetadata"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyLegalTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attribution"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<NodeQuery, NodeQueryVariables>;
-export const NodesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Nodes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"nodes"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"nodes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"nodes"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyScorecard"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSLSATree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyBad"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyGood"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHashEqualTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSBOMTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSourceAt"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPointOfContact"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVuln"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVEXStatement"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnMetadataTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasMetadata"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyLegalTree"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllBuilderTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyScorecard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateScore"}},{"kind":"Field","name":{"kind":"Name","value":"checks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"check"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecardVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scorecardCommit"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"packages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSLSATree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsa"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"builtFrom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"builtBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"buildType"}},{"kind":"Field","name":{"kind":"Name","value":"slsaPredicate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsaVersion"}},{"kind":"Field","name":{"kind":"Name","value":"startedOn"}},{"kind":"Field","name":{"kind":"Name","value":"finishedOn"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyBad"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyGood"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHashEqualTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"artifacts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSBOMTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}},{"kind":"Field","name":{"kind":"Name","value":"downloadLocation"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSourceAt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPointOfContact"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVuln"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dbUri"}},{"kind":"Field","name":{"kind":"Name","value":"dbVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scannerUri"}},{"kind":"Field","name":{"kind":"Name","value":"scannerVersion"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVEXStatement"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"vexJustification"}},{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"statusNotes"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnMetadataTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"scoreType"}},{"kind":"Field","name":{"kind":"Name","value":"scoreValue"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasMetadata"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyLegalTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attribution"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<NodesQuery, NodesQueryVariables>;
-export const IngestPkgEqualDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPkgEqual"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherPackage"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgEqual"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqualInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPkgEqual"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherPackage"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherPackage"}}},{"kind":"Argument","name":{"kind":"Name","value":"pkgEqual"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgEqual"}}}]}]}}]} as unknown as DocumentNode<IngestPkgEqualMutation, IngestPkgEqualMutationVariables>;
-export const IngestPkgEqualsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPkgEquals"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherPackages"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgEquals"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqualInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPkgEquals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherPackages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherPackages"}}},{"kind":"Argument","name":{"kind":"Name","value":"pkgEquals"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgEquals"}}}]}]}}]} as unknown as DocumentNode<IngestPkgEqualsMutation, IngestPkgEqualsMutationVariables>;
+export const PathDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Path"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"subject"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"target"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"maxPathLength"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"usingOnly"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Edge"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"path"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subject"},"value":{"kind":"Variable","name":{"kind":"Name","value":"subject"}}},{"kind":"Argument","name":{"kind":"Name","value":"target"},"value":{"kind":"Variable","name":{"kind":"Name","value":"target"}}},{"kind":"Argument","name":{"kind":"Name","value":"maxPathLength"},"value":{"kind":"Variable","name":{"kind":"Name","value":"maxPathLength"}}},{"kind":"Argument","name":{"kind":"Name","value":"usingOnly"},"value":{"kind":"Variable","name":{"kind":"Name","value":"usingOnly"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyScorecard"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSLSATree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyBad"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyGood"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHashEqualTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSBOMTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSourceAt"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPointOfContact"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVuln"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVEXStatement"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnMetadataTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasMetadata"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyLegalTree"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllBuilderTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyScorecard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateScore"}},{"kind":"Field","name":{"kind":"Name","value":"checks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"check"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecardVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scorecardCommit"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"packages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSLSATree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsa"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"builtFrom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"builtBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"buildType"}},{"kind":"Field","name":{"kind":"Name","value":"slsaPredicate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsaVersion"}},{"kind":"Field","name":{"kind":"Name","value":"startedOn"}},{"kind":"Field","name":{"kind":"Name","value":"finishedOn"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyBad"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyGood"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHashEqualTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"artifacts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSBOMTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}},{"kind":"Field","name":{"kind":"Name","value":"downloadLocation"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"includedSoftware"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedDependencies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedOccurrences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSourceAt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPointOfContact"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVuln"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dbUri"}},{"kind":"Field","name":{"kind":"Name","value":"dbVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scannerUri"}},{"kind":"Field","name":{"kind":"Name","value":"scannerVersion"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVEXStatement"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"vexJustification"}},{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"statusNotes"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnMetadataTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"scoreType"}},{"kind":"Field","name":{"kind":"Name","value":"scoreValue"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasMetadata"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyLegalTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attribution"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<PathQuery, PathQueryVariables>;
+export const NeighborsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Neighbors"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"node"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"usingOnly"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Edge"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"neighbors"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"node"},"value":{"kind":"Variable","name":{"kind":"Name","value":"node"}}},{"kind":"Argument","name":{"kind":"Name","value":"usingOnly"},"value":{"kind":"Variable","name":{"kind":"Name","value":"usingOnly"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyScorecard"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSLSATree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyBad"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyGood"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHashEqualTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSBOMTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSourceAt"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPointOfContact"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVuln"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVEXStatement"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnMetadataTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasMetadata"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyLegalTree"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllBuilderTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyScorecard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateScore"}},{"kind":"Field","name":{"kind":"Name","value":"checks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"check"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecardVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scorecardCommit"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"packages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSLSATree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsa"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"builtFrom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"builtBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"buildType"}},{"kind":"Field","name":{"kind":"Name","value":"slsaPredicate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsaVersion"}},{"kind":"Field","name":{"kind":"Name","value":"startedOn"}},{"kind":"Field","name":{"kind":"Name","value":"finishedOn"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyBad"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyGood"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHashEqualTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"artifacts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSBOMTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}},{"kind":"Field","name":{"kind":"Name","value":"downloadLocation"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"includedSoftware"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedDependencies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedOccurrences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSourceAt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPointOfContact"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVuln"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dbUri"}},{"kind":"Field","name":{"kind":"Name","value":"dbVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scannerUri"}},{"kind":"Field","name":{"kind":"Name","value":"scannerVersion"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVEXStatement"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"vexJustification"}},{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"statusNotes"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnMetadataTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"scoreType"}},{"kind":"Field","name":{"kind":"Name","value":"scoreValue"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasMetadata"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyLegalTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attribution"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<NeighborsQuery, NeighborsQueryVariables>;
+export const NodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Node"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"node"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"node"},"value":{"kind":"Variable","name":{"kind":"Name","value":"node"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyScorecard"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSLSATree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyBad"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyGood"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHashEqualTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSBOMTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSourceAt"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPointOfContact"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVuln"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVEXStatement"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnMetadataTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasMetadata"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyLegalTree"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllBuilderTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyScorecard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateScore"}},{"kind":"Field","name":{"kind":"Name","value":"checks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"check"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecardVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scorecardCommit"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"packages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSLSATree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsa"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"builtFrom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"builtBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"buildType"}},{"kind":"Field","name":{"kind":"Name","value":"slsaPredicate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsaVersion"}},{"kind":"Field","name":{"kind":"Name","value":"startedOn"}},{"kind":"Field","name":{"kind":"Name","value":"finishedOn"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyBad"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyGood"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHashEqualTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"artifacts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSBOMTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}},{"kind":"Field","name":{"kind":"Name","value":"downloadLocation"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"includedSoftware"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedDependencies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedOccurrences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSourceAt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPointOfContact"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVuln"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dbUri"}},{"kind":"Field","name":{"kind":"Name","value":"dbVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scannerUri"}},{"kind":"Field","name":{"kind":"Name","value":"scannerVersion"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVEXStatement"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"vexJustification"}},{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"statusNotes"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnMetadataTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"scoreType"}},{"kind":"Field","name":{"kind":"Name","value":"scoreValue"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasMetadata"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyLegalTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attribution"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<NodeQuery, NodeQueryVariables>;
+export const NodesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Nodes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"nodes"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"nodes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"nodes"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyScorecard"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSLSATree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyBad"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyGood"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHashEqualTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSBOMTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasSourceAt"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPointOfContact"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVuln"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnEqual"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyVEXStatement"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllBuilderTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnMetadataTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllHasMetadata"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllCertifyLegalTree"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsDependencyTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsDependency"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyPackage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dependencyType"}},{"kind":"Field","name":{"kind":"Name","value":"versionRange"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllIsOccurrencesTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"IsOccurrence"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artifact"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllLicenseTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"License"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inline"}},{"kind":"Field","name":{"kind":"Name","value":"listVersion"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllBuilderTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Builder"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyScorecard"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyScorecard"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateScore"}},{"kind":"Field","name":{"kind":"Name","value":"checks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"check"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"scorecardVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scorecardCommit"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"packages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSLSATree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSLSA"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsa"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"builtFrom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"builtBy"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"uri"}}]}},{"kind":"Field","name":{"kind":"Name","value":"buildType"}},{"kind":"Field","name":{"kind":"Name","value":"slsaPredicate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slsaVersion"}},{"kind":"Field","name":{"kind":"Name","value":"startedOn"}},{"kind":"Field","name":{"kind":"Name","value":"finishedOn"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyBad"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyBad"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyGood"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyGood"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHashEqualTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HashEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"artifacts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSBOMTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSBOM"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"uri"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}},{"kind":"Field","name":{"kind":"Name","value":"downloadLocation"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"includedSoftware"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedDependencies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsDependencyTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"includedOccurrences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllIsOccurrencesTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasSourceAt"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasSourceAt"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPointOfContact"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PointOfContact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"since"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVuln"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVuln"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"package"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dbUri"}},{"kind":"Field","name":{"kind":"Name","value":"dbVersion"}},{"kind":"Field","name":{"kind":"Name","value":"scannerUri"}},{"kind":"Field","name":{"kind":"Name","value":"scannerVersion"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnEqual"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqual"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyVEXStatement"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyVEXStatement"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"vexJustification"}},{"kind":"Field","name":{"kind":"Name","value":"statement"}},{"kind":"Field","name":{"kind":"Name","value":"statusNotes"}},{"kind":"Field","name":{"kind":"Name","value":"knownSince"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnMetadataTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerability"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"scoreType"}},{"kind":"Field","name":{"kind":"Name","value":"scoreValue"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllHasMetadata"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"HasMetadata"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllCertifyLegalTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CertifyLegal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"subject"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"declaredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicense"}},{"kind":"Field","name":{"kind":"Name","value":"discoveredLicenses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllLicenseTree"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attribution"}},{"kind":"Field","name":{"kind":"Name","value":"justification"}},{"kind":"Field","name":{"kind":"Name","value":"timeScanned"}},{"kind":"Field","name":{"kind":"Name","value":"origin"}},{"kind":"Field","name":{"kind":"Name","value":"collector"}}]}}]} as unknown as DocumentNode<NodesQuery, NodesQueryVariables>;
+export const IngestPkgEqualDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPkgEqual"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherPackage"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgEqual"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqualInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPkgEqual"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkg"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherPackage"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherPackage"}}},{"kind":"Argument","name":{"kind":"Name","value":"pkgEqual"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgEqual"}}}]}]}}]} as unknown as DocumentNode<IngestPkgEqualMutation, IngestPkgEqualMutationVariables>;
+export const IngestPkgEqualsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestPkgEquals"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherPackages"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorPkgInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pkgEquals"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PkgEqualInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestPkgEquals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"pkgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgs"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherPackages"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherPackages"}}},{"kind":"Argument","name":{"kind":"Name","value":"pkgEquals"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pkgEquals"}}}]}]}}]} as unknown as DocumentNode<IngestPkgEqualsMutation, IngestPkgEqualsMutationVariables>;
 export const FindSoftwareDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindSoftware"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchText"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findSoftware"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"searchText"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchText"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllPkgTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllArtifactTree"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllPkgTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Package"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"qualifiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subpath"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllArtifactTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artifact"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"algorithm"}},{"kind":"Field","name":{"kind":"Name","value":"digest"}}]}}]} as unknown as DocumentNode<FindSoftwareQuery, FindSoftwareQueryVariables>;
-export const IngestSourceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestSource"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestSource"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}]}]}}]} as unknown as DocumentNode<IngestSourceMutation, IngestSourceMutationVariables>;
-export const IngestSourcesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestSources"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestSources"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}]}]}}]} as unknown as DocumentNode<IngestSourcesMutation, IngestSourcesMutationVariables>;
+export const IngestSourceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestSource"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"source"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestSource"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"source"},"value":{"kind":"Variable","name":{"kind":"Name","value":"source"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sourceTypeID"}},{"kind":"Field","name":{"kind":"Name","value":"sourceNamespaceID"}},{"kind":"Field","name":{"kind":"Name","value":"sourceNameID"}}]}}]}}]} as unknown as DocumentNode<IngestSourceMutation, IngestSourceMutationVariables>;
+export const IngestSourcesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestSources"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sources"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorSourceInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestSources"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sources"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sources"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sourceTypeID"}},{"kind":"Field","name":{"kind":"Name","value":"sourceNamespaceID"}},{"kind":"Field","name":{"kind":"Name","value":"sourceNameID"}}]}}]}}]} as unknown as DocumentNode<IngestSourcesMutation, IngestSourcesMutationVariables>;
 export const SourcesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Sources"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SourceSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sources"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sourceSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllSourceTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllSourceTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Source"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"namespaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"namespace"}},{"kind":"Field","name":{"kind":"Name","value":"names"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"commit"}}]}}]}}]}}]} as unknown as DocumentNode<SourcesQuery, SourcesQueryVariables>;
-export const IngestVulnEqualDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestVulnEqual"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherVulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnEqual"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqualInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVulnEqual"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherVulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherVulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnEqual"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnEqual"}}}]}]}}]} as unknown as DocumentNode<IngestVulnEqualMutation, IngestVulnEqualMutationVariables>;
-export const IngestVulnEqualsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestVulnEquals"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherVulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnEquals"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqualInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVulnEquals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherVulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherVulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnEquals"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnEquals"}}}]}]}}]} as unknown as DocumentNode<IngestVulnEqualsMutation, IngestVulnEqualsMutationVariables>;
-export const VulnHasMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"VulnHasMetadata"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnMetadata"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadataInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVulnerabilityMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilityMetadata"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnMetadata"}}}]}]}}]} as unknown as DocumentNode<VulnHasMetadataMutation, VulnHasMetadataMutationVariables>;
-export const BulkVulnHasMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"BulkVulnHasMetadata"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilityMetadataList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadataInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBulkVulnerabilityMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilityMetadataList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilityMetadataList"}}}]}]}}]} as unknown as DocumentNode<BulkVulnHasMetadataMutation, BulkVulnHasMetadataMutationVariables>;
-export const IngestVulnerabilityDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestVulnerability"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vuln"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVulnerability"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vuln"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vuln"}}}]}]}}]} as unknown as DocumentNode<IngestVulnerabilityMutation, IngestVulnerabilityMutationVariables>;
-export const IngestVulnerabilitiesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestVulnerabilities"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulns"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVulnerabilities"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vulns"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulns"}}}]}]}}]} as unknown as DocumentNode<IngestVulnerabilitiesMutation, IngestVulnerabilitiesMutationVariables>;
+export const IngestVulnEqualDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestVulnEqual"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherVulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnEqual"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqualInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVulnEqual"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherVulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherVulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnEqual"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnEqual"}}}]}]}}]} as unknown as DocumentNode<IngestVulnEqualMutation, IngestVulnEqualMutationVariables>;
+export const IngestVulnEqualsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestVulnEquals"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otherVulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnEquals"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnEqualInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVulnEquals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"otherVulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otherVulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnEquals"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnEquals"}}}]}]}}]} as unknown as DocumentNode<IngestVulnEqualsMutation, IngestVulnEqualsMutationVariables>;
+export const IngestVulnHasMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestVulnHasMetadata"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnMetadata"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadataInputSpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVulnerabilityMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vulnerability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerability"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilityMetadata"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnMetadata"}}}]}]}}]} as unknown as DocumentNode<IngestVulnHasMetadataMutation, IngestVulnHasMetadataMutationVariables>;
+export const IngestBulkVulnHasMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestBulkVulnHasMetadata"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilityMetadataList"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilityMetadataInputSpec"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestBulkVulnerabilityMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilities"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilities"}}},{"kind":"Argument","name":{"kind":"Name","value":"vulnerabilityMetadataList"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulnerabilityMetadataList"}}}]}]}}]} as unknown as DocumentNode<IngestBulkVulnHasMetadataMutation, IngestBulkVulnHasMetadataMutationVariables>;
+export const IngestVulnerabilityDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestVulnerability"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vuln"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVulnerability"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vuln"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vuln"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityTypeID"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityNodeID"}}]}}]}}]} as unknown as DocumentNode<IngestVulnerabilityMutation, IngestVulnerabilityMutationVariables>;
+export const IngestVulnerabilitiesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"IngestVulnerabilities"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vulns"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"IDorVulnerabilityInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ingestVulnerabilities"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vulns"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vulns"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityTypeID"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityNodeID"}}]}}]}}]} as unknown as DocumentNode<IngestVulnerabilitiesMutation, IngestVulnerabilitiesMutationVariables>;
 export const VulnerabilitiesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Vulnerabilities"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VulnerabilitySpec"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vulnerabilities"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"vulnSpec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AllVulnerabilityTree"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AllVulnerabilityTree"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Vulnerability"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityIDs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vulnerabilityID"}}]}}]}}]} as unknown as DocumentNode<VulnerabilitiesQuery, VulnerabilitiesQueryVariables>;
