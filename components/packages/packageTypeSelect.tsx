@@ -41,7 +41,7 @@ const PackageTypeSelect = ({
       setPackageNamespacesFunc(
         sortablePackageNamespaces
           .sort((a, b) => a.namespace.localeCompare(b.namespace))
-          .map((t) => ({ label: t.namespace, value: t.namespace }))
+          .map((t) => ({ label: t.namespace || "\u00A0", value: t.namespace }))
       );
     });
   };
