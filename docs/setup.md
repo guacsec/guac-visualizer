@@ -62,3 +62,11 @@ info  - Using webpack 5. Reason: Enabled by default https://nextjs.org/docs/mess
 **Using the GUAC visualizer will look something like this:**
 
 ![image](https://github.com/guacsec/guac-visualizer/assets/68356865/420c523e-9774-4a4f-82c1-b7e1d29ba9ac)
+
+**Note:** If you get an error when guac-visualizer tries to render, you may need to update the generated graphql code.
+To do this:
+
+1. Clone the [GUAC repo](https://github.com/guacsec/guac)
+2. Ensure the paths in the `codegen.ts` file in this repository are correct.
+If you cloned GUAC into a directory next to this repo's directory, you will not need to change the paths.
+3. Run `yarn graphql-codegen` to update the graphql code.
