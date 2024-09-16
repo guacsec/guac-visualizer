@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { GraphDataWithMetadata } from "@/components/graph/types";
 import { NodeFragment } from "@/gql/types/nodeFragment";
 import {
