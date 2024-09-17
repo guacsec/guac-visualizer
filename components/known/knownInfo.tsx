@@ -265,7 +265,7 @@ const KnownInfo = () => {
       <div className="m-10">
         {handleSbomClicked &&
           (sboms.length === 0 ? (
-            <h2>Didn't find SBOMs</h2>
+            <h2>Didn&apos;t find SBOMs</h2>
           ) : (
             <ul>
               {sboms.map((sbom) => (
@@ -288,7 +288,7 @@ const KnownInfo = () => {
       <div className="m-10">
         {handleVulnClicked &&
           (filteredVulns.length === 0 ? (
-            <h2>Didn't find vulns</h2>
+            <h2>Didn&apos;t find vulns</h2>
           ) : (
             <ul>
               {filteredVulns.map((vuln, index) => (
