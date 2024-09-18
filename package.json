@@ -1,6 +1,6 @@
 {
   "name": "guac-visualizer",
-  "version": "0.3.2",
+  "version": "main",
   "private": true,
   "scripts": {
     "dev": "next dev",
