@@ -54,6 +54,11 @@ jobs:
           cosign-release: 'v2.4.0'
       - name: Install crane
         uses: imjasonh/setup-crane@5146f708a817ea23476677995bf2133943b9be0b # v0.1
+      - name: Update version string to match git tag
+        run: |
+          #!/usr/bin/env bash
+          set -euo pipefail
+          npm version --no-git-tag-version $(git describe --tags --abbrev=0)          
       - name: Build and publish image
         id: build_n_publish_image 
         run: |
