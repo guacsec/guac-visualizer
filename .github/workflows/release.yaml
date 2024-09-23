@@ -64,7 +64,7 @@ jobs:
         run: |
           #!/usr/bin/env bash
           set -euo pipefail
-          pack build ${IMAGE_URI}:${{ github.ref_name }} --builder ${BUILDER} --buildpack ${BUILDPACK} --publish --sbom-output-dir ${BUILDPACK_SBOM_OUTPUT_DIR}
+          pack build --env NODE_ENV=production ${IMAGE_URI}:${{ github.ref_name }} --builder ${BUILDER} --buildpack ${BUILDPACK} --publish --sbom-output-dir ${BUILDPACK_SBOM_OUTPUT_DIR}
           echo "IMAGE_DIGEST=$(crane digest ${IMAGE_URI}:${{ github.ref_name }})" >> $GITHUB_OUTPUT
       - name: Sign and verify image
         run: |
