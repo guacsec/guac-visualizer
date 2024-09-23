@@ -84,7 +84,7 @@ jobs:
     name: generate provenance for container
     needs: [build-n-release]
     if: startsWith(github.ref, 'refs/tags/')
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v1.9.0 # must use semver here
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v2.0.0 # must use semver here
     with:
       image: ${{ needs.build-n-release.outputs.image }}
       digest: ${{ needs.build-n-release.outputs.digest }}
