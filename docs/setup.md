@@ -9,17 +9,16 @@ as well as a means to explore the supply chain, and prototype policies.
 Since the GUAC Visaulizer is still in an early experimental stage, it is likely
 that there may be some unexpected behavior or usage problems. We recommend using the [GraphQL interface directly](https://github.com/guacsec/guac/blob/main/demo/GraphQL.md). Feedback is welcome as we continue to improve the visualizer!
 
-## Requirements
+## Prerequisites
 
 **Tools:**
 
-- yarn
-- docker
+- [Yarn](https://yarnpkg.com/getting-started/install)
+- [Docker](https://docs.docker.com/get-docker/)
 
 ### Services
 
-To use the GUAC visualizer, you need to have the main GUAC server running. For more information on how to do this, click
-[here](https://docs.guac.sh/getting-started/).
+To use the GUAC visualizer, you need to have the [main GUAC server running](https://docs.guac.sh/getting-started/).
 
 ## Step 1. Getting started
 
