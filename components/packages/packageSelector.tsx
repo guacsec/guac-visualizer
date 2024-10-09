@@ -21,9 +21,9 @@ export default function PackageSelector({
   setGraphData: (data: GraphDataWithMetadata) => void;
   resetTypeFunc?: () => void;
 }) {
-  const [packageType, setPackageType] = useState("");
-  const [packageNamespace, setPackageNamespace] = useState("");
-  const [packageName, setPackageName] = useState("");
+  const [packageType, setPackageType] = useState<string | null>(null);
+  const [packageNamespace, setPackageNamespace] = useState<string | null>(null);
+  const [packageName, setPackageName] = useState<string | null>(null);
   const [packageNamespaces, setPackageNamespaces] = useState(
     INITIAL_PACKAGE_NAMESPACES
   );
@@ -33,7 +33,7 @@ export default function PackageSelector({
 
   const resetNamespace = () => {
     setPackageNames(INITIAL_PACKAGE_NAMESPACES);
-    setPackageName("");
+    setPackageName(null);
     resetName();
   };
 
@@ -43,7 +43,7 @@ export default function PackageSelector({
 
   const resetType = () => {
     setPackageNamespaces(INITIAL_PACKAGE_NAMESPACES);
-    setPackageNamespace("");
+    setPackageNamespace(null);
     resetNamespace();
     resetTypeFunc();
   };
@@ -70,7 +70,7 @@ export default function PackageSelector({
           setPackageNamespaceFunc={setPackageNamespace}
           setPackageNamesFunc={setPackageNames}
           resetNamespaceFunc={resetName}
-          disabled={!packageType}
+          disabled={packageType === null}
         />
       </div>
       <div className="left-0 flex w-full items-end justify-center bg-gradient-to-t lg:static lg:h-auto lg:w-auto lg:bg-none">
@@ -82,7 +82,7 @@ export default function PackageSelector({
           setPackageNameFunc={setPackageName}
           setPackageVersionsFunc={setPackageVersions}
           resetNameFunc={resetName}
-          disabled={!packageNamespace}
+          disabled={packageNamespace === null}
         />
       </div>
       <div className="left-0 flex w-full items-end justify-center bg-gradient-to-t lg:static lg:h-auto lg:w-auto lg:bg-none">
@@ -93,7 +93,7 @@ export default function PackageSelector({
           packageNamespace={packageNamespace}
           packageName={packageName}
           setGraphDataFunc={setGraphData}
-          disabled={!packageName}
+          disabled={packageName === null}
         />
       </div>
     </div>
