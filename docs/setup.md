@@ -22,8 +22,8 @@ To use the GUAC visualizer, you need to have the [main GUAC server running](http
 
 ## Step 1. Getting started
 
-Get the
-[source code for guac-visualizer `v0.3.0` here:](https://github.com/guacsec/guac-visualizer/releases/tag/v0.3.0)
+Download the
+[source code for the latest guac-visualizer release](https://github.com/guacsec/guac-visualizer/releases/latest)
 
 `cd` into it:
 

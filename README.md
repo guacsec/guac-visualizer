@@ -23,4 +23,5 @@ If you are instead looking for the main GUAC repo, you may find it [here](https:
 
 ## Give Feedback
 
-We'd love to hear how we can make the visualizer more useful. Send feedback **[here](https://forms.gle/Bv1RgaPvuxXdJPt17)**.
+We'd love to hear how we can make the visualizer more useful.
+See the [GUAC Community page](https://guac.sh/community) for contact information.
