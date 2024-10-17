@@ -56,6 +56,27 @@ info  - Using webpack 5. Reason: Enabled by default https://nextjs.org/docs/mess
 ...
 ```
 
+## Configuring the server (optional step)
+
+When running the development server (see step 3), or as a container app,
+the visualizer app server needs some configuration.
+The default configuration is stored in `.env` file.
+
+```properties
+# Reminder: These are the defaults for the application.
+# Please, use a `.env.local` file for you local config
+# See also: https://nextjs.org/docs/app/building-your-application/configuring/environment-variables
+
+GUACGQL_SERVER_URL=http://localhost:8080
+```
+
+You have multiple options, to change the configuration to your local needs:
+* provide environment variable ==> typical for execution environment, like kubernetes
+* create file `.env.local`, which then contains local configurations ==> typical during development 
+
+If these two options are not fitting for you, there are even more options for changing the configuration,
+please read the [next.js's documentation, chapter environment variables](https://nextjs.org/docs/app/building-your-application/configuring/environment-variables).
+
 <hr />
 
 **Using the GUAC visualizer will look something like this:**
