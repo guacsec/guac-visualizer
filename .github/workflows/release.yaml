@@ -33,7 +33,7 @@ jobs:
       digest: ${{ steps.build_n_publish_image.outputs.IMAGE_DIGEST }}
     env:
       IMAGE_URI: ghcr.io/${{ github.repository }}
-      BUILDER: paketobuildpacks/builder-jammy-full
+      BUILDER: paketobuildpacks/builder-jammy-base
       BUILDPACK: paketo-buildpacks/nodejs
       BUILDPACK_SBOM_OUTPUT_DIR: sbom-output-dir
       BUILDPACK_SPDX_SBOM: "launch/paketo-buildpacks_yarn-install/launch-modules/sbom.spdx.json"
@@ -46,7 +46,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup pack 
+      - name: Setup pack
         uses: buildpacks/github-actions/setup-pack@7fc3d673350db0fff960cc94a3b9b80e5b663ae2 # v5.0.0
       - name: Install cosign
         uses: sigstore/cosign-installer@v3.6.0 # main
@@ -58,9 +58,9 @@ jobs:
         run: |
           #!/usr/bin/env bash
           set -euo pipefail
-          npm version --no-git-tag-version $(git describe --tags --abbrev=0)          
+          npm version --no-git-tag-version $(git describe --tags --abbrev=0)
       - name: Build and publish image
-        id: build_n_publish_image 
+        id: build_n_publish_image
         run: |
           #!/usr/bin/env bash
           set -euo pipefail
