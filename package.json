@@ -3,7 +3,7 @@
     "node": "20.*.*"
   },
   "name": "guac-visualizer",
-  "version": "main",
+  "version": "0.0.0-development",
   "private": true,
   "scripts": {
     "dev": "next dev",

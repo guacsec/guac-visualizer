@@ -1,4 +1,17 @@
+'use client';
+
+import {useEffect, useState} from "react";
+
 export default function Footer() {
+  const [versionData, setData] = useState({guacgql: "", guacVisualizer: ""})
+  useEffect(() => {
+    fetch('/api/version')
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data);
+      })
+  }, []);
+
   return (
     <>
       <div className="flex justify-center bg-stone-200 dark:bg-stone-800 px-2 md:px-20 items-center backdrop-blur-sm w-full py-4">
@@ -12,6 +25,10 @@ export default function Footer() {
             Send feedback here!
           </a>
         </h1>
+      </div>
+      <div
+        className="flex justify-center bg-stone-200 dark:bg-stone-800 px-2 md:px-20 items-center backdrop-blur-sm w-full py-1">
+        <small className="text-gray-400">Served by GUAC GraphQL {versionData.guacgql}</small>
       </div>
     </>
   );
