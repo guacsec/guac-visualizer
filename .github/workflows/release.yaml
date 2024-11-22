@@ -90,6 +90,8 @@ jobs:
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v2.0.0 # must use semver here
     permissions:
       id-token: write # needed for signing the images with GitHub OIDC Token **not production ready**
+      actions: none
+      packages: none
     with:
       image: ${{ needs.build-n-release.outputs.image }}
       digest: ${{ needs.build-n-release.outputs.digest }}
