@@ -89,6 +89,8 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v2.0.0 # must use semver here
     permissions:
+      actions: read
+      packages: write
       id-token: write # needed for signing the images with GitHub OIDC Token **not production ready**
     with:
       image: ${{ needs.build-n-release.outputs.image }}
