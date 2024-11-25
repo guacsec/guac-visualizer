@@ -38,6 +38,7 @@ jobs:
       BUILDPACK_SPDX_SBOM: "launch/paketo-buildpacks_yarn-install/launch-modules/sbom.spdx.json"
     permissions:
       packages: write # To publish container images to GHCR
+      id-toke: write # For sigstore to use our OIDC token for signing
     steps:
       - name: Checkout code
         uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # tag=v3
