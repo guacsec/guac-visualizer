@@ -2968,6 +2968,8 @@ export type QueryVulnerabilityMetadataListArgs = {
  */
 export enum QueryType {
   /** indirect dependency */
+  Eol = 'EOL',
+  /** indirect dependency */
   License = 'LICENSE',
   /** direct dependency */
   Vulnerability = 'VULNERABILITY'
