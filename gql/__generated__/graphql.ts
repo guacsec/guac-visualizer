@@ -2438,7 +2438,7 @@ export type Query = {
   BatchQueryDepPkgDependency: Array<IsDependency>;
   /** Batch queries via pkgVersion IDs to find all CertifyLegal (latest timestamp) */
   BatchQueryPkgIDCertifyLegal: Array<CertifyLegal>;
-  /** Batch queries via pkgVersion IDs to find all CertifyVulns (latest timestamp) that contain vulnerabilities */
+  /** Batch queries via pkgVersion IDs to find all CertifyVulns (latest timestamp, including any `novuln`) */
   BatchQueryPkgIDCertifyVuln: Array<CertifyVuln>;
   /** Batch queries via pkgVersion IDs to find to find all isDependency nodes that have the subject pkg ID */
   BatchQuerySubjectPkgDependency: Array<IsDependency>;
@@ -2967,6 +2967,8 @@ export type QueryVulnerabilityMetadataListArgs = {
  * or certifyLegal.
  */
 export enum QueryType {
+  /** indirect dependency */
+  Eol = 'EOL',
   /** indirect dependency */
   License = 'LICENSE',
   /** direct dependency */
