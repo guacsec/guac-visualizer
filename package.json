@@ -37,7 +37,7 @@
     "jerrypick": "^1.1.1",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
-    "next": "14.2.15",
+    "next": "14.2.21",
     "next-transpile-modules": "^10.0.0",
     "postcss": "^8.4.31",
     "react": "^18.2.0",
