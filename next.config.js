@@ -10,6 +10,14 @@ const nextConfig = {
   experimental: {
     missingSuspenseWithCSRBailout: false,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/graphql",
+        destination: "http://localhost:8080/query",
+      },
+    ]
+  }
 };
 
 module.exports = nextConfig;
