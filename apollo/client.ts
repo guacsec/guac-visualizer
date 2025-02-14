@@ -5,6 +5,7 @@ import {
   NormalizedCacheObject,
 } from "@apollo/client";
 import merge from "deepmerge";
+import { GUACGQL_PROXY_PATH } from "@/src/config";
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
@@ -12,7 +13,8 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
     // link: createIsomorphLink(),
-    uri: "/api/graphql",
+    uri: GUACGQL_PROXY_PATH,
+    credentials: "same-origin",
     cache: new InMemoryCache(),
     defaultOptions: {
       watchQuery: {
@@ -25,21 +27,7 @@ function createApolloClient() {
   });
 }
 
-const client = new ApolloClient({
-  ssrMode: typeof window === "undefined",
-  // link: createIsomorphLink(),
-  uri: "/api/graphql",
-  credentials: "same-origin",
-  cache: new InMemoryCache(),
-  defaultOptions: {
-    watchQuery: {
-      fetchPolicy: "no-cache",
-    },
-    query: {
-      fetchPolicy: "no-cache",
-    },
-  },
-});
+const client = createApolloClient();
 
 export function initializeApollo(initialState: NormalizedCacheObject = null) {
   const _apolloClient = apolloClient ?? createApolloClient();

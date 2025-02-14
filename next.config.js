@@ -1,3 +1,5 @@
+const config = require("./src/config");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -9,6 +11,14 @@ const nextConfig = {
   // https://github.com/guacsec/guac-visualizer/issues/98
   experimental: {
     missingSuspenseWithCSRBailout: false,
+  },
+  async rewrites() {
+    return [
+      {
+        source: config.GUACGQL_PROXY_PATH,
+        destination: config.GUACGQL_SERVER_QUERY_URL.toString(),
+      },
+    ];
   },
 };
 
