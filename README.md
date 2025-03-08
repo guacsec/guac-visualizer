@@ -27,3 +27,7 @@ If you are instead looking for the main GUAC repo, you may find it [here](https:
 
 We'd love to hear how we can make the visualizer more useful.
 See the [GUAC Community page](https://guac.sh/community) for contact information.
+
+## License
+
+GUAC Visualizer is released under the [Apache License 2.0](LICENSE).
