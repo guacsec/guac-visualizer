@@ -1,10 +1,9 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useApolloClient } from "@apollo/client";
 import { CERTIFY_VULN_QUERY } from "./certifyVulnQuery";
 import { useRouter } from "next/navigation";
-import { useGraphData } from "@/hooks/useGraphData";
+import { ArrowRightCircleIcon } from "@heroicons/react/24/solid";
+import { useVulnResults } from "@/store/vulnResultsContext";
 
 const QueryCertifyVuln: React.FC = () => {
   const [vulnerabilityID, setVulnerabilityID] = useState("");
@@ -12,11 +11,11 @@ const QueryCertifyVuln: React.FC = () => {
   const [searched, setSearched] = useState(false);
   const client = useApolloClient();
   const router = useRouter();
-
-  const { setGraphData } = useGraphData();
+  const { setVulnResults } = useVulnResults();
 
   // triggers a GraphQL query based on the user input, updates the results state, and navigates to a URL with its corresponding id
   const handleVulnSearch = async () => {
+    if (!vulnerabilityID) return;
     setSearched(true);
     const { data } = await client.query({
       query: CERTIFY_VULN_QUERY,
@@ -24,34 +23,23 @@ const QueryCertifyVuln: React.FC = () => {
         filter: { vulnerability: { vulnerabilityID } },
       },
     });
-    setResults(data.CertifyVuln);
+
     if (data.CertifyVuln && data.CertifyVuln.length > 0) {
+      setResults(data.CertifyVuln);
+      setVulnResults(data.CertifyVuln);
+
       const firstResultId = data.CertifyVuln[0].id;
       router.push(`/?path=${firstResultId}`);
+    } else {
+      setResults([]);
+      setVulnResults([]);
     }
+    setVulnerabilityID("");
   };
 
-  // updates the URL and graph data based on the first result's ID whenever the results state changes.
-  // note: this is temporary until a more stable URL parameter feature is built out
-  useEffect(() => {
-    if (results && results.length > 0) {
-      const firstResultId = results[0].id;
-      const currentPath = window.location.pathname;
-      const newPath = `/?path=${firstResultId}`;
-      const newUrl =
-        currentPath !== "/"
-          ? currentPath.replace(/\?path=.*/, newPath)
-          : newPath;
-
-      window.history.pushState(null, "", newUrl);
-
-      setGraphData(firstResultId);
-    }
-  }, [setGraphData, results]);
-
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="py-3 text-lg font-semibold">Query vulnerability</h1>
+    <div className="ml-10 container mx-auto p-4">
+      <h1 className="py-3 text-lg">Query vulnerability</h1>
       <input
         className="border rounded p-2 mb-4 dark:text-black"
         value={vulnerabilityID}
@@ -64,7 +52,6 @@ const QueryCertifyVuln: React.FC = () => {
       >
         Search
       </button>
-
       {results ? (
         <div className="mt-4">
           {results.map((node) => {
