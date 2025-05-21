@@ -12,8 +12,6 @@ use of GUAC, we recommend using the
 ## Get Started
 
 To get started with GUAC visualizer, look at the guide on [our official docsite](https://docs.guac.sh/guac-visualizer/).
-To configure the backend, provide an environment variable with proper URL, e.g. `GUACGQL_SERVER_URL=http://localhost:8080`.
-For more configuration options, please see [docs/setup.md](./docs/setup.md#configuring-the-server-optional-step)
 
 Once started, using the visualizer might look something like this:
 
