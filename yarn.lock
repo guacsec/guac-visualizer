@@ -653,7 +653,7 @@
     "@graphql-codegen/plugin-helpers" "^4.1.0"
     tslib "~2.5.0"
 
-"@graphql-codegen/cli@^3.2.2":
+"@graphql-codegen/cli@^3.3.1":
   version "3.3.1"
   resolved "https://registry.npmjs.org/@graphql-codegen/cli/-/cli-3.3.1.tgz"
   integrity sha512-4Es8Y9zFeT0Zx2qRL7L3qXDbbqvXK6aID+8v8lP6gaYD+uWx3Jd4Hsq5vxwVBR+6flm0BW/C85Qm0cvmT7O6LA==
@@ -2546,7 +2546,7 @@ cookie-signature@~1.0.6:
   resolved "https://registry.npmjs.org/cookie-signature/-/cookie-signature-1.0.7.tgz"
   integrity sha512-NXdYc3dLr47pBkpUCHtKSwIOQXLVn8dZEuywboCOJY/osA0wFSLlSawr3KN8qXJEyX66FcONTH8EIlVuK0yyFA==
 
-cookie@^1.0.1:
+cookie@^1.0.1, cookie@^1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/cookie/-/cookie-1.1.1.tgz"
   integrity sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==
