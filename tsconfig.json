@@ -18,7 +18,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "baseUrl": ".",
     "paths": {
@@ -39,7 +39,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next.config.js",
-    "src/config.js"
+    "src/config.js",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
