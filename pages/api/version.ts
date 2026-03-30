@@ -15,7 +15,7 @@ export const config = {
 export default async function provideVersionInformation(req: NextApiRequest, res: NextApiResponse) {
   const options = {
     timeout: {
-      connect: 5 // assuming the backend should be able to establish connection in 5 seconds
+      connect: 5000 // assuming the backend should be able to establish connection in 5 seconds
     },
     responseType: "buffer",
     headers: {
