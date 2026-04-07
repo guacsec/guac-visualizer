@@ -64,12 +64,12 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^3.2.2",
-    "@graphql-codegen/client-preset": "^2.1.1",
-    "@graphql-codegen/typescript": "^3.0.2",
-    "@graphql-codegen/typescript-operations": "^3.0.2",
-    "@graphql-codegen/typescript-react-apollo": "^3.3.7",
-    "@graphql-codegen/typescript-resolvers": "^3.1.1",
+    "@graphql-codegen/cli": "^6.2.1",
+    "@graphql-codegen/client-preset": "^5.2.4",
+    "@graphql-codegen/typescript": "^5.0.9",
+    "@graphql-codegen/typescript-operations": "^5.0.9",
+    "@graphql-codegen/typescript-react-apollo": "^4.4.1",
+    "@graphql-codegen/typescript-resolvers": "^5.1.7",
     "@types/cytoscape": "3.19.9",
     "@types/got": "^9.6.12",
     "@types/lodash": "^4.14.196",
