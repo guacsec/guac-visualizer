@@ -17,7 +17,8 @@
   "resolutions": {
     "form-data": ">=4.0.5",
     "minimatch": ">=3.1.5",
-    "@cosmograph/cosmos": "npm:@cosmos.gl/graph"
+    "@cosmograph/cosmos": "npm:@cosmos.gl/graph",
+    "@ardatan/relay-compiler": ">=13.0.1"
   },
   "dependencies": {
     "3d-force-graph": "^1.71.2",
