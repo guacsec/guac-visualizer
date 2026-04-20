@@ -20,7 +20,7 @@ export default function Footer() {
           <a
             className="text-purple-900 font-semibold"
             href="https://forms.gle/Bv1RgaPvuxXdJPt17"
-            target="blank"
+            target="_blank"
           >
             Send feedback here!
           </a>

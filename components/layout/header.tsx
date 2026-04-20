@@ -17,20 +17,21 @@ export default function Header() {
         <a
           className="block py-1 text-sm text-gray-800 dark:text-stone-300 hover:bg-white dark:hover:bg-black rounded-xl p-3 my-2"
           href="https://github.com/guacsec/guac-visualizer"
-          target="blank"
+          target="_blank"
         >
           GitHub
         </a>
         <a
           className="block py-1 text-sm text-gray-800 dark:text-stone-300 hover:bg-white dark:hover:bg-black rounded-xl p-3 my-2"
           href="https://docs.guac.sh/"
-          target="blank"
+          target="_blank"
         >
           GUAC Docs
         </a>
         <a
           className="block py-1 text-sm text-gray-800 dark:text-stone-300 hover:bg-white dark:hover:bg-black rounded-xl p-3 my-2"
           href="https://guac.sh/community/"
+          target="_blank"
         >
           Community
         </a>
