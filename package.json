@@ -56,7 +56,7 @@
     "next": "16.2.6",
     "next-transpile-modules": "^10.0.0",
     "postcss": "^8.5.10",
-    "qs": "6.14.2",
+    "qs": "6.15.2",
     "react": "^18.2.0",
     "react-cytoscapejs": "^2.0.0",
     "react-dom": "^18.2.0",
