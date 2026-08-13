@@ -33,7 +33,7 @@
     "@eslint/plugin-kit": "^0.3.4",
     "@floating-ui/dom": "^1.2.6",
     "@heroicons/react": "^2.0.18",
-    "@remix-run/router": "1.23.2",
+    "@remix-run/router": "1.23.3",
     "@textea/json-viewer": "^2.14.1",
     "@types/node": "^20.14.8",
     "@types/react": "18.0.27",
