@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import {
   ApolloClient,
+  HttpLink,
   InMemoryCache,
   NormalizedCacheObject,
 } from "@apollo/client";
@@ -12,9 +13,10 @@ let apolloClient: ApolloClient<NormalizedCacheObject>;
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    // link: createIsomorphLink(),
-    uri: GUACGQL_PROXY_PATH,
-    credentials: "same-origin",
+    link: new HttpLink({
+      uri: GUACGQL_PROXY_PATH,
+      credentials: "same-origin",
+    }),
     cache: new InMemoryCache(),
     defaultOptions: {
       watchQuery: {

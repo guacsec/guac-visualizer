@@ -50,27 +50,23 @@ const KnownInfo = () => {
   });
 
   const fetchVulns = async () => {
-    let pathWithIDs = "";
     resetState();
     setHandleVulnClicked(true);
     if (pkgVersion !== "") {
       const { data } = await vulnsRefetch({ pkgVersion });
-      if (
-        data?.CertifyVuln &&
-        Array.isArray(data.CertifyVuln) &&
-        data.CertifyVuln.length > 0 &&
-        data.CertifyVuln.some(
-          (vuln: CertifyVuln) => vuln.vulnerability.type !== "novuln"
-        )
-      ) {
-        setVulns(data.CertifyVuln);
-        for (let vuln of data.CertifyVuln) {
-          pathWithIDs += `${vuln.id},`;
-        }
-        router.push(`/?path=${pathWithIDs?.slice(0, pathWithIDs.length - 1)}`);
-      } else {
+      if (!Array.isArray(data?.CertifyVuln)) {
         console.error("Unexpected data structure:", data);
         setVulns([]);
+        return;
+      }
+      // no matches, or only "novuln", just means nothing known against this
+      // version -- the render below shows "Didn't find vulns" for it
+      const found = data.CertifyVuln.filter(
+        (vuln: CertifyVuln) => vuln.vulnerability.type !== "novuln"
+      );
+      setVulns(found);
+      if (found.length > 0) {
+        router.push(`/?path=${found.map((v: CertifyVuln) => v.id).join(",")}`);
       }
     }
   };
@@ -205,7 +201,7 @@ const KnownInfo = () => {
 
   return (
     <div className="text-black">
-      <div className="flex items-center justify-center">
+      <div className="flex flex-wrap items-center gap-2">
         {VULNLoadingElement}
         {VULNErrorElement}
         {SBOMLoadingElement}
@@ -215,7 +211,7 @@ const KnownInfo = () => {
         <button
           disabled={!pkgID}
           type="button"
-          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
+          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 ${
             !pkgID ? "cursor-not-allowed opacity-50" : ""
           }`}
           onClick={fetchVulns}
@@ -229,7 +225,7 @@ const KnownInfo = () => {
         <button
           disabled={!packageName || !pkgID}
           type="button"
-          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
+          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 ${
             !packageName || !pkgID ? "cursor-not-allowed opacity-50" : ""
           }`}
           onClick={fetchSBOMs}
@@ -240,7 +236,7 @@ const KnownInfo = () => {
         <button
           disabled={!packageName}
           type="button"
-          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
+          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 ${
             !packageName || !pkgID ? "cursor-not-allowed opacity-50" : ""
           }`}
           onClick={fetchOccurrences}
@@ -251,7 +247,7 @@ const KnownInfo = () => {
         <button
           disabled={!pkgID}
           type="button"
-          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-300 px-2.5 py-1.5 text-sm font-semibold text-gray shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 mx-2 my-5 ${
+          className={`inline-flex items-center gap-x-1.5 rounded-md bg-gray-300 px-2.5 py-1.5 text-sm font-semibold text-gray shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 ${
             !pkgID ? "cursor-not-allowed opacity-50" : ""
           }`}
           onClick={resetState}

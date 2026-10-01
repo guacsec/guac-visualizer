@@ -20,10 +20,10 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
   userInteractedWithPath,
 }) => {
   return (
-    <div className=" mt-10 flex space-x-3">
+    <div className="flex space-x-2">
       <button
         type="button"
-        className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
+        className={`rounded px-2.5 py-2 text-xs font-semibold shadow-sm ${
           backStack.length === 0
             ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
             : "bg-slate-700 text-white"
@@ -36,7 +36,7 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
       </button>
       <button
         type="button"
-        className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
+        className={`rounded px-2.5 py-2 text-xs font-semibold shadow-sm ${
           breadcrumb.length === 0 || currentIndex >= breadcrumb.length - 1
             ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
             : "bg-slate-700 text-white"
@@ -53,7 +53,7 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
       </button>
       <button
         type="button"
-        className={`rounded px-3 py-2 text-xs font-semibold shadow-sm ${
+        className={`rounded px-2.5 py-2 text-xs font-semibold shadow-sm ${
           breadcrumb.length === 0
             ? "bg-gray-300 dark:bg-slate-700 cursor-not-allowed"
             : "bg-slate-700 text-white"

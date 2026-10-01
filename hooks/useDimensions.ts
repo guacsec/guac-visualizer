@@ -1,35 +1,30 @@
-import { useState, useEffect } from "react";
-import { debounce } from "lodash";
+"use client";
 
-export function useDimensions() {
-  const [dimensions, setDimensions] = useState({ width: 3000, height: 1000 });
+import { useEffect, useRef, useState } from "react";
+
+/**
+ * Measures the element the graph actually lives in.
+ *
+ * The previous version guessed from `window.innerWidth * 0.5`, which was only
+ * ever right for one layout -- collapse the legend or the details panel and the
+ * canvas kept the old width, leaving a dead gutter beside a cramped graph.
+ */
+export function useDimensions<T extends HTMLElement = HTMLDivElement>() {
+  const ref = useRef<T>(null);
+  const [size, setSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    setDimensions({
-      width: window.innerWidth,
-      height: window.innerHeight,
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      setSize({ width: Math.round(width), height: Math.round(height) });
     });
 
-    const handleResize = debounce(() => {
-      setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }, 300);
-
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
-  let containerWidth = dimensions.width * 0.5;
-  let containerHeight = dimensions.height * 0.6;
-
-  if (dimensions.width <= 640) {
-    containerWidth = dimensions.width * 0.9;
-    containerHeight = dimensions.height * 0.5;
-  }
-
-  return { containerWidth, containerHeight };
+  return { ref, ...size };
 }

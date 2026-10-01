@@ -21,6 +21,7 @@ export function useGraphData() {
   const [initialGraphData, setInitialGraphData] =
     useState<GraphDataWithMetadata | null>(null);
   const [renderedInitialGraph, setRenderedInitialGraph] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
 
@@ -50,13 +51,20 @@ export function useGraphData() {
   // fetch neighbor nodes and set new graph data
   const fetchAndSetGraphData = async (id: string | number) => {
     try {
-      const res = await fetchNeighbors(id.toString());
+      const { nodes, total, shown } = await fetchNeighbors(id.toString());
       const newGraphData: GraphDataWithMetadata = { nodes: [], links: [] };
-      res.forEach((n) => {
+      nodes.forEach((n) => {
         let node = n as NodeFragment;
         parseAndFilterGraph(newGraphData, ParseNode(node));
       });
       setGraphData(newGraphData);
+      // say so when the node was too dense to draw whole, otherwise the missing
+      // neighbors just look like a bug
+      setNotice(
+        total > shown
+          ? `That node has ${total.toLocaleString()} neighbors. Showing the first ${shown.toLocaleString()}.`
+          : null
+      );
     } catch (error) {
       console.error(error);
     }
@@ -111,6 +119,7 @@ export function useGraphData() {
 
   return {
     graphData,
+    notice,
     setGraphData,
     initialGraphData,
     renderedInitialGraph,

@@ -49,11 +49,8 @@ export default function PackageSelector({
   };
 
   return (
-    <div
-      id="ptDiv"
-      className="z-10 w-full max-w-5xl items-center justify-between text-sm lg:flex"
-    >
-      <div className="left-0 flex w-full items-end justify-center lg:static lg:h-auto lg:w-auto lg:bg-none">
+    <div id="ptDiv" className="flex flex-wrap items-end gap-x-3 gap-y-2">
+      <div>
         <PackageTypeSelect
           label="Package Type"
           options={packageTypes}
@@ -62,7 +59,7 @@ export default function PackageSelector({
           resetTypeFunc={resetType}
         />
       </div>
-      <div className="left-0 flex w-full items-end justify-center lg:static lg:h-auto lg:w-auto lg:bg-none">
+      <div>
         <PackageNamespaceSelect
           label="Package Namespace"
           options={packageNamespaces}
@@ -73,7 +70,7 @@ export default function PackageSelector({
           disabled={packageType === null}
         />
       </div>
-      <div className="left-0 flex w-full items-end justify-center bg-gradient-to-t lg:static lg:h-auto lg:w-auto lg:bg-none">
+      <div>
         <PackageNameSelect
           label="Package Name"
           options={packageNames}
@@ -85,7 +82,7 @@ export default function PackageSelector({
           disabled={packageNamespace === null}
         />
       </div>
-      <div className="left-0 flex w-full items-end justify-center bg-gradient-to-t lg:static lg:h-auto lg:w-auto lg:bg-none">
+      <div>
         <PackageVersionSelect
           label="Package Version"
           options={packageVersions}

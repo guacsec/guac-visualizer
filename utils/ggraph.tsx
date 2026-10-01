@@ -20,6 +20,7 @@ import {
   CertifyScorecard,
   CertifyVuln,
   HasSourceAt,
+  HasMetadata,
   HasSbom,
   HasSlsa,
   Vulnerability,
@@ -120,6 +121,9 @@ export function ParseNode(
       break;
     case "HasSLSA":
       [gd, target] = parseHasSlsa(n as HasSlsa);
+      break;
+    case "HasMetadata":
+      [gd, target] = parseHasMetadata(n as HasMetadata);
       break;
     case "Vulnerability": // Add this case
       [gd, target] = parseVulnerability(n); // You'll need to implement this function
@@ -1049,4 +1053,53 @@ export function parseCertifyLegal(
 
   target = nodes.at(-1);
   return [{ nodes: nodes, edges: edges }, target];
+}
+
+/**
+ * A key/value attestation about a package, source or artifact -- in practice
+ * mostly CPE identifiers emitted during SBOM ingestion, which makes these by far
+ * the most numerous evidence nodes in a typical store.
+ *
+ * Same shape as parseCertifyGood, but written against one subject branch instead
+ * of three near-identical copies of the same block.
+ */
+export function parseHasMetadata(
+  n: HasMetadata
+): [GuacGraphData, Node | undefined] {
+  const nodes: Node[] = [
+    {
+      data: {
+        ...n,
+        id: n.id,
+        // Full key=value: the canvas truncates it, the hover tooltip does not.
+        label: `${n.key}: ${n.value}`,
+        type: "HasMetadata",
+        expanded: "true",
+      },
+    },
+  ];
+  const edges: Edge[] = [];
+  const target = nodes.at(-1);
+
+  const sub = n.subject;
+  const [gd, t]: [GuacGraphData | undefined, Node | undefined] =
+    sub.__typename === "Artifact"
+      ? parseArtifact(sub)
+      : sub.__typename === "Source"
+        ? parseSource(sub)
+        : sub.__typename === "Package"
+          ? parsePackage(sub)
+          : [undefined, undefined];
+
+  if (gd) {
+    nodes.push(...gd.nodes);
+    edges.push(...gd.edges);
+    if (t != undefined) {
+      edges.push({
+        data: { source: n.id, target: t.data.id, label: "has_metadata" },
+      });
+    }
+  }
+
+  return [{ nodes, edges }, target];
 }

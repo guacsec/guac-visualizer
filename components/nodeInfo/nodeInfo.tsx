@@ -3,9 +3,9 @@ import KnownInfo from "../known/knownInfo";
 
 const NodeInfo = () => {
   return (
-    <div className="bg-gray-200 mx-10 p-10 h-[550px] w-[650px] overflow-y-auto flex flex-col items-center text-slate-900">
-      <h1 className="font-bold text-lg">Package Information</h1>
-      <p className="text-sm mb-1">Fetch more information about this package</p>
+    <div className="flex flex-col p-4">
+      <h2 className="font-semibold uppercase tracking-wide text-xs opacity-70">Package details</h2>
+      <p className="pb-3 text-xs opacity-60 leading-snug">Known vulnerabilities, SBOMs and attestations for the selected package.</p>
       <KnownInfo />
     </div>
   );

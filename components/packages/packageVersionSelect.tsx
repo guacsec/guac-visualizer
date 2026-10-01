@@ -1,8 +1,7 @@
 import client from "@/apollo/client";
-import { parseAndFilterGraph } from "@/utils/graph_queries";
+import { fetchNeighbors, parseAndFilterGraph } from "@/utils/graph_queries";
 import {
   AllPkgTreeFragment,
-  NeighborsDocument,
   PackagesDocument,
 } from "@/gql/__generated__/graphql";
 import React from "react";
@@ -101,15 +100,9 @@ const PackageVersionSelect = ({
       const parsedNode = ParseNode(pkg);
 
       parseAndFilterGraph(graphData, parsedNode);
-      client
-        .query({
-          query: NeighborsDocument,
-          variables: {
-            node: pkg.id,
-            usingOnly: [],
-          },
-        })
-        .then((r) => processGraphData(r.data.neighbors, graphData));
+      // through fetchNeighbors for the same cap a node click gets: selecting a
+      // version of a dense package pulled the whole neighbor tree here too
+      fetchNeighbors(pkg.id).then((r) => processGraphData(r.nodes, graphData));
     });
   };
 

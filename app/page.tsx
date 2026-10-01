@@ -1,34 +1,46 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
-import Graph from "@/components/graph/Graph";
-// import { HighlightToggles } from "@/components/highlightToggles";
-import { useGraphData } from "@/hooks/useGraphData";
-import { usePackageData } from "@/hooks/usePackageData";
-import PackageSelector from "@/components/packages/packageSelector";
-import { Breadcrumb } from "@/components/breadcrumb";
-import { NavigationButtons } from "@/components/navigationButton";
-import { useBreadcrumbNavigation } from "@/hooks/useBreadcrumbNavigation";
-import QueryVuln from "@/components/queryvuln/queryVuln";
+import React, { useMemo, useState, useEffect, Suspense } from "react";
 import { ApolloProvider } from "@apollo/client";
 import client from "@/apollo/client";
-import { useDimensions } from "@/hooks/useDimensions";
-import { PackageDataProvider } from "@/store/packageDataContext";
+
+import Graph from "@/components/graph/Graph";
+import GraphLegend from "@/components/graph/GraphLegend";
+import HelpPanel from "@/components/helpPanel";
+import { Breadcrumb } from "@/components/breadcrumb";
+import { NavigationButtons } from "@/components/navigationButton";
+import PackageSelector from "@/components/packages/packageSelector";
+import QueryVuln from "@/components/queryvuln/queryVuln";
 import NodeInfo from "@/components/nodeInfo/nodeInfo";
+
+import { useGraphData } from "@/hooks/useGraphData";
+import { usePackageData } from "@/hooks/usePackageData";
+import { useBreadcrumbNavigation } from "@/hooks/useBreadcrumbNavigation";
+import { useDimensions } from "@/hooks/useDimensions";
+import { useShortcuts, Shortcut } from "@/hooks/useShortcuts";
+import { PackageDataProvider } from "@/store/packageDataContext";
 import { VulnResultsProvider } from "@/store/vulnResultsContext";
 
+const SEEN_HELP_KEY = "guacviz.seenHelp";
+
+const TOGGLE_CLASS =
+  "rounded border border-black/15 dark:border-white/20 px-2.5 py-2 text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/10";
+
 function HomeContent() {
-  const [highlights, setHighlights] = useState({
-    artifact: false,
-    vuln: false,
-    sbom: false,
-    builder: false,
-  });
+  const [showLegend, setShowLegend] = useState(true);
+  const [showDetails, setShowDetails] = useState(true);
+  const [showHelp, setShowHelp] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | number | null>(null);
+  /** null = show everything. A set = only these node types stay bright. */
+  const [focusTypes, setFocusTypes] = useState<Set<string> | null>(null);
+
+  const graphRef = React.useRef<any>();
 
   const {
     graphData,
-    setGraphData,
+    notice,
     initialGraphData,
+    setGraphData,
     fetchAndSetGraphData,
     setGraphDataWithInitial,
   } = useGraphData();
@@ -50,65 +62,94 @@ function HomeContent() {
   );
 
   const { packageTypes, packageLoading, packageError } = usePackageData();
+  const { ref: graphBoxRef, width, height } = useDimensions<HTMLDivElement>();
 
-  const { containerWidth, containerHeight } = useDimensions();
+  const hasGraph = graphData.nodes.length > 0;
+
+  // First visit opens the help panel once. After that it is on demand only.
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem(SEEN_HELP_KEY)) {
+        setShowHelp(true);
+        localStorage.setItem(SEEN_HELP_KEY, "1");
+      }
+    } catch {
+      // Private mode / blocked storage: just skip the intro.
+    }
+  }, []);
+
+  const zoomBy = (factor: number) => {
+    const fg = graphRef.current;
+    if (!fg) return;
+    fg.zoom(fg.zoom() * factor, 200);
+  };
+
+  const fit = () => graphRef.current?.zoomToFit(400, 60);
+
+  const toggleType = (type: string) =>
+    setFocusTypes((prev) => {
+      const next = new Set(prev ?? []);
+      if (next.has(type)) {
+        next.delete(type);
+      } else {
+        next.add(type);
+      }
+      return next.size === 0 ? null : next;
+    });
+
+  const clearAll = () => {
+    setFocusTypes(null);
+    setSelectedId(null);
+    setShowHelp(false);
+  };
+
+  const onNodeClick = (node: any) => {
+    setSelectedId(node?.id ?? null);
+    handleNodeClick(node);
+  };
+
+  const shortcuts: Shortcut[] = useMemo(
+    () => [
+      { keys: "?", match: ["?"], label: "Open or close this help", run: () => setShowHelp((v) => !v) },
+      { keys: "F", match: ["f"], label: "Fit the graph to the view", run: fit },
+      { keys: "+", match: ["+", "="], label: "Zoom in", run: () => zoomBy(1.3) },
+      { keys: "−", match: ["-"], label: "Zoom out", run: () => zoomBy(1 / 1.3) },
+      { keys: "L", match: ["l"], label: "Show or hide the legend", run: () => setShowLegend((v) => !v) },
+      { keys: "I", match: ["i"], label: "Show or hide package details", run: () => setShowDetails((v) => !v) },
+      { keys: "←", match: ["arrowleft"], label: "Back to the previous node", run: handleBackClick },
+      { keys: "→", match: ["arrowright"], label: "Forward again", run: handleForwardClick },
+      { keys: "R", match: ["r"], label: "Reset to the starting graph", run: reset },
+      { keys: "Esc", match: ["escape"], label: "Clear the filter and close panels", run: clearAll },
+    ],
+    [handleBackClick, handleForwardClick, reset]
+  );
+
+  useShortcuts(shortcuts);
 
   return (
-    <main className="h-full w-screen md:w-auto flex flex-col p-10">
-      {packageLoading ? (
-        <div>Loading package types...</div>
-      ) : packageError ? (
-        <div>Error loading package types!</div>
-      ) : (
-        <div className="flex flex-col md:flex-row justify-center py-5">
-          <PackageSelector
-            packageTypes={packageTypes}
-            setGraphData={setGraphDataWithInitial}
-            resetTypeFunc={reset}
-          />
-          <div>
+    <div className="flex h-full flex-col">
+      {/* ---- toolbar: everything that starts or steers a query ---- */}
+      <div className="flex flex-wrap items-end gap-x-6 gap-y-3 border-b border-black/10 dark:border-white/10 px-4 py-3">
+        {packageLoading ? (
+          <span className="text-sm opacity-70">Loading package types…</span>
+        ) : packageError ? (
+          <span className="text-sm text-red-700 dark:text-red-400">
+            Could not reach the GUAC GraphQL server.
+          </span>
+        ) : (
+          <>
+            <PackageSelector
+              packageTypes={packageTypes}
+              setGraphData={setGraphDataWithInitial}
+              resetTypeFunc={reset}
+            />
             <QueryVuln />
-          </div>
-        </div>
-      )}
+          </>
+        )}
 
-      <div className="flex flex-col justify-center items-center lg:items-start lg:flex-row">
-        {/* TODO: Fix highlighter, until then keep it commented */}
-        {/* <div className="flex flex-col text-sm p-4 row-span-1 lg:col-span-1">
-          <p className="pb-5 pt-3 opacity-70">
-            <span className="font-bold uppercase">Tip:</span> Use click
-            and scroll to adjust graph. <br />
-            Right clicking a node displays more information.
-          </p>
-          <h1 className="my-5 text-lg">Highlight Nodes</h1>
-          <div className="flex flex-col justify-start gap-y-2 w-full">
-            <div>
-              <HighlightToggles
-                highlights={highlights}
-                setHighlights={setHighlights}
-              />
-            </div>
-
-          </div>
-        </div>  */}
-
-        <div className="p-8 lg:p-0">
-          <Graph
-            graphData={graphData}
-            onNodeClick={handleNodeClick}
-            options={{
-              highlightArtifact: highlights.artifact,
-              highlightVuln: highlights.vuln,
-              highlightSbom: highlights.sbom,
-              highlightBuilder: highlights.builder,
-            }}
-            containerOptions={{
-              width: containerWidth,
-              height: containerHeight,
-            }}
-          />
-          {graphData.nodes.length !== 0 &&
-            graphData.links.length !== 0 && (
+        <div className="ml-auto flex items-end gap-x-2">
+          {hasGraph && (
+            <>
               <NavigationButtons
                 backStack={backStack}
                 breadcrumb={breadcrumb}
@@ -118,40 +159,121 @@ function HomeContent() {
                 reset={reset}
                 userInteractedWithPath={userInteractedWithPath}
               />
-            )}
-          <Breadcrumb
-            breadcrumb={breadcrumb.map((item) => item.label)}
-            handleNodeClick={handleBreadcrumbClick}
-            currentIndex={currentIndex}
-          />
+              <button className={TOGGLE_CLASS} onClick={fit} title="Fit graph to view (F)">
+                Fit
+              </button>
+            </>
+          )}
+          <button
+            className={TOGGLE_CLASS}
+            onClick={() => setShowLegend((v) => !v)}
+            aria-pressed={showLegend}
+            title="Show or hide the legend (L)"
+          >
+            Legend
+          </button>
+          <button
+            className={TOGGLE_CLASS}
+            onClick={() => setShowDetails((v) => !v)}
+            aria-pressed={showDetails}
+            title="Show or hide package details (I)"
+          >
+            Details
+          </button>
+          <button
+            className={TOGGLE_CLASS}
+            onClick={() => setShowHelp(true)}
+            title="Help and keyboard shortcuts (?)"
+            aria-label="Help and keyboard shortcuts"
+          >
+            ?
+          </button>
         </div>
-        <NodeInfo />
       </div>
-    </main>
+
+      {breadcrumb.length > 0 && (
+        <Breadcrumb
+          breadcrumb={breadcrumb.map((item) => item.label)}
+          handleNodeClick={handleBreadcrumbClick}
+          currentIndex={currentIndex}
+        />
+      )}
+
+      {/* ---- body: graph fills, rails collapse away ---- */}
+      <div className="flex min-h-0 flex-1">
+        <div ref={graphBoxRef} className="relative min-w-0 flex-1">
+          {width > 0 && (
+            <Graph
+              graphData={graphData}
+              onNodeClick={onNodeClick}
+              graphRef={graphRef}
+              selectedId={selectedId}
+              focusTypes={focusTypes}
+              containerOptions={{ width, height }}
+            />
+          )}
+          {notice && (
+            <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center p-2">
+              <p className="rounded bg-amber-100 px-3 py-1.5 text-xs text-amber-900 shadow dark:bg-amber-900 dark:text-amber-100">
+                {notice}
+              </p>
+            </div>
+          )}
+          {!hasGraph && (
+            <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-y-2 text-center">
+              <p className="text-sm opacity-70">
+                Pick a package type above to draw its supply chain.
+              </p>
+              <p className="text-xs opacity-50">
+                Press <kbd className="font-mono">?</kbd> for what the shapes and
+                colours mean.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {(showLegend || showDetails) && (
+          <aside className="w-80 shrink-0 overflow-y-auto border-l border-black/10 dark:border-white/10">
+            {showLegend && hasGraph && (
+              <div className="border-b border-black/10 dark:border-white/10 p-4">
+                <GraphLegend
+                  graphData={graphData}
+                  focusTypes={focusTypes}
+                  onToggleType={toggleType}
+                  onClearFocus={() => setFocusTypes(null)}
+                />
+              </div>
+            )}
+            {showDetails && <NodeInfo />}
+          </aside>
+        )}
+      </div>
+
+      {showHelp && (
+        <HelpPanel shortcuts={shortcuts} onClose={() => setShowHelp(false)} />
+      )}
+    </div>
   );
 }
 
-// Loading fallback component
 function LoadingFallback() {
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-lg">Loading...</div>
+    <div className="flex h-full items-center justify-center">
+      <div className="text-sm opacity-70">Loading…</div>
     </div>
   );
 }
 
 export default function Home() {
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between m-auto">
-      <ApolloProvider client={client}>
-        <VulnResultsProvider>
-          <PackageDataProvider>
-            <Suspense fallback={<LoadingFallback />}>
-              <HomeContent />
-            </Suspense>
-          </PackageDataProvider>
-        </VulnResultsProvider>
-      </ApolloProvider>
-    </div>
+    <ApolloProvider client={client}>
+      <VulnResultsProvider>
+        <PackageDataProvider>
+          <Suspense fallback={<LoadingFallback />}>
+            <HomeContent />
+          </Suspense>
+        </PackageDataProvider>
+      </VulnResultsProvider>
+    </ApolloProvider>
   );
 }

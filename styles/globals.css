@@ -76,7 +76,7 @@ input:checked + span:before {
   transform: translateX(29px);
 }
 
-strong {
+.toggle_label {
   position: absolute;
   left: 100%;
   width: max-content;

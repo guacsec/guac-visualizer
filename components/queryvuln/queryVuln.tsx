@@ -38,22 +38,26 @@ const QueryCertifyVuln: React.FC = () => {
   };
 
   return (
-    <div className="ml-10 container mx-auto p-4">
-      <h1 className="py-3 text-lg">Query vulnerability</h1>
+    <div className="relative flex flex-col space-y-1">
+      <label className="text-xs uppercase tracking-wide opacity-70">
+        Query vulnerability
+      </label>
+      <div className="flex items-center gap-x-2">
       <input
-        className="border rounded p-2 mb-4 dark:text-black"
+        className="h-[34px] rounded border px-2 text-sm dark:text-black"
         value={vulnerabilityID}
         onChange={(e) => setVulnerabilityID(e.target.value)}
         placeholder="Enter vuln ID here..."
       />
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="h-[34px] rounded bg-blue-500 px-3 text-sm font-bold text-white hover:bg-blue-700"
         onClick={handleVulnSearch}
       >
         Search
       </button>
+      </div>
       {results ? (
-        <div className="mt-4">
+        <div className="absolute top-full left-0 z-[10003] mt-1 max-h-80 w-96 overflow-y-auto rounded border bg-stone-100 p-2 shadow-lg dark:bg-stone-800">
           {results.map((node) => {
             return (
               <div key={node.id} className="border p-4 rounded mb-4">
@@ -83,7 +87,9 @@ const QueryCertifyVuln: React.FC = () => {
         </div>
       ) : (
         searched && (
-          <p className="mt-4 text-lg text-gray-500">No results found.</p>
+          <p className="absolute top-full left-0 z-[10003] mt-1 rounded border bg-stone-100 px-3 py-2 text-sm text-gray-500 shadow-lg dark:bg-stone-800">
+            No results found.
+          </p>
         )
       )}
     </div>

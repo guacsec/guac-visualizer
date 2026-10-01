@@ -26,6 +26,16 @@ type ForceGraph2DWrapperProps = {
   dataFetcher?: (id: string | number) => void;
   nodeCanvasObject: CanvasCustomRenderFn<NodeObject>;
   nodeCanvasObjectMode?: string | ((obj: NodeObject) => any);
+  nodePointerAreaPaint?: (
+    node: NodeObject,
+    color: string,
+    ctx: CanvasRenderingContext2D
+  ) => void;
+  onNodeHover?: (node: NodeObject | null) => void;
+  linkColor?: string | ((link: LinkObject) => string);
+  linkWidth?: number | ((link: LinkObject) => number);
+  /** Lifted so the page can drive zoom/fit from the toolbar and keyboard. */
+  graphRef?: React.MutableRefObject<ForceGraphMethods | undefined>;
   onNodeDragEnd?: (
     node: NodeObject,
     translate: { x: number; y: number }
@@ -54,6 +64,11 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
   selectedNode,
   nodeCanvasObject,
   nodeCanvasObjectMode,
+  nodePointerAreaPaint,
+  onNodeHover,
+  linkColor,
+  linkWidth,
+  graphRef,
   onNodeDragEnd,
   dataFetcher,
   width,
@@ -75,7 +90,8 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
     left: 0,
   });
 
-  const fgRef = useRef<ForceGraphMethods>();
+  const localRef = useRef<ForceGraphMethods>();
+  const fgRef = graphRef ?? localRef;
 
   if (selectedNode) {
     const sn = graphData.nodes.find((node) => node.id === selectedNode.value);
@@ -183,7 +199,7 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
         nodeAutoColorBy={nodeAutoColorBy}
         linkDirectionalArrowLength={linkDirectionalArrowLength}
         linkDirectionalArrowRelPos={linkDirectionalArrowRelPos}
-        onNodeClick={onNodeClick ?? handleClick}
+        onNodeClick={onNodeClick}
         onNodeRightClick={(node: NodeObject, event: MouseEvent) => {
           event.preventDefault();
           let [content, plainText] = buildTooltipContent(cloneDeep(node));
@@ -202,7 +218,10 @@ const ForceGraph2D: React.FC<ForceGraph2DWrapperProps & ResponsiveProps> = ({
         linkDirectionalParticleWidth={10.5}
         linkSource={linkSource}
         linkTarget={linkTarget}
-        linkWidth={3}
+        linkColor={linkColor}
+        linkWidth={linkWidth ?? 3}
+        onNodeHover={onNodeHover}
+        nodePointerAreaPaint={nodePointerAreaPaint}
         cooldownTicks={100}
         cooldownTime={15000}
         nodeCanvasObjectMode={nodeCanvasObjectMode}
